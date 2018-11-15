@@ -17,13 +17,6 @@ public class CourseTest {
     public CourseTest() {
     }
     
-    @BeforeClass
-    public static void setUpClass() {
-    }
-    
-    @AfterClass
-    public static void tearDownClass() {
-    }
     
     @Before
     public void setUp() {
@@ -38,50 +31,25 @@ public class CourseTest {
      * Test of setName method, of class Course.
      */
     @Test
-    public void testSetName() {
+    public void testSetGetName() {
         course.setName("test1");
         assertEquals("test1", course.getName());
-    }
-
-    /**
-     * Test of getName method, of class Course.
-     */
-    @Test
-    public void testGetName() {
-        System.out.println("getName");
-        Course instance = null;
-        String expResult = "";
-        String result = instance.getName();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
     }
 
     /**
      * Test of setDescription method, of class Course.
      */
     @Test
-    public void testSetDescription() {
-        System.out.println("setDescription");
-        String description = "";
-        Course instance = null;
-        instance.setDescription(description);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+    public void testSetGetDescription() {
+        course.setDescription("desc1");
+        assertEquals("desc1", course.getDescription());
     }
 
-    /**
-     * Test of getDescription method, of class Course.
-     */
     @Test
-    public void testGetDescription() {
-        System.out.println("getDescription");
-        Course instance = null;
-        String expResult = "";
-        String result = instance.getDescription();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+    public void testConstructor() {
+        Course course2 = new Course("name1");
+        
+        assertEquals("name1", course2.getName());
+        assertEquals("", course2.getDescription());
     }
-    
 }
