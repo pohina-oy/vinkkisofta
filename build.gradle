@@ -23,4 +23,6 @@ test {
     systemProperties System.getProperties()
 }
 
+run {}
+
 mainClassName = 'fi.pohina.vinkkilista.App'
