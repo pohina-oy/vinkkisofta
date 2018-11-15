@@ -1,1 +1,1 @@
-web: java -jar ./build/libs/vinkkisofta.jar
+web: java -jar ./build/libs/vinkkilista.jar
