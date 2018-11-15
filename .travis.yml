@@ -1,0 +1,10 @@
+language: java
+
+script:
+  - gradle check
+
+deploy: 
+  provider: script
+  script: echo "TODO"
+  on:
+    branch: master
