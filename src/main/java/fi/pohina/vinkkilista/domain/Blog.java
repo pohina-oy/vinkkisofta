@@ -10,6 +10,12 @@ public class Blog implements Bookmark {
     private BookmarkType type;
     private ArrayList<Course> relatedCourses;
 
+    /**
+     * Constructor
+     * @param title
+     * @param url
+     * @param type 
+     */
     public Blog(String title, String url, BookmarkType type) {
         this.title = title;
         this.url = url;
@@ -31,6 +37,9 @@ public class Blog implements Bookmark {
     }
 
     public String getAuthor() {
+        if (author == null) {
+            return "No author specified.";
+        }
         return author;
     }
 
