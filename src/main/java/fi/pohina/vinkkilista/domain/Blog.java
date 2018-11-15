@@ -2,10 +2,10 @@ package fi.pohina.vinkkilista.domain;
 
 import java.util.*;
 
-public class Blog {
+public class Blog implements Bookmark {
 
     private String title;
-    private String writer;
+    private String author;
     private String url;
     private BookmarkType type;
     private ArrayList<Course> relatedCourses;
@@ -17,20 +17,28 @@ public class Blog {
 
         relatedCourses = new ArrayList<Course>();
     }
+    public Blog(String title, String url, BookmarkType type, String author) {
+        this.title = title;
+        this.url = url;
+        this.type = type;
+        this.author = author;
+        
+        relatedCourses = new ArrayList<Course>();
+    }
 
     public String getTitle() {
         return title;
     }
 
-    public String writer() {
-        return writer;
+    public String getAuthor() {
+        return author;
     }
 
     public String getUrl() {
         return url;
     }
 
-    public BookmarkType getType() {
+    public BookmarkType getBookmarkType() {
         return type;
     }
 
