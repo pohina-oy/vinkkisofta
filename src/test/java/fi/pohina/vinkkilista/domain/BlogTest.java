@@ -8,6 +8,9 @@ import org.junit.Test;
 
 public class BlogTest {
 
+    /**
+     * Tests the consrtuctor of the class.
+     */
     @Test
     public void blogConstructorWorks() {
 
@@ -31,6 +34,9 @@ public class BlogTest {
         assertEquals(author, blog.getAuthor());
     }
 
+    /**
+     * Tests the addition of a new related course.
+     */
     @Test
     public void canAddCourseToBlog() {
 
@@ -54,7 +60,10 @@ public class BlogTest {
 
         assertEquals("course0", blog.getRelatedCourses().get(0).getName());
     }
-
+    
+    /**
+     * Tests the addition of related courses through a list.
+     */
     @Test
     public void canAddCoursesToBlog() {
 
