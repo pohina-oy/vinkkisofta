@@ -10,6 +10,6 @@ package fi.pohina.vinkkilista.domain;
  * @author porrasm
  */
 public interface Bookmark {
-    public BookmarkType getBookmarkType();
-    public String getTitle();
+    BookmarkType getBookmarkType();
+    String getTitle();
 }
