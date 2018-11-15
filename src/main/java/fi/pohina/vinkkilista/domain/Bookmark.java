@@ -12,5 +12,4 @@ package fi.pohina.vinkkilista.domain;
 public interface Bookmark {
     public BookmarkType getBookmarkType();
     public String getTitle();
-    public String getAuthor();
 }

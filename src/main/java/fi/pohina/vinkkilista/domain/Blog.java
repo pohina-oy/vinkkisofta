@@ -23,6 +23,14 @@ public class Blog implements Bookmark {
 
         relatedCourses = new ArrayList<Course>();
     }
+    
+    /**
+     * Constructor
+     * @param title
+     * @param url
+     * @param type
+     * @param author
+     */
     public Blog(String title, String url, BookmarkType type, String author) {
         this.title = title;
         this.url = url;
@@ -55,13 +63,13 @@ public class Blog implements Bookmark {
         return relatedCourses;
     }
 
-    public void addCourses(List<Course> courses) {
+    public void addRelatedCourses(List<Course> courses) {
         for (Course course : courses) {
-            addCourse(course);
+            addRelatedCourse(course);
         }
     }
 
-    public void addCourse(Course course) {
+    public void addRelatedCourse(Course course) {
         relatedCourses.add(course);
     }
 }
