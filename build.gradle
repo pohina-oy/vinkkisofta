@@ -25,4 +25,17 @@ test {
 
 run {}
 
+jar {
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+
+    manifest {
+        attributes 'Main-Class': 'fi.pohina.vinkkilista.App'
+    }
+}
+
+task stage(dependsOn: ['jar', 'clean'])
+jar.mustRunAfter clean
+
 mainClassName = 'fi.pohina.vinkkilista.App'
