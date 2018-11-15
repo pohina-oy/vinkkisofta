@@ -3,8 +3,9 @@ language: java
 script:
   - gradle check
 
-# deploy: 
-#   provider: script
-#   script: echo "TODO"
-#   on:
-#     branch: master
+deploy: 
+  provider: heroku
+  api_key: $HEROKU_API_KEY
+  app: vinkkisofta
+  on:
+    branch: master
