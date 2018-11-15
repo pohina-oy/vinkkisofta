@@ -1,0 +1,24 @@
+apply plugin: 'java'
+apply plugin: 'application'
+
+project.ext {
+    junitVersion = '4.12'
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    testCompile 'junit:junit:' + junitVersion
+    compile 'com.google.guava:guava:20.0'
+    compile 'com.sparkjava:spark-core:2.8.0'
+    compile 'org.slf4j:slf4j-simple:1.7.25'
+}
+
+test {
+    testLogging.showStandardStreams = true
+    systemProperties System.getProperties()
+}
+
+mainClassName = 'fi.pohina.vinkkilista.App'
