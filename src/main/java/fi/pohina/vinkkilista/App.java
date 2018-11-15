@@ -1,5 +1,9 @@
 package fi.pohina.vinkkilista;
 
+import spark.ModelAndView;
+import java.util.HashMap;
+import java.util.Map;
+import spark.template.thymeleaf.ThymeleafTemplateEngine;
 import static spark.Spark.*;
 
 public class App {
@@ -7,8 +11,18 @@ public class App {
         port(getPort());
 
         get("/", (req, res) -> {
-            return "Hello world!";
+            Map<String, Object> map = new HashMap<>();
+            return render(map, "index");
         });
+    }
+
+    private static String render(
+        Map<String, Object> model,
+        String templatePath
+    ) {
+        return new ThymeleafTemplateEngine().render(
+            new ModelAndView(model, templatePath)
+        );
     }
 
     private static int getPort() {
