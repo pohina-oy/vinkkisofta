@@ -9,7 +9,7 @@ import org.junit.Test;
 public class BlogTest {
 
     /**
-     * Tests the consrtuctor of the class.
+     * Tests the constructor of the class.
      */
     @Test
     public void blogConstructorWorks() {
@@ -19,14 +19,14 @@ public class BlogTest {
         BookmarkType type = BookmarkType.Blog;
         String author = "author";
 
-        Blog blog = new Blog(title, url, type);
+        Blog blog = new Blog(title, url);
 
         assertEquals(title, blog.getTitle());
         assertEquals(url, blog.getUrl());
         assertEquals(type, blog.getBookmarkType());
         assertEquals("No author specified.", blog.getAuthor());
 
-        blog = new Blog(title, url, type, author);
+        blog = new Blog(title, url, author);
 
         assertEquals(title, blog.getTitle());
         assertEquals(url, blog.getUrl());
@@ -45,7 +45,7 @@ public class BlogTest {
         courses.add(new Course("course2"));
         courses.add(new Course("course3"));
 
-        Blog blog = new Blog("a", "b", BookmarkType.Blog);
+        Blog blog = new Blog("a", "b");
 
         blog.addRelatedCourse(new Course("course0"));
         ArrayList<Course> related = blog.getRelatedCourses();
@@ -72,7 +72,7 @@ public class BlogTest {
         courses.add(new Course("course2"));
         courses.add(new Course("course3"));
 
-        Blog blog = new Blog("a", "b", BookmarkType.Blog);
+        Blog blog = new Blog("a", "b");
 
         blog.addRelatedCourses(courses);
         ArrayList<Course> related = blog.getRelatedCourses();
@@ -92,5 +92,27 @@ public class BlogTest {
             assertEquals(courses.get(i), related.get(i));
         }
 
+    }
+    
+    @Test
+    public void authorGetterWorks() {
+        
+        Blog blog = new Blog("title", "url");
+        assertEquals("No author specified.", blog.getAuthor());
+        
+        blog = new Blog("title", "url", "");
+        assertEquals("No author specified.", blog.getAuthor());
+        
+        blog = new Blog("title", "url", "author");
+        assertEquals("author", blog.getAuthor());
+    }
+    
+    @Test
+    public void gettersWork() {
+        
+        Blog blog = new Blog("title", "url");
+        
+        assertEquals("title", blog.getTitle());
+        assertEquals("url", blog.getUrl());
     }
 }

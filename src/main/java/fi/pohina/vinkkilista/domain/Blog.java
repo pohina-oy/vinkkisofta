@@ -7,19 +7,16 @@ public class Blog implements Bookmark {
     private String title;
     private String author;
     private String url;
-    private BookmarkType type;
     private ArrayList<Course> relatedCourses;
 
     /**
      * Constructor
      * @param title
      * @param url
-     * @param type 
      */
-    public Blog(String title, String url, BookmarkType type) {
+    public Blog(String title, String url) {
         this.title = title;
         this.url = url;
-        this.type = type;
 
         relatedCourses = new ArrayList<Course>();
     }
@@ -28,13 +25,10 @@ public class Blog implements Bookmark {
      * Constructor
      * @param title
      * @param url
-     * @param type
      * @param author
      */
-    public Blog(String title, String url, BookmarkType type, String author) {
-        this.title = title;
-        this.url = url;
-        this.type = type;
+    public Blog(String title, String url, String author) {
+        this(title, url);
         this.author = author;
         
         relatedCourses = new ArrayList<Course>();
@@ -45,7 +39,7 @@ public class Blog implements Bookmark {
     }
 
     public String getAuthor() {
-        if (author == null) {
+        if (author == null || author.equals("")) {
             return "No author specified.";
         }
         return author;
@@ -56,7 +50,7 @@ public class Blog implements Bookmark {
     }
 
     public BookmarkType getBookmarkType() {
-        return type;
+        return BookmarkType.Blog;
     }
 
     public ArrayList<Course> getRelatedCourses() {
