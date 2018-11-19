@@ -5,8 +5,8 @@
     <module name="TreeWalker">
         <!-- <module name="JavadocMethod"/>
         <module name="JavadocType"/>
-        <module name="JavadocVariable"/> -->
-        <module name="JavadocStyle"/>
+        <module name="JavadocVariable"/> 
+        <module name="JavadocStyle"/> -->
         <module name="ConstantName"/>
         <module name="LocalFinalVariableName"/>
         <module name="LocalVariableName"/>
@@ -41,14 +41,12 @@
         <module name="RightCurly"/>
         <module name="EmptyStatement"/>
         <module name="EqualsHashCode"/>
-        <module name="HiddenField"/>
         <module name="IllegalInstantiation"/>
         <module name="InnerAssignment"/>
         <!-- <module name="MagicNumber"/> -->
         <module name="MissingSwitchDefault"/>
         <module name="SimplifyBooleanExpression"/>
         <module name="SimplifyBooleanReturn"/>
-        <module name="DesignForExtension"/>
         <module name="InterfaceIsType"/>
         <module name="VisibilityModifier"/>
         <module name="ArrayTypeStyle"/>
