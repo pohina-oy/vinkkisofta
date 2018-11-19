@@ -1,32 +1,46 @@
 
 package fi.pohina.vinkkilista.data_access;
 
-import fi.pohina.vinkkilista.domain.Blog;
 import fi.pohina.vinkkilista.domain.Bookmark;
 import java.util.ArrayList;
 
 
 public class InMemoryBookmarkDao implements BookmarkDao<Bookmark> {
-
     ArrayList<Bookmark> bookmarksDB = new ArrayList<>();
     
     public InMemoryBookmarkDao() {
-        bookmarksDB.add(new Blog("eka", "https://www.abc.fi"));
-        bookmarksDB.add(new Blog("toinen", "https://www.qwerty.fi"));
     }
 
+    /**
+     * Function for finding saved bookmark by title
+     * @param title
+     * @return 
+     */
     @Override
     public Bookmark findByTitle(String title) {
-        return bookmarksDB.get(0);
+        for (Bookmark bookmark : bookmarksDB) {
+            if (bookmark.getTitle().equals(title)) {
+                return bookmark;
+            }
+        }
+        return null;
     }
 
+    /**
+     * Function for finding all saved bookmarks
+     * @return 
+     */
     @Override
     public ArrayList<Bookmark> findAll() {
         return bookmarksDB;
     }
 
+    /**
+     * Function for adding a new bookmark
+     * @param bookmark
+     */
     @Override
-    public void create(Bookmark bookmark) {
+    public void add(Bookmark bookmark) {
         bookmarksDB.add(bookmark);
     }
     

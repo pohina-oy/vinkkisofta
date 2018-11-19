@@ -1,76 +1,74 @@
 
 package fi.pohina.vinkkilista.data_access;
 
+import fi.pohina.vinkkilista.domain.Blog;
 import fi.pohina.vinkkilista.domain.Bookmark;
 import java.util.ArrayList;
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class InMemoryBookmarkDaoTest {
-    
-    public InMemoryBookmarkDaoTest() {
-    }
-    
-    @BeforeClass
-    public static void setUpClass() {
-    }
-    
-    @AfterClass
-    public static void tearDownClass() {
-    }
+    InMemoryBookmarkDao bookmarkDao;
     
     @Before
     public void setUp() {
-    }
-    
-    @After
-    public void tearDown() {
-    }
-
-    /**
-     * Test of findByTitle method, of class InMemoryBookmarkDao.
-     */
-    @Test
-    public void testFindByTitle() {
-        System.out.println("findByTitle");
-        String title = "";
-        InMemoryBookmarkDao instance = new InMemoryBookmarkDao();
-        Bookmark expResult = null;
-        Bookmark result = instance.findByTitle(title);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        bookmarkDao = new InMemoryBookmarkDao();
+        Blog eka = new Blog("eka", "https://www.abc.fi");
+        Blog toka = new Blog("toka", "https://www.qwerty.com", "tekija");
+        bookmarkDao.add(eka);
+        bookmarkDao.add(toka);
     }
 
     /**
-     * Test of findAll method, of class InMemoryBookmarkDao.
+     * Tests that existing bookmark can be found by title
      */
     @Test
-    public void testFindAll() {
-        System.out.println("findAll");
-        InMemoryBookmarkDao instance = new InMemoryBookmarkDao();
-        ArrayList<Bookmark> expResult = null;
-        ArrayList<Bookmark> result = instance.findAll();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+    public void canFindExistingBookmarkByTitle() {
+        assertEquals("eka", bookmarkDao.findByTitle("eka").getTitle());
     }
 
     /**
-     * Test of create method, of class InMemoryBookmarkDao.
+     * Tests that finding non-existent bookmark by title returns null
      */
     @Test
-    public void testCreate() {
-        System.out.println("create");
-        Bookmark bookmark = null;
-        InMemoryBookmarkDao instance = new InMemoryBookmarkDao();
-        instance.create(bookmark);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+    public void findingNonExistentBookmarkByTitleReturnsNull() {
+        assertEquals(null, bookmarkDao.findByTitle("eiole"));
     }
-    
+
+    /**
+     * Tests that finding all bookmarks returns all saved bookmarks
+     */
+    @Test
+    public void findingAllReturnsSavedBookmarks() {
+        ArrayList<Bookmark> result = bookmarkDao.findAll();
+        
+        assertTrue(result.contains(bookmarkDao.findByTitle("eka")));
+        assertTrue(result.contains(bookmarkDao.findByTitle("toka")));
+    }
+
+    /**
+     * Tests newly added bookmark is saved in the bookmark
+     */
+    @Test
+    public void addingNewBookmarkWorks() {
+        Blog newEntry = new Blog("uusi", "http://www.somesite.org");
+        bookmarkDao.add(newEntry);
+        
+        assertEquals("uusi", bookmarkDao.findByTitle("uusi").getTitle());
+        assertTrue(bookmarkDao.findAll().contains(newEntry));
+    }
+
+    /**
+     * Tests finding all returns up-to-date list of bookmarks after adding new entries
+     */
+    @Test
+    public void findAllKeepsUpWithAdd() {
+        Blog newEntry = new Blog("uusi", "http://www.somesite.org");
+        bookmarkDao.add(newEntry);
+        
+        assertTrue(bookmarkDao.findAll().contains(bookmarkDao.findByTitle("eka")));
+        assertTrue(bookmarkDao.findAll().contains(bookmarkDao.findByTitle("toka")));
+        assertTrue(bookmarkDao.findAll().contains(newEntry));
+    }
 }
