@@ -1,5 +1,5 @@
 
-package fi.pohina.vinkkilista.access;
+package fi.pohina.vinkkilista.data_access;
 
 import fi.pohina.vinkkilista.domain.Bookmark;
 import java.util.List;
