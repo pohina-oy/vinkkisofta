@@ -25,6 +25,7 @@ public class App {
      * Configures and ignites the Spark server.
      */
     public void startServer() {
+        staticFileLocation("/static");
         port(getPort());
 
         get("/", (req, res) -> {
