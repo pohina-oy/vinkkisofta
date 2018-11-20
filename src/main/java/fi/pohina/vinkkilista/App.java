@@ -38,11 +38,17 @@ public class App {
         });
         
         post("/new", (req, res) -> {
-            String label = req.queryParams("label");
-            String url = req.queryParams("url");
-            String author = req.queryParams("author");
+            String type = req.queryParams("type");
+            
+            if(type.equals("blog")) {
+                String title = req.queryParams("title");
+                String url = req.queryParams("url");
+                String author = req.queryParams("author");
+                bookmarks.addBlog(new Blog(title, url, author));
+            }
+            
             res.redirect("/");
-            return "New bookmark added: " + label + "-" + url + "-" + author;
+            return "New bookmark added";
         });
     }
 

@@ -7,10 +7,16 @@
     <body>
         <div class="container">
             <form method="post" action="/new">
-
                 <div>
-                    <label>Label:</label>
-                    <input type="text" name="label"/>
+                    <label>Type:</label>
+                    <select name="type">
+                        <option value="blog">Blog</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label>Title:</label>
+                    <input type="text" name="title"/>
                 </div>
                 
                 <div>
@@ -23,13 +29,6 @@
                     <input type="text" name="author"/>
                 </div>
 
-                <div>
-                    <label>Type:</label>
-                    <select name="type">
-                        <option value="blog">Blog</option>
-                    </select>
-                </div>
-                
                 <button type="submit">Add Bookmark</button>
 
             </form>
