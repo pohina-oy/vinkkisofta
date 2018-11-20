@@ -6,7 +6,33 @@
     </head>
     <body>
         <div class="container">
-            TODO write content
+            <form method="post" action="/new">
+
+                <div>
+                    <label>Label:</label>
+                    <input type="text" name="label"/>
+                </div>
+                
+                <div>
+                    <label>Url:</label>
+                    <input type="url" name="url"/>
+                </div>
+                
+                <div>
+                    <label>Author:</label>
+                    <input type="text" name="author"/>
+                </div>
+
+                <div>
+                    <label>Type:</label>
+                    <select name="type">
+                        <option value="blog">Blog</option>
+                    </select>
+                </div>
+                
+                <button type="submit">Add Bookmark</button>
+
+            </form>
         </div>
     </body>
 </html>
