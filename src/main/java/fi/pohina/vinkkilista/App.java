@@ -36,6 +36,14 @@ public class App {
             Map<String, Object> map = new HashMap<>();
             return render(map, "new");
         });
+        
+        post("/new", (req, res) -> {
+            String label = req.queryParams("label");
+            String url = req.queryParams("url");
+            String author = req.queryParams("author");
+            res.redirect("/");
+            return "New bookmark added: " + label + "-" + url + "-" + author;
+        });
     }
 
     /**
