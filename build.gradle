@@ -38,4 +38,4 @@ jar {
 task stage(dependsOn: ['jar', 'clean'])
 jar.mustRunAfter clean
 
-mainClassName = 'fi.pohina.vinkkilista.App'
+mainClassName = 'fi.pohina.vinkkilista.Main'
