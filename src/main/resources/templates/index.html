@@ -4,10 +4,22 @@
 <head>
     <title>Vinkkisofta</title>
     <meta charset="utf-8"/>
+    <link rel="stylesheet" th:href="@{main.css}" type="text/css"/>
 </head>
 
 <body>
-<h1>Vinkkilista</h1>
-Hello world.
+<div class="container">
+    <h1>Vinkkilista</h1>
+    <ul>
+        <li th:each="blog : ${blogs}">
+            Blog:
+            <a th:href="${blog.url}">
+                <span th:text="${blog.title}"></span>
+            </a>
+            by
+            <span th:text="${blog.author}"></span>
+        </li>
+    </ul>
+</div>
 </body>
 </html>
