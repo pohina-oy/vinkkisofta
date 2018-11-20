@@ -17,11 +17,13 @@ public class App {
     }
 
     /**
-     * Configures and ignites the Spark server.
+     * Configures and ignites the Spark server, binding to the specified port.
+     *
+     * @param portNumber The port to which the HTTP server will be bound to.
      */
-    public void startServer() {
+    public void startServer(int portNumber) {
         staticFileLocation("/static");
-        port(getPort());
+        port(portNumber);
 
         get("/", (req, res) -> {
             Map<String, Object> map = new HashMap<>();
@@ -45,10 +47,5 @@ public class App {
         return new ThymeleafTemplateEngine().render(
             new ModelAndView(model, templatePath)
         );
-    }
-
-    private static int getPort() {
-        String port = System.getenv("PORT");
-        return port == null ? 4567 : Integer.parseInt(port);
     }
 }
