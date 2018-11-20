@@ -12,11 +12,6 @@ import static spark.Spark.*;
 public class App {
     private final BookmarkService bookmarks;
 
-    public static void main(String[] args) {
-        BookmarkService service = new BookmarkService();
-        new App(service).startServer();
-    }
-
     public App(BookmarkService bookmarks) {
         this.bookmarks = bookmarks;
     }
