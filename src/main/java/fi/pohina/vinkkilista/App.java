@@ -31,6 +31,11 @@ public class App {
             map.put("blogs", blogs);
             return render(map, "index");
         });
+        
+        get("/new", (req, res) -> {
+            Map<String, Object> map = new HashMap<>();
+            return render(map, "new");
+        });
     }
 
     /**
