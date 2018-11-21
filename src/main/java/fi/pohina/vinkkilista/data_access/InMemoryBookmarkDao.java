@@ -3,7 +3,7 @@ package fi.pohina.vinkkilista.data_access;
 import fi.pohina.vinkkilista.domain.Bookmark;
 import java.util.ArrayList;
 
-public class InMemoryBookmarkDao implements BookmarkDao<Bookmark> {
+public class InMemoryBookmarkDao implements BookmarkDao {
 
     private ArrayList<Bookmark> bookmarksDB = new ArrayList<>();
 
