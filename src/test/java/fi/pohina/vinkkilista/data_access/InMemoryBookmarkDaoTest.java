@@ -21,7 +21,7 @@ public class InMemoryBookmarkDaoTest {
     }
 
     /**
-     * Tests that existing bookmark can be found by title
+     * Tests that an existing bookmark can be found by title
      */
     @Test
     public void canFindExistingBookmarkByTitle() {
@@ -29,7 +29,7 @@ public class InMemoryBookmarkDaoTest {
     }
 
     /**
-     * Tests that finding non-existent bookmark by title returns null
+     * Tests that searcing a non-existent bookmark by title returns null
      */
     @Test
     public void findingNonExistentBookmarkByTitleReturnsNull() {
@@ -48,7 +48,7 @@ public class InMemoryBookmarkDaoTest {
     }
 
     /**
-     * Tests newly added bookmark is saved in the bookmark
+     * Tests that newly added bookmark is saved in the bookmarks
      */
     @Test
     public void addingNewBookmarkWorks() {
@@ -60,8 +60,8 @@ public class InMemoryBookmarkDaoTest {
     }
 
     /**
-     * Tests finding all returns up-to-date list of bookmarks after adding new
-     * entries
+     * Tests that finding all returns up-to-date list of bookmarks after adding
+     * new entries
      */
     @Test
     public void findAllKeepsUpWithAdd() {

@@ -11,10 +11,10 @@ public class InMemoryBookmarkDao implements BookmarkDao<Bookmark> {
     }
 
     /**
-     * Function for finding saved bookmark by title
+     * Function for finding a saved bookmark by title
      *
-     * @param title
-     * @return
+     * @param title title by which a bookmark is searched
+     * @return found bookmark, otherwise null
      */
     @Override
     public Bookmark findByTitle(String title) {
@@ -29,7 +29,7 @@ public class InMemoryBookmarkDao implements BookmarkDao<Bookmark> {
     /**
      * Function for finding all saved bookmarks
      *
-     * @return
+     * @return found bookmarks as an ArrayList
      */
     @Override
     public ArrayList<Bookmark> findAll() {
@@ -39,7 +39,7 @@ public class InMemoryBookmarkDao implements BookmarkDao<Bookmark> {
     /**
      * Function for adding a new bookmark
      *
-     * @param bookmark
+     * @param bookmark bookmark which is saved
      */
     @Override
     public void add(Bookmark bookmark) {
