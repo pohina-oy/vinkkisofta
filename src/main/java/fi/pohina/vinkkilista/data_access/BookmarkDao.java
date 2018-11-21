@@ -5,7 +5,7 @@ import java.util.List;
 
 public interface BookmarkDao<T> {
 
-    Bookmark findByTitle(String title);
+    Bookmark findByID(int id);
 
     List<Bookmark> findAll();
 

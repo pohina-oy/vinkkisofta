@@ -11,15 +11,15 @@ public class InMemoryBookmarkDao implements BookmarkDao<Bookmark> {
     }
 
     /**
-     * Function for finding a saved bookmark by title
+     * Function for finding a saved bookmark by id
      *
-     * @param title title by which a bookmark is searched
+     * @param id id by which a bookmark is searched
      * @return found bookmark, otherwise null
      */
     @Override
-    public Bookmark findByTitle(String title) {
+    public Bookmark findByID(int id) {
         for (Bookmark bookmark : bookmarksDB) {
-            if (bookmark.getTitle().equals(title)) {
+            if (bookmark.getID() == id) {
                 return bookmark;
             }
         }
@@ -44,10 +44,6 @@ public class InMemoryBookmarkDao implements BookmarkDao<Bookmark> {
     @Override
     public void add(Bookmark bookmark) {
         bookmarksDB.add(bookmark);
-    }
-
-    public ArrayList<Bookmark> getBookmarksDB() {
-        return bookmarksDB;
     }
 
 }

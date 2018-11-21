@@ -16,24 +16,26 @@ public class InMemoryBookmarkDaoTest {
         bookmarkDao = new InMemoryBookmarkDao();
         Blog eka = new Blog("eka", "https://www.abc.fi");
         Blog toka = new Blog("toka", "https://www.qwerty.com", "tekija");
+        eka.setID(1);
+        toka.setID(2);
         bookmarkDao.add(eka);
         bookmarkDao.add(toka);
     }
 
     /**
-     * Tests that an existing bookmark can be found by title
+     * Tests that an existing bookmark can be found by id
      */
     @Test
-    public void canFindExistingBookmarkByTitle() {
-        assertEquals("eka", bookmarkDao.findByTitle("eka").getTitle());
+    public void canFindExistingBookmarkByID() {
+        assertEquals(1, bookmarkDao.findByID(1).getID());
     }
 
     /**
-     * Tests that searcing a non-existent bookmark by title returns null
+     * Tests that searcing a non-existent bookmark by id returns null
      */
     @Test
-    public void findingNonExistentBookmarkByTitleReturnsNull() {
-        assertEquals(null, bookmarkDao.findByTitle("eiole"));
+    public void findingNonExistentBookmarkByIDReturnsNull() {
+        assertEquals(null, bookmarkDao.findByID(3));
     }
 
     /**
@@ -43,8 +45,8 @@ public class InMemoryBookmarkDaoTest {
     public void findingAllReturnsSavedBookmarks() {
         ArrayList<Bookmark> result = bookmarkDao.findAll();
 
-        assertTrue(result.contains(bookmarkDao.findByTitle("eka")));
-        assertTrue(result.contains(bookmarkDao.findByTitle("toka")));
+        assertTrue(result.contains(bookmarkDao.findByID(1)));
+        assertTrue(result.contains(bookmarkDao.findByID(2)));
     }
 
     /**
@@ -53,9 +55,10 @@ public class InMemoryBookmarkDaoTest {
     @Test
     public void addingNewBookmarkWorks() {
         Blog newEntry = new Blog("uusi", "http://www.somesite.org");
+        newEntry.setID(5);
         bookmarkDao.add(newEntry);
 
-        assertEquals("uusi", bookmarkDao.findByTitle("uusi").getTitle());
+        assertEquals(5, bookmarkDao.findByID(5).getID());
         assertTrue(bookmarkDao.findAll().contains(newEntry));
     }
 
@@ -66,11 +69,12 @@ public class InMemoryBookmarkDaoTest {
     @Test
     public void findAllKeepsUpWithAdd() {
         Blog newEntry = new Blog("uusi", "http://www.somesite.org");
+        newEntry.setID(5);
         bookmarkDao.add(newEntry);
         ArrayList<Bookmark> bookmarks = bookmarkDao.findAll();
 
-        assertTrue(bookmarks.contains(bookmarkDao.findByTitle("eka")));
-        assertTrue(bookmarks.contains(bookmarkDao.findByTitle("toka")));
+        assertTrue(bookmarks.contains(bookmarkDao.findByID(1)));
+        assertTrue(bookmarks.contains(bookmarkDao.findByID(2)));
         assertTrue(bookmarks.contains(newEntry));
     }
 }
