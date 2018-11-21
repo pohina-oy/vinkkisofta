@@ -6,7 +6,7 @@ import static org.junit.Assert.*;
 
 public class BookmarkServiceTest {
     
-    BookmarkService bookmarks;
+    private BookmarkService bookmarks;
 
     @Before
     public void setUp() {
