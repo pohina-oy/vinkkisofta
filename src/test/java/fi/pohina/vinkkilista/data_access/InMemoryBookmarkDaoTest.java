@@ -1,4 +1,3 @@
-
 package fi.pohina.vinkkilista.data_access;
 
 import fi.pohina.vinkkilista.domain.Blog;
@@ -9,8 +8,9 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class InMemoryBookmarkDaoTest {
+
     InMemoryBookmarkDao bookmarkDao;
-    
+
     @Before
     public void setUp() {
         bookmarkDao = new InMemoryBookmarkDao();
@@ -42,7 +42,7 @@ public class InMemoryBookmarkDaoTest {
     @Test
     public void findingAllReturnsSavedBookmarks() {
         ArrayList<Bookmark> result = bookmarkDao.findAll();
-        
+
         assertTrue(result.contains(bookmarkDao.findByTitle("eka")));
         assertTrue(result.contains(bookmarkDao.findByTitle("toka")));
     }
@@ -54,19 +54,20 @@ public class InMemoryBookmarkDaoTest {
     public void addingNewBookmarkWorks() {
         Blog newEntry = new Blog("uusi", "http://www.somesite.org");
         bookmarkDao.add(newEntry);
-        
+
         assertEquals("uusi", bookmarkDao.findByTitle("uusi").getTitle());
         assertTrue(bookmarkDao.findAll().contains(newEntry));
     }
 
     /**
-     * Tests finding all returns up-to-date list of bookmarks after adding new entries
+     * Tests finding all returns up-to-date list of bookmarks after adding new
+     * entries
      */
     @Test
     public void findAllKeepsUpWithAdd() {
         Blog newEntry = new Blog("uusi", "http://www.somesite.org");
         bookmarkDao.add(newEntry);
-        
+
         assertTrue(bookmarkDao.findAll().contains(bookmarkDao.findByTitle("eka")));
         assertTrue(bookmarkDao.findAll().contains(bookmarkDao.findByTitle("toka")));
         assertTrue(bookmarkDao.findAll().contains(newEntry));
