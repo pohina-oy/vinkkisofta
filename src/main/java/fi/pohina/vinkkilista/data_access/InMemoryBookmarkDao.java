@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 public class InMemoryBookmarkDao implements BookmarkDao<Bookmark> {
 
-    ArrayList<Bookmark> bookmarksDB = new ArrayList<>();
+    private ArrayList<Bookmark> bookmarksDB = new ArrayList<>();
 
     public InMemoryBookmarkDao() {
     }
@@ -44,6 +44,10 @@ public class InMemoryBookmarkDao implements BookmarkDao<Bookmark> {
     @Override
     public void add(Bookmark bookmark) {
         bookmarksDB.add(bookmark);
+    }
+
+    public ArrayList<Bookmark> getBookmarksDB() {
+        return bookmarksDB;
     }
 
 }
