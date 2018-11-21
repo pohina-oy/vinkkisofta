@@ -1,35 +1,39 @@
-<!DOCTYPE html>
-<html>
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
     <head>
         <title>Vinkkisofta - New Bookmark</title>
-        <meta charset="UTF-8">
+        <meta charset="UTF-8"/>
+        <link rel="stylesheet" th:href="@{main.css}" type="text/css"/>
+        <link rel="stylesheet" th:href="@{new.css}" type="text/css"/>
     </head>
     <body>
         <div class="container">
-            <form method="post" action="/new">
-                <div>
-                    <label>Type:</label>
-                    <select name="type">
-                        <option value="blog">Blog</option>
+
+            <form class="bookmarkForm" method="post" action="/new">
+                <div class="formSection">
+                    <label class="formSectionLabel">Type</label>
+                    <select class="formSectionInput" name="type" >
+                        <option th:each="type : ${types}" th:value="${type}" th:text="${type}"/>
                     </select>
                 </div>
-                
-                <div>
-                    <label>Title:</label>
-                    <input type="text" name="title"/>
-                </div>
-                
-                <div>
-                    <label>Url:</label>
-                    <input type="url" name="url"/>
-                </div>
-                
-                <div>
-                    <label>Author:</label>
-                    <input type="text" name="author"/>
+
+                <div class="formSection">
+                    <label class="formSectionLabel">Title</label>
+                    <input class="formSectionInput" type="text" name="title" placeholder="Example"/>
                 </div>
 
-                <button type="submit">Add Bookmark</button>
+                <div class="formSection">
+                    <label class="formSectionLabel">Url</label>
+                    <input class="formSectionInput" type="url" name="url" placeholder="http://example.com/"/>
+                </div>
+
+                <div class="formSection">
+                    <label class="formSectionLabel">Author</label>
+                    <input class="formSectionInput" type="text" name="author" placeholder="Joe Bloggs"/>
+                </div>
+                <div class="formSection">
+                    <button class="formSectionInput" type="submit">Add Bookmark</button>
+                </div>
 
             </form>
         </div>
