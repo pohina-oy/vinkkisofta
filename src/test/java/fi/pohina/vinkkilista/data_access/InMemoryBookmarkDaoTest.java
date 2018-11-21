@@ -9,7 +9,7 @@ import static org.junit.Assert.*;
 
 public class InMemoryBookmarkDaoTest {
 
-    InMemoryBookmarkDao bookmarkDao;
+    private InMemoryBookmarkDao bookmarkDao;
 
     @Before
     public void setUp() {
@@ -67,9 +67,10 @@ public class InMemoryBookmarkDaoTest {
     public void findAllKeepsUpWithAdd() {
         Blog newEntry = new Blog("uusi", "http://www.somesite.org");
         bookmarkDao.add(newEntry);
+        ArrayList<Bookmark> bookmarks = bookmarkDao.findAll();
 
-        assertTrue(bookmarkDao.findAll().contains(bookmarkDao.findByTitle("eka")));
-        assertTrue(bookmarkDao.findAll().contains(bookmarkDao.findByTitle("toka")));
-        assertTrue(bookmarkDao.findAll().contains(newEntry));
+        assertTrue(bookmarks.contains(bookmarkDao.findByTitle("eka")));
+        assertTrue(bookmarks.contains(bookmarkDao.findByTitle("toka")));
+        assertTrue(bookmarks.contains(newEntry));
     }
 }
