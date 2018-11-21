@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package fi.pohina.vinkkilista.domain;
 
 /**
@@ -12,4 +7,5 @@ package fi.pohina.vinkkilista.domain;
 public interface Bookmark {
     BookmarkType getBookmarkType();
     String getTitle();
+    int getID();
 }

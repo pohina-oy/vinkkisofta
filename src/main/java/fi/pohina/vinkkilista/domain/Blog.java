@@ -4,6 +4,7 @@ import java.util.*;
 
 public class Blog implements Bookmark {
 
+    private int id;
     private String title;
     private String author;
     private String url;
@@ -17,6 +18,7 @@ public class Blog implements Bookmark {
     public Blog(String title, String url) {
         this.title = title;
         this.url = url;
+        this.id = -1;
 
         relatedCourses = new ArrayList<Course>();
     }
@@ -30,6 +32,7 @@ public class Blog implements Bookmark {
     public Blog(String title, String url, String author) {
         this(title, url);
         this.author = author;
+        this.id = -1;
         
         relatedCourses = new ArrayList<Course>();
     }
@@ -51,6 +54,14 @@ public class Blog implements Bookmark {
 
     public BookmarkType getBookmarkType() {
         return BookmarkType.Blog;
+    }
+
+    public int getID() {
+        return id;
+    }
+
+    public void setID(int id) {
+        this.id = id;
     }
 
     public ArrayList<Course> getRelatedCourses() {
