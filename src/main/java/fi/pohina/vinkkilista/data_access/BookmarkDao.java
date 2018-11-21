@@ -3,7 +3,7 @@ package fi.pohina.vinkkilista.data_access;
 import fi.pohina.vinkkilista.domain.Bookmark;
 import java.util.List;
 
-public interface BookmarkDao<T> {
+public interface BookmarkDao {
 
     Bookmark findByID(int id);
 
