@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 import spark.QueryParamsMap;
 import spark.template.thymeleaf.ThymeleafTemplateEngine;
+import com.google.common.base.Strings;
 import static spark.Spark.*;
 
 public class App {
@@ -61,6 +62,7 @@ public class App {
     /**
      * Validates parameters and creates blog.
      * Todo: Make a validator class.
+     *
      * @param params Contains the parameters from request.
      * @return Returns true if blog is added, otherwise false.
      */
@@ -69,11 +71,11 @@ public class App {
         String url = params.get("url").value();
         String author = params.get("author").value();
 
-        if (title.isEmpty() || url.isEmpty()) {
+        if (Strings.isNullOrEmpty(title) || Strings.isNullOrEmpty(url)) {
             return false;
         }
 
-        if (author.isEmpty()) {
+        if (Strings.isNullOrEmpty(author)) {
             bookmarks.addBlog(new Blog(title, url));
         } else {
             bookmarks.addBlog(new Blog(title, url, author));
