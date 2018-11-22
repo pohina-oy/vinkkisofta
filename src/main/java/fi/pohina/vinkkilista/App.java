@@ -1,6 +1,7 @@
 package fi.pohina.vinkkilista;
 
 import fi.pohina.vinkkilista.domain.Blog;
+import fi.pohina.vinkkilista.domain.Bookmark;
 import fi.pohina.vinkkilista.domain.BookmarkService;
 import fi.pohina.vinkkilista.domain.BookmarkType;
 import java.util.Collection;
@@ -31,7 +32,7 @@ public class App {
 
         get("/", (req, res) -> {
             Map<String, Object> map = new HashMap<>();
-            Collection<Blog> blogs = this.bookmarks.getBlogs();
+            Collection<Bookmark> blogs = this.bookmarks.getBlogs();
             map.put("blogs", blogs);
             return render(map, "index");
         });

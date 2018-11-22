@@ -1,35 +1,21 @@
 package fi.pohina.vinkkilista.domain;
 
-import java.util.ArrayList;
+import fi.pohina.vinkkilista.data_access.BookmarkDao;
 import java.util.Collection;
 
 public class BookmarkService {
-    
-    private Collection<Blog> blogs;
-    
-    public BookmarkService() {
-        this.blogs = new ArrayList<>();
-        blogs.add(new Blog(
-            "GitHub Blog",
-            "https://blog.github.com",
-            "GitHub")
-        );
-        blogs.add(new Blog(
-            "Domain Driven Design Weekly",
-            "http://dddweekly.com"
-        ));
-        blogs.add(new Blog(
-            "the morning paper",
-            "https://blog.acolyer.org",
-            "Adrian Colyer"
-        ));
+
+    private final BookmarkDao dao;
+
+    public BookmarkService(BookmarkDao dao) {
+        this.dao = dao;
     }
     
     public void addBlog(Blog blog) {
-        this.blogs.add(blog);
+        dao.add(blog);
     }
-    
-    public Collection<Blog> getBlogs() {
-        return this.blogs;
+
+    public Collection<Bookmark> getBlogs() {
+        return dao.findAll();
     }
 }
