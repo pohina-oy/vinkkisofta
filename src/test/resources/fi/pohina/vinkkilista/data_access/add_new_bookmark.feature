@@ -1,6 +1,0 @@
-Feature: A newly created bookmark is saved
-
-    Scenario: bookmark is saved when a valid blog is created
-        Given a valid blog with title "uusi" with url "http://www.somesite.org" is created
-        When  ...
-        Then  ...
