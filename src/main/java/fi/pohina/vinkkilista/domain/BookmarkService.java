@@ -1,21 +1,42 @@
 package fi.pohina.vinkkilista.domain;
 
 import fi.pohina.vinkkilista.data_access.BookmarkDao;
-import java.util.Collection;
+import java.util.*;
 
 public class BookmarkService {
 
-    private final BookmarkDao dao;
+    private final BookmarkDao bookmarkDao;
 
-    public BookmarkService(BookmarkDao dao) {
-        this.dao = dao;
-    }
-    
-    public void addBlog(Blog blog) {
-        dao.add(blog);
+    public BookmarkService(BookmarkDao bookmarkDao) {
+        this.bookmarkDao = bookmarkDao;
     }
 
-    public Collection<Bookmark> getBlogs() {
-        return dao.findAll();
+    /**
+     * Creates a new {@link Bookmark} from the specified title, url and author.
+     */
+    public void createBookmark(
+        String title,
+        String url,
+        String author
+    ) {
+        String id = generateBookmarkId();
+
+        Bookmark bookmark = new Bookmark(
+            id,
+            title,
+            url,
+            author,
+            new ArrayList<>()
+        );
+
+        bookmarkDao.add(bookmark);
+    }
+
+    public Collection<Bookmark> getAllBookmarks() {
+        return bookmarkDao.findAll();
+    }
+
+    private String generateBookmarkId() {
+        return UUID.randomUUID().toString();
     }
 }
