@@ -1,9 +1,11 @@
 package fi.pohina.vinkkilista.domain;
 
+import fi.pohina.vinkkilista.data_access.BookmarkDao;
 import fi.pohina.vinkkilista.data_access.InMemoryBookmarkDao;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 public class BookmarkServiceTest {
 
@@ -11,18 +13,32 @@ public class BookmarkServiceTest {
 
     @Before
     public void setUp() {
-        bookmarks = new BookmarkService(new InMemoryBookmarkDao());
     }
 
     @Test
-    public void canAddBlogs() {
-        int blogsInBeginning = bookmarks.getBlogs().size();
-        Blog blog = new Blog(
-            "TestBlog",
-            "https://www.example.com",
-            "Testing Company");
-        bookmarks.addBlog(blog);
-        assertEquals(blogsInBeginning + 1, bookmarks.getBlogs().size());
+    public void createBookmarkCreatesCorrectBookmark() {
+        BookmarkDao bookmarkDao = spy(new InMemoryBookmarkDao());
+
+        bookmarks = new BookmarkService(bookmarkDao);
+
+        String title = "foobar",
+            url = "http://foo.com",
+            author = "author";
+
+        bookmarks.createBookmark(
+            title,
+            url,
+            author
+        );
+
+        verify(bookmarkDao, times(1))
+            .add(any(Bookmark.class));
+
+        Bookmark createdBookmark = bookmarkDao.findAll().get(0);
+
+        assertEquals(title, createdBookmark.getTitle());
+        assertEquals(url, createdBookmark.getUrl());
+        assertEquals(author, createdBookmark.getAuthor());
     }
 
 }

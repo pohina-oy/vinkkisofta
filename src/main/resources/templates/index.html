@@ -11,13 +11,14 @@
 <div class="container">
     <h1>Vinkkilista</h1>
     <ul>
-        <li th:each="blog : ${blogs}">
-            Blog:
-            <a th:href="${blog.url}">
-                <span th:text="${blog.title}"></span>
+        <li th:each="bookmark : ${bookmarks}">
+            Bookmark:
+            <a th:href="${bookmark.url}">
+                <span th:text="${bookmark.title}"></span>
             </a>
-            by
-            <span th:text="${blog.author}"></span>
+            <span th:if="${bookmark.author != null}"
+                  th:text="${'by ' + bookmark.author}">
+            </span>
         </li>
     </ul>
     <a id="newBookmarkLink" href="/new">Add new bookmark</a>
