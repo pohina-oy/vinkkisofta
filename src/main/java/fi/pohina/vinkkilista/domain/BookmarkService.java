@@ -26,7 +26,7 @@ public class BookmarkService {
             title,
             url,
             author,
-            new ArrayList<>()
+            new HashSet<>()
         );
 
         bookmarkDao.add(bookmark);

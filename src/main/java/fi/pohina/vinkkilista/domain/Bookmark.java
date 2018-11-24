@@ -8,14 +8,14 @@ public class Bookmark {
     private final String title;
     private final String url;
     private final String author;
-    private final List<Tag> tags;
+    private final Set<Tag> tags;
 
     public Bookmark(String id, String title, String url) {
         this(id, title, url, null);
     }
 
     public Bookmark(String id, String title, String url, String author) {
-        this(id, title, url, author, new ArrayList<>());
+        this(id, title, url, author, new HashSet<>());
     }
 
     public Bookmark(
@@ -23,7 +23,7 @@ public class Bookmark {
         String title,
         String url,
         String author,
-        List<Tag> tags
+        Set<Tag> tags
     ) {
         this.id = id;
         this.title = title;
@@ -48,7 +48,7 @@ public class Bookmark {
         return url;
     }
 
-    public List<Tag> getTags() {
+    public Set<Tag> getTags() {
         return tags;
     }
 }

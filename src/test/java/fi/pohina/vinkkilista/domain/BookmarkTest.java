@@ -2,8 +2,7 @@ package fi.pohina.vinkkilista.domain;
 
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import org.junit.Test;
 
 public class BookmarkTest {
@@ -15,7 +14,7 @@ public class BookmarkTest {
             url = "url",
             author = "John Wick";
         Tag tag = new Tag("id 1", "video");
-        List<Tag> expectedTags = new ArrayList<>();
+        Set<Tag> expectedTags = new HashSet<>();
         expectedTags.add(tag);
 
         Bookmark bookmark = new Bookmark(id, title, url, author, expectedTags);
@@ -34,7 +33,7 @@ public class BookmarkTest {
             "id", "title", "url", "author"
         );
 
-        List<Tag> tags = bookmark.getTags();
+        Set<Tag> tags = bookmark.getTags();
 
         assertEquals(0, tags.size());
     }
