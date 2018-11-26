@@ -33,7 +33,7 @@ public class BookmarkService {
      * @return matching bookmarks
      */
     public Collection<Bookmark> getBookmarksByTags(String tags) {
-        Set<Tag> tagSet = tagSetStringToObject(parseTagsList(tags), FALSE);
+        Set<Tag> tagSet = tagSetStringToObject(parseTagsString(tags), FALSE);
         return findByTagSet(tagSet);
     }
     
@@ -43,7 +43,7 @@ public class BookmarkService {
      * @param tags comma-separated string list of tags
      * @return tags in a string set
      */
-    private Set<String> parseTagsList(String tags) {
+    private Set<String> parseTagsString(String tags) {
         List<String> tagsList = Arrays.asList(tags.split(","));
         Set<String> tagsSet = new HashSet<>();
         
