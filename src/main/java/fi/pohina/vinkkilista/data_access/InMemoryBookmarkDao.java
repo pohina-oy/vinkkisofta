@@ -1,7 +1,9 @@
 package fi.pohina.vinkkilista.data_access;
 
 import fi.pohina.vinkkilista.domain.Bookmark;
+import fi.pohina.vinkkilista.domain.Tag;
 import java.util.ArrayList;
+import java.util.Set;
 
 public class InMemoryBookmarkDao implements BookmarkDao {
 
@@ -34,6 +36,29 @@ public class InMemoryBookmarkDao implements BookmarkDao {
     @Override
     public ArrayList<Bookmark> findAll() {
         return bookmarksDB;
+    }
+
+    /**
+     * Function for finding saved bookmarks matching any of the tags specified
+     * in input set.
+     *
+     * @param tags set of tags to search for bookmarks
+     * @return found bookmarks as an ArrayList
+     */
+    @Override
+    public ArrayList<Bookmark> findByTagSet(Set<Tag> tags) {
+        ArrayList<Bookmark> bookmarksList = new ArrayList<>();
+        
+        for (Bookmark bookmark : bookmarksDB) {
+            for (Tag tag : bookmark.getTags()) {
+                if (tags.contains(tag)) {
+                    bookmarksList.add(bookmark);
+                    break;
+                }
+            }
+        }
+        
+        return bookmarksList;
     }
 
     /**
