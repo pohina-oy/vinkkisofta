@@ -34,7 +34,7 @@ public class BookmarkService {
      */
     public Collection<Bookmark> getBookmarksByTags(String tags) {
         Set<Tag> tagSet = tagSetStringToObject(parseTagsString(tags), FALSE);
-        return findByTagSet(tagSet);
+        return dao.findByTagSet(tagSet);
     }
     
     /**
