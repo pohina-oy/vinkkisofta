@@ -141,6 +141,8 @@ public class BookmarkServiceTest {
 
         return word.toString();
     }
+
+    @Test
     public void tagByUrlGetsCorrectTag() {
         String tag = bookmarks.addTagStringByUrl("https://www.youtube.com/watch?v=ZgjWOo7IqQY");
         assertEquals("Video", tag);
