@@ -112,40 +112,36 @@ public class BookmarkService {
      * @param tag
      * @return A validated tag as a string that contains no extra spaces and has only allowed characters.
      */
-    private String validateTag(String tag) {
+    public String validateTag(String tag) {
 
-        tag = tag.trim().toLowerCase();
+        tag = tag.toLowerCase();
         if (tag.length() == 0) {
             return null;
         }
 
         StringBuilder validated = new StringBuilder();
-        char lastCharacter = ' ';
 
-        for (char c : tag.toCharArray()) {
-            if (allowedCharacter(c, lastCharacter != ' ')) {
+        for (int i = 0; i < tag.length(); i++) {
+            char c = tag.charAt(i);
+
+            if (allowedCharacter(c)) {
                 validated.append(c);
             }
-            lastCharacter = c;
         }
 
-        return validated.toString();
+        return validated.toString().trim().replaceAll(" +", " ");
     }
-    private boolean allowedCharacter(char c, boolean allowSpace) {
+    private boolean allowedCharacter(char c) {
 
         if (c >= 'a' && c <= 'z') {
             return true;
         }
 
-        if (c >= '0' || c <= '9') {
+        if (c >= '0' && c <= '9') {
             return true;
         }
 
-        if (c == 'ä' || c == 'ö' || c == 'å') {
-            return true;
-        }
-
-        if (allowSpace && c == ' ') {
+        if (c == 'ä' || c == 'ö' || c == 'å' || c == ' ') {
             return true;
         }
 
