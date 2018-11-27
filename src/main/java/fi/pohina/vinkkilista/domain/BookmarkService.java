@@ -17,8 +17,8 @@ public class BookmarkService {
     public void createBookmark(
         String title,
         String url,
-        String author,
-        Set<String> tags
+        String author
+        // Set<String> tags
     ) {
         String id = generateBookmarkId();
 
