@@ -1,8 +1,11 @@
 language: java
 
+install:
+  - sudo apt-get -qq install -y chromium-browser
+  - sudo apt-get -qq install -y chromium-chromedriver
+
 script:
-  - gradle check
-  - gradle test
+  - gradle check -DchromeDriverBinary=/usr/lib/chromium-browser/chromedriver -DchromeBinary=/usr/bin/chromium-browser 
 
 deploy: 
   provider: heroku

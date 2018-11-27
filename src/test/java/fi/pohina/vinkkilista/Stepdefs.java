@@ -4,14 +4,35 @@ import cucumber.api.java.After;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
+import java.io.File;
+import java.util.*;
 import static org.junit.Assert.*;
 import org.openqa.selenium.*;
-import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.*;
+
 
 public class Stepdefs {
-
-    private WebDriver driver = new ChromeDriver();
+    private WebDriver driver;
     private String baseUrl = "http://localhost:4567/";
+    
+    public Stepdefs() {
+        ChromeDriverService.Builder builder = new ChromeDriverService.Builder();
+        builder.usingDriverExecutable(new File(System.getProperty("chromeDriverBinary")));
+        builder.usingAnyFreePort();
+        ChromeDriverService service = builder.build();
+        
+        ChromeOptions opts = new ChromeOptions();
+        List<String> args = new ArrayList<>();
+        args.add("--disable-gpu");
+        args.add("--no-sandbox");
+        args.add("--headless");
+        args.add("--start-maximized");
+        args.add("--allow-insecure-localhost");
+        opts.addArguments(args);
+        opts.setBinary(System.getProperty("chromeBinary"));
+        
+        driver = new ChromeDriver(service, opts);
+    }
 
     @Given("new bookmark is selected")
     public void new_bookmark_is_selected() {
@@ -22,44 +43,31 @@ public class Stepdefs {
 
     @When("valid title {string} and valid url {string} are given")
     public void valid_title_and_valid_url_are_given(String title, String url) {
-        WebElement element = driver.findElement(By.id("titleInput"));
-        element.sendKeys(title);
-        element = driver.findElement(By.id("urlInput"));
-        element.sendKeys(url);
-        element = driver.findElement(By.id("submitForm"));
-        element.submit();
+        typeToElementWithId("titleInput", title);
+        typeToElementWithId("urlInput", url);
+        submitElementWithId("submitForm");
     }
 
     @When("valid title {string} and valid url {string} and valid author {string} are given")
     public void valid_title_and_valid_url_and_valid_author_are_given(String title, String url, String author) {
-        WebElement element = driver.findElement(By.id("titleInput"));
-        element.sendKeys(title);
-        element = driver.findElement(By.id("urlInput"));
-        element.sendKeys(url);
-        element = driver.findElement(By.id("authorInput"));
-        element.sendKeys(author);
-        element = driver.findElement(By.id("submitForm"));
-        element.submit();
+        typeToElementWithId("titleInput", title);
+        typeToElementWithId("urlInput", url);
+        typeToElementWithId("authorInput", author);
+        submitElementWithId("submitForm");
     }
 
     @When("missing title {string} and valid url {string} are given")
     public void missing_title_and_valid_url_are_given(String title, String url) {
-        WebElement element = driver.findElement(By.id("titleInput"));
-        element.sendKeys(title);
-        element = driver.findElement(By.id("urlInput"));
-        element.sendKeys(url);
-        element = driver.findElement(By.id("submitForm"));
-        element.submit();
+        typeToElementWithId("titleInput", title);
+        typeToElementWithId("urlInput", url);
+        submitElementWithId("submitForm");
     }
 
     @When("valid title {string} and missing url {string} are given")
     public void valid_title_and_missing_url_are_given(String title, String url) {
-        WebElement element = driver.findElement(By.id("titleInput"));
-        element.sendKeys(title);
-        element = driver.findElement(By.id("urlInput"));
-        element.sendKeys(url);
-        element = driver.findElement(By.id("submitForm"));
-        element.submit();
+        typeToElementWithId("titleInput", title);
+        typeToElementWithId("urlInput", url);
+        submitElementWithId("submitForm");
     }
 
     @Then("a new bookmark is created")
@@ -75,6 +83,18 @@ public class Stepdefs {
     @After
     public void tearDown() {
         driver.quit();
+    }
+    
+    // Helper functions
+    
+    private void submitElementWithId(String id) {
+        WebElement element = driver.findElement(By.id(id));
+        element.submit();
+    }
+    
+    private void typeToElementWithId(String id, String text) {
+        WebElement element = driver.findElement(By.id(id));
+        element.sendKeys(text);
     }
 
     private void pageUrlIs(String url) {
