@@ -4,7 +4,6 @@ import fi.pohina.vinkkilista.data_access.BookmarkDao;
 import fi.pohina.vinkkilista.data_access.InMemoryBookmarkDao;
 import fi.pohina.vinkkilista.data_access.TagDao;
 import fi.pohina.vinkkilista.data_access.InMemoryTagDao;
-import java.util.*;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -48,22 +47,6 @@ public class BookmarkServiceTest {
 
     @Test
     public void createTagCreatesCorrectTag() {
-    }
-
-    /**
-     * Tests that searching for bookmarks by tags returns a list of only
-     * matching bookmarks
-     */
-    @Test
-    public void canSearchBookmarksByTags() {
-    }
-
-    /**
-     * Tests that searching for bookmarks by tags returns an empty list if no
-     * matching bookmarks are found
-     */
-    @Test
-    public void searchBookmarksByTagsReturnsEmptyListIfNoMatches() {
     }
 
     @Test

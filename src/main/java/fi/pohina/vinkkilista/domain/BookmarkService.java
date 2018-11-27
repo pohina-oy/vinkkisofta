@@ -2,7 +2,6 @@ package fi.pohina.vinkkilista.domain;
 
 import fi.pohina.vinkkilista.data_access.BookmarkDao;
 import fi.pohina.vinkkilista.data_access.TagDao;
-import static java.lang.Boolean.FALSE;
 import java.util.*;
 
 public class BookmarkService {
@@ -58,19 +57,6 @@ public class BookmarkService {
 
     private String generateBookmarkId() {
         return UUID.randomUUID().toString();
-    }
-    
-    /**
-     * Function for retrieving bookmarks with any of the tags specified as a
-     * comma-separated string list.
-     *
-     * @param tags comma-separated string list of tags
-     * @return matching bookmarks
-     */
-    public Collection<Bookmark> getBookmarksByTags(String tags) {
-        Set<String> stringSet = parseTagsFromString(tags);
-        Set<Tag> tagSet = tagSetStringToObject(stringSet, FALSE);
-        return bookmarkDao.findByTagSet(tagSet);
     }
     
     /**
