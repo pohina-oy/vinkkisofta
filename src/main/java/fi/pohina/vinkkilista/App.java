@@ -1,13 +1,10 @@
 package fi.pohina.vinkkilista;
 
-import fi.pohina.vinkkilista.domain.Blog;
 import fi.pohina.vinkkilista.domain.Bookmark;
 import fi.pohina.vinkkilista.domain.BookmarkService;
 import fi.pohina.vinkkilista.domain.BookmarkType;
-import java.util.Collection;
+import java.util.*;
 import spark.ModelAndView;
-import java.util.HashMap;
-import java.util.Map;
 import spark.QueryParamsMap;
 import spark.template.thymeleaf.ThymeleafTemplateEngine;
 import com.google.common.base.Strings;
@@ -32,8 +29,8 @@ public class App {
 
         get("/", (req, res) -> {
             Map<String, Object> map = new HashMap<>();
-            Collection<Bookmark> blogs = this.bookmarks.getBlogs();
-            map.put("blogs", blogs);
+            Collection<Bookmark> bookmarks = this.bookmarks.getAllBookmarks();
+            map.put("bookmarks", bookmarks);
             return render(map, "index");
         });
 
@@ -44,13 +41,7 @@ public class App {
         });
 
         post("/new", (req, res) -> {
-            String type = req.queryParams("type");
-            boolean created = false;
-            if (type.equals("Blog")) {
-                created = newBlog(req.queryMap());
-            }
-
-            if (created) {
+            if (validateAndCreateBookmark(req.queryMap())) {
                 res.redirect("/");
                 return "New bookmark added";
             } else {
@@ -61,13 +52,14 @@ public class App {
     }
 
     /**
-     * Validates parameters and creates blog.
+     * Validates parameters and creates a bookmark.
      * Todo: Make a validator class.
      *
-     * @param params Contains the parameters from request.
-     * @return Returns true if blog is added, otherwise false.
+     * @param params the query parameters of the request.
+     * @return <c>true</c> if the bookmark is successfully created,
+     * otherwise <c>false</c>.
      */
-    private boolean newBlog(QueryParamsMap params) {
+    private boolean validateAndCreateBookmark(QueryParamsMap params) {
         String title = params.get("title").value();
         String url = params.get("url").value();
         String author = params.get("author").value();
@@ -76,11 +68,12 @@ public class App {
             return false;
         }
 
-        if (Strings.isNullOrEmpty(author)) {
-            bookmarks.addBlog(new Blog(title, url));
-        } else {
-            bookmarks.addBlog(new Blog(title, url, author));
-        }
+        bookmarks.createBookmark(
+            title,
+            url,
+            author
+        );
+
         return true;
     }
 

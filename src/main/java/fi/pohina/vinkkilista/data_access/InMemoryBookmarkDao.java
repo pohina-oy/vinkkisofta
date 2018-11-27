@@ -2,40 +2,44 @@ package fi.pohina.vinkkilista.data_access;
 
 import fi.pohina.vinkkilista.domain.Bookmark;
 import fi.pohina.vinkkilista.domain.Tag;
-import java.util.ArrayList;
-import java.util.Set;
+import java.util.*;
 
+/**
+ * Provides an in-memory implementation of the {@link BookmarkDao} interface,
+ * backed by a {@link List<Bookmark>}.
+ */
 public class InMemoryBookmarkDao implements BookmarkDao {
 
-    private ArrayList<Bookmark> bookmarksDB = new ArrayList<>();
+    private final List<Bookmark> bookmarksDB;
 
     public InMemoryBookmarkDao() {
+        this(new ArrayList<>());
+    }
+
+    public InMemoryBookmarkDao(List<Bookmark> initialBookmarks) {
+        this.bookmarksDB = initialBookmarks;
     }
 
     /**
-     * Function for finding a saved bookmark by id
-     *
-     * @param id id by which a bookmark is searched
-     * @return found bookmark, otherwise null
+     * {@inheritDoc}
+     * This is a linear time operation.
      */
     @Override
-    public Bookmark findByID(int id) {
+    public Bookmark findById(String id) {
         for (Bookmark bookmark : bookmarksDB) {
-            if (bookmark.getID() == id) {
+            if (bookmark.getId().equals(id)) {
                 return bookmark;
             }
         }
+
         return null;
     }
 
-    /**
-     * Function for finding all saved bookmarks
-     *
-     * @return found bookmarks as an ArrayList
-     */
     @Override
-    public ArrayList<Bookmark> findAll() {
-        return bookmarksDB;
+    public List<Bookmark> findAll() {
+        // return a new ArrayList so that the consumer cannot change our
+        // internal copy of the bookmark list
+        return new ArrayList<>(this.bookmarksDB);
     }
 
     /**
@@ -66,9 +70,9 @@ public class InMemoryBookmarkDao implements BookmarkDao {
      *
      * @param bookmark bookmark which is saved
      */
+    
     @Override
     public void add(Bookmark bookmark) {
         bookmarksDB.add(bookmark);
     }
-
 }
