@@ -1,5 +1,7 @@
 package fi.pohina.vinkkilista;
 
+import com.google.common.base.Splitter;
+import com.google.common.collect.Sets;
 import fi.pohina.vinkkilista.domain.Bookmark;
 import fi.pohina.vinkkilista.domain.BookmarkService;
 import fi.pohina.vinkkilista.domain.BookmarkType;
@@ -63,18 +65,37 @@ public class App {
         String title = params.get("title").value();
         String url = params.get("url").value();
         String author = params.get("author").value();
+        String commaSeparatedTags = params.get("tags").value();
 
         if (Strings.isNullOrEmpty(title) || Strings.isNullOrEmpty(url)) {
             return false;
         }
 
+        Set<String> tags = parseTags(commaSeparatedTags);
+
         bookmarks.createBookmark(
             title,
             url,
-            author
+            author,
+            tags
         );
 
         return true;
+    }
+
+    private Set<String> parseTags(String commaSeparatedTags) {
+        if (Strings.isNullOrEmpty(commaSeparatedTags)) {
+            return new HashSet<>();
+        }
+
+        List<String> tags =
+            Splitter.on(',')
+                .trimResults()
+                .splitToList(commaSeparatedTags);
+
+        tags.removeIf(Strings::isNullOrEmpty);
+
+        return Sets.newHashSet(tags);
     }
 
     /**
