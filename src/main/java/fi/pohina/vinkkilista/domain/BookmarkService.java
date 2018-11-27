@@ -171,6 +171,12 @@ public class BookmarkService {
         return tagsSet;
     }
 
+    /**
+     * Takes the URL given and returns the appropriate tag related to that URL as string.
+     *
+     * @param url The URL of the bookmark
+     * @return Name of the tag as string
+     */
     public String addTagStringByUrl(String url) {
         String[] videoUrls = {"youtube.com","vimeo.com","youtu.be"};
         String[] blogUrls = {"blogger.com","blogs.helsinki.fi","wordpress.org","blogspot.com"};
