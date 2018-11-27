@@ -2,9 +2,7 @@ package fi.pohina.vinkkilista.data_access;
 
 import fi.pohina.vinkkilista.domain.Bookmark;
 import fi.pohina.vinkkilista.domain.Tag;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public interface BookmarkDao {
 
@@ -19,7 +17,7 @@ public interface BookmarkDao {
 
     List<Bookmark> findAll();
     
-    public ArrayList<Bookmark> findByTagSet(Set<Tag> tags);
+    ArrayList<Bookmark> findByTagSet(Set<Tag> tags);
 
     void add(Bookmark bookmark);
 }

@@ -70,7 +70,6 @@ public class InMemoryBookmarkDao implements BookmarkDao {
      *
      * @param bookmark bookmark which is saved
      */
-    
     @Override
     public void add(Bookmark bookmark) {
         bookmarksDB.add(bookmark);

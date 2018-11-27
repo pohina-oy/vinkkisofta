@@ -2,13 +2,16 @@ package fi.pohina.vinkkilista;
 
 import fi.pohina.vinkkilista.data_access.BookmarkDao;
 import fi.pohina.vinkkilista.data_access.InMemoryBookmarkDao;
+import fi.pohina.vinkkilista.data_access.TagDao;
+import fi.pohina.vinkkilista.data_access.InMemoryTagDao;
 import fi.pohina.vinkkilista.domain.BookmarkService;
 
 public class Main {
     public static void main(String[] args) {
         BookmarkDao bookmarkDao = new InMemoryBookmarkDao();
+        TagDao tagDao = new InMemoryTagDao();
 
-        BookmarkService service = new BookmarkService(bookmarkDao);
+        BookmarkService service = new BookmarkService(bookmarkDao, tagDao);
         addMockBookmarks(service);
 
         int port = getPort();

@@ -2,6 +2,8 @@ package fi.pohina.vinkkilista.domain;
 
 import fi.pohina.vinkkilista.data_access.BookmarkDao;
 import fi.pohina.vinkkilista.data_access.InMemoryBookmarkDao;
+import fi.pohina.vinkkilista.data_access.TagDao;
+import fi.pohina.vinkkilista.data_access.InMemoryTagDao;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -18,8 +20,9 @@ public class BookmarkServiceTest {
     @Test
     public void createBookmarkCreatesCorrectBookmark() {
         BookmarkDao bookmarkDao = spy(new InMemoryBookmarkDao());
+        TagDao tagDao = spy(new InMemoryTagDao());
 
-        bookmarks = new BookmarkService(bookmarkDao);
+        bookmarks = new BookmarkService(bookmarkDao, tagDao);
 
         String title = "foobar",
             url = "http://foo.com",

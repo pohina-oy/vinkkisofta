@@ -1,15 +1,18 @@
 package fi.pohina.vinkkilista.domain;
 
 import fi.pohina.vinkkilista.data_access.BookmarkDao;
+import fi.pohina.vinkkilista.data_access.TagDao;
 import static java.lang.Boolean.FALSE;
 import java.util.*;
 
 public class BookmarkService {
 
     private final BookmarkDao bookmarkDao;
+    private final TagDao tagDao;
 
-    public BookmarkService(BookmarkDao bookmarkDao) {
+    public BookmarkService(BookmarkDao bookmarkDao, TagDao tagDao) {
         this.bookmarkDao = bookmarkDao;
+        this.tagDao = tagDao;
     }
 
     /**
@@ -33,6 +36,22 @@ public class BookmarkService {
         bookmarkDao.add(bookmark);
     }
 
+    /**
+     * Creates a new {@link Tag} from the specified tag name.
+     *
+     * @param name the name of the new tag to be created
+     * @return reference to the new tag
+     */
+    public Tag createTag(String name) {
+        String id = generateBookmarkId();
+
+        Tag tag = new Tag(id, name);
+
+        tagDao.add(tag);
+
+        return tag;
+    }
+
     public Collection<Bookmark> getAllBookmarks() {
         return bookmarkDao.findAll();
     }
@@ -49,8 +68,9 @@ public class BookmarkService {
      * @return matching bookmarks
      */
     public Collection<Bookmark> getBookmarksByTags(String tags) {
-        Set<Tag> tagSet = tagSetStringToObject(parseTagsFromString(tags), FALSE);
-        return dao.findByTagSet(tagSet);
+        Set<String> stringSet = parseTagsFromString(tags);
+        Set<Tag> tagSet = tagSetStringToObject(stringSet, FALSE);
+        return bookmarkDao.findByTagSet(tagSet);
     }
     
     /**
@@ -89,8 +109,7 @@ public class BookmarkService {
             if (tagObject != null && !tagsSet.contains(tagObject)) {
                 tagsSet.add(tagObject);
             } else if (createNew) {
-                createTag(tagString);
-                tagsSet.add(tagDao.findByName(tagString));
+                tagsSet.add(createTag(tagString));
             }
         }
         
