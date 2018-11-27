@@ -110,7 +110,7 @@ public class BookmarkService {
     /***
      * Function for validating a tag.
      * @param tag
-     * @return A validated tag as a string that contains no extra spaces and has only allowed characters.
+     * @return A validated tag as a string that contains no extra spaces and has only allowed characters. Only allows alpha-numeric characters.
      */
     public String validateTag(String tag) {
 
