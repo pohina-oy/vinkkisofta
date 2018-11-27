@@ -5,10 +5,8 @@
 }
 
 .bookmark {
-    list-style-type: none;
     background-color: #eee;
     margin: 10px 0;
-    border-radius: 5px;
 }
 
 .bookmarkLink {
@@ -25,14 +23,15 @@
 }
 
 .bookmarkTitle {
+    display: inline-block;
     text-decoration: none;
-    font-size: 20px;
-    font-weight: bold;
+    font-size: 22px;
     color: #555555;
 }
 
 .bookmarkTags {
     display: inline-block;
+    color: #555555;
 }
 
 .bookmarkTag {
@@ -46,4 +45,20 @@
 .bookmarkAuthor {
     display: block;
     font-size: 13px;
+    color: #bbb;
+}
+
+.newBookmarkLink {
+    display: block;
+    margin: 10px 0;
+    height: 100%;
+    padding: 10px;
+    color: inherit;
+    border: 1px solid #eee;
+    text-decoration: none;
+    text-align: center;
+}
+
+.newBookmarkLink:hover {
+    box-shadow: 0px 0px 1px 1px #ddd;
 }
