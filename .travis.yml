@@ -1,18 +1,4 @@
-sudo: required
-dist: trusty
-
-addons:
-  apt:
-    sources:
-      - google-chrome
-    packages:
-      - google-chrome-stable
-
 language: java
-
-install:
-  - sudo apt-get -qq install -y chromium-browser
-  - sudo apt-get -qq install -y chromium-chromedriver
 
 script:
   - gradle check

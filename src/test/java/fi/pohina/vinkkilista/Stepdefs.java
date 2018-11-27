@@ -6,7 +6,7 @@ import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import static org.junit.Assert.*;
 import org.openqa.selenium.*;
-import org.openqa.selenium.chrome.*;
+import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
 
 public class Stepdefs {
@@ -14,25 +14,7 @@ public class Stepdefs {
     private String baseUrl = "http://localhost:4567/";
     
     public Stepdefs() {
-        /*ChromeDriverService.Builder builder = new ChromeDriverService.Builder();
-        builder.usingDriverExecutable(new File(System.getProperty("chromeDriverBinary")));
-        builder.usingAnyFreePort();
-        ChromeDriverService service = builder.build();
-        
-        ChromeOptions opts = new ChromeOptions();
-        List<String> args = new ArrayList<>();
-        args.add("--disable-gpu");
-        args.add("--no-sandbox");
-        args.add("--headless");
-        args.add("--start-maximized");
-        args.add("--allow-insecure-localhost");
-        opts.addArguments(args);
-        opts.setBinary(System.getProperty("chromeBinary"));
-        
-        driver = new ChromeDriver(service, opts);*/
-        ChromeOptions options = new ChromeOptions();
-        options.addArguments("--headless");
-        driver = new ChromeDriver(options);
+        driver = new HtmlUnitDriver();
     }
 
     @Given("new bookmark is selected")
