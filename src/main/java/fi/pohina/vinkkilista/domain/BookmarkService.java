@@ -33,7 +33,7 @@ public class BookmarkService {
      * @return matching bookmarks
      */
     public Collection<Bookmark> getBookmarksByTags(String tags) {
-        Set<Tag> tagSet = tagSetStringToObject(parseTagsString(tags), FALSE);
+        Set<Tag> tagSet = tagSetStringToObject(parseTagsFromString(tags), FALSE);
         return dao.findByTagSet(tagSet);
     }
     
@@ -43,7 +43,7 @@ public class BookmarkService {
      * @param tags comma-separated string list of tags
      * @return tags in a string set
      */
-    private Set<String> parseTagsString(String tags) {
+    private Set<String> parseTagsFromString(String tags) {
         List<String> tagsList = Arrays.asList(tags.split(","));
         Set<String> tagsSet = new HashSet<>();
         
@@ -62,7 +62,7 @@ public class BookmarkService {
      * and alternatively also creates missing tags if specified.
      *
      * @param tags comma-separated string list of tags
-     * @param createNew comma-separated string list of tags
+     * @param createNew Boolean for whether to create missing tags
      * @return set of tag objects
      */
     private Set<Tag> tagSetStringToObject(Set<String> tags, Boolean createNew) {
