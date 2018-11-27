@@ -1,0 +1,45 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Vinkkisofta - Search Bookmark</title>
+        <meta charset="UTF-8"/>
+        <link rel="stylesheet" th:href="@{main.css}" type="text/css"/>
+        <link rel="stylesheet" th:href="@{new.css}" type="text/css"/>
+        <link rel="stylesheet" th:href="@{search.css}" type="text/css"/>
+    </head>
+    <body>
+        <div class="container">
+            <h2>Search bookmarks by tags</h2>
+
+            <form class="bookmarkForm" method="post" action="/search">
+                <div class="formSection">
+                    <label class="formSectionLabel">Tags</label>
+                    <input class="formSectionInput" type="text" name="tag" placeholder="tag1, tag2"/>
+                </div>
+
+                <div class="formSection">
+                    <button class="formSectionInput" type="submit">Search</button>
+                </div>
+            </form>
+            <a href="/">Back</a>
+        </div>
+        <div class="container" style="visibility: hidden">
+            <h2>Matching bookmarks</h2>
+            <ul>
+                <li th:each="bookmark : ${bookmarks}">
+                    Bookmark:
+                    <a th:href="${bookmark.url}">
+                        <span th:text="${bookmark.title}"></span>
+                    </a>
+                    <span th:if="${bookmark.author != null}"
+                          th:text="${' by ' + bookmark.author}">
+                    </span>
+                    <span th:each="bookmark.tag : ${bookmarks.tags}"
+                          th:text="${ bookmark.tag}">
+                    </span>
+                </li>
+            </ul>
+            <a href="/">Back</a>
+        </div>
+    </body>
+</html>

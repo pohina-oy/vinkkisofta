@@ -40,6 +40,11 @@ public class App {
             return render(map, "new");
         });
 
+        get("/search", (req, res) -> {
+            Map<String, Object> map = new HashMap<>();
+            return render(map, "search");
+        });
+
         post("/new", (req, res) -> {
             if (validateAndCreateBookmark(req.queryMap())) {
                 res.redirect("/");
