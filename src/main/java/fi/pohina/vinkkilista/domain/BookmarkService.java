@@ -172,9 +172,9 @@ public class BookmarkService {
     }
 
     public String addTagStringByUrl(String url) {
-        String[] videoUrls = {"youtube.com","vimeo.com"};
-        String[] blogUrls = {"blogger.com","blogs.helsinki.fi","wordpress.org"};
-        String[] bookUrls = {null}; // Missing book related URLs
+        String[] videoUrls = {"youtube.com","vimeo.com","youtu.be"};
+        String[] blogUrls = {"blogger.com","blogs.helsinki.fi","wordpress.org","blogspot.com"};
+        String[] bookUrls = {".suomalainen.com",};
         String[] scienceUrls = {"dl.acm.org","ieeexplore.ieee.org"};
 
         for (String videoUrl : videoUrls) {

@@ -135,10 +135,26 @@ public class BookmarkServiceTest {
         StringBuilder word = new StringBuilder();
 
         for (int i = 0; i < length; i++) {
-            char c = chars[(int)(Math.random() * chars.length)];
+            char c = chars[(int) (Math.random() * chars.length)];
             word.append(c);
-       }
+        }
 
         return word.toString();
+    }
+    public void tagByUrlGetsCorrectTag() {
+        String tag = bookmarks.addTagStringByUrl("https://www.youtube.com/watch?v=ZgjWOo7IqQY");
+        assertEquals("Video", tag);
+        tag = bookmarks.addTagStringByUrl("https://youtu.be/G60llMJepZI");
+        assertEquals("Video", tag);
+        tag = bookmarks.addTagStringByUrl("https://tastytreats-blog.blogspot.com/");
+        assertEquals("Blog", tag);
+        tag = bookmarks.addTagStringByUrl("https://wordpress.org/showcase/the-dish/");
+        assertEquals("Blog", tag);
+        tag = bookmarks.addTagStringByUrl("https://www.suomalainen.com/webapp/wcs/stores/servlet/fi/skk/lazarus-p9789513196455--77");
+        assertEquals("Book", tag);
+        tag = bookmarks.addTagStringByUrl("https://ieeexplore.ieee.org/document/8543874");
+        assertEquals("Scientific Publication", tag);
+        tag = bookmarks.addTagStringByUrl("https://dl.acm.org/citation.cfm?id=3292530&picked=prox");
+        assertEquals("Scientific Publication", tag);
     }
 }
