@@ -31,7 +31,7 @@ public class InMemoryBookmarkDaoTest {
     }
 
     /**
-     * Tests that searcing a non-existent bookmark by id returns null
+     * Tests that searching a non-existent bookmark by id returns null
      */
     @Test
     public void findingNonExistentBookmarkByIDReturnsNull() {
@@ -76,5 +76,20 @@ public class InMemoryBookmarkDaoTest {
         assertTrue(bookmarks.contains(bookmarkDao.findByID(1)));
         assertTrue(bookmarks.contains(bookmarkDao.findByID(2)));
         assertTrue(bookmarks.contains(newEntry));
+    }
+    
+    /**
+     * Tests that finding bookmarks by tags returns only matching bookmarks
+     */
+    @Test
+    public void findByTagSetReturnsCorrectBookmarks() {
+    }
+    
+    /**
+     * Tests that finding bookmarks by tags returns an empty list if there
+     * are no matching bookmarks
+     */
+    @Test
+    public void findByTagSetReturnsEmptyListIfNoMatches() {
     }
 }
