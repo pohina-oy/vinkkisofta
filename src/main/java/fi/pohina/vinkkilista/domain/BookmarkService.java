@@ -20,16 +20,21 @@ public class BookmarkService {
     public void createBookmark(
         String title,
         String url,
-        String author
+        String author,
+        String tags
     ) {
         String id = generateBookmarkId();
+
+        Set<String> tagStringSet = parseTagsFromString(tags);
+        tagStringSet.add(addTagStringByUrl(url));
+        Set<Tag> tagSet = tagSetStringToObject(tagStringSet, true);
 
         Bookmark bookmark = new Bookmark(
             id,
             title,
             url,
             author,
-            new HashSet<>()
+
         );
 
         bookmarkDao.add(bookmark);
@@ -75,7 +80,7 @@ public class BookmarkService {
                 tagsSet.add(tag);
             }
         }
-        
+
         return tagsSet;
     }
     
@@ -89,7 +94,7 @@ public class BookmarkService {
      */
     private Set<Tag> tagSetStringToObject(Set<String> tags, Boolean createNew) {
         Set<Tag> tagsSet = new HashSet<>();
-        
+
         for (String tagString : tags) {
             Tag tagObject = tagDao.findByName(tagString);
             if (tagObject != null && !tagsSet.contains(tagObject)) {
@@ -102,15 +107,9 @@ public class BookmarkService {
         return tagsSet;
     }
 
-    public Bookmark addTagByUrl(Bookmark bookmark) {
-        String tag = getTagByUrl(bookmark.getUrl());
-        if (tag != null) {
-            bookmark.addTag(tag); // Tags saved as a set?
-        }
-        return bookmark;
-    }
 
-    public Tag getTagByUrl(String url) {
+
+    public String addTagStringByUrl(String url) {
         String[] videoUrls = {"youtube.com","vimeo.com"};
         String[] blogUrls = {"blogger.com","blogs.helsinki.fi","wordpress.org"};
         String[] bookUrls = {null}; // Missing book related URLs
@@ -118,28 +117,28 @@ public class BookmarkService {
 
         for (String videoUrl : videoUrls) {
             if (url.contains(videoUrl)) {
-                return new Tag(,"Video");
+                return "Video";
             }
         }
 
         for (String blogUrl : blogUrls) {
             if (url.contains(blogUrl)) {
-                return new Tag(,"Blog");
+                return "Blog";
             }
         }
 
         for (String bookUrl : bookUrls) {
             if (url.contains(bookUrl)) {
-                return new Tag(,"Book");
+                return "Book";
             }
         }
 
         for (String scienceUrl : scienceUrls) {
             if (url.contains(scienceUrl)) {
-                return new Tag(,"Scientific Publication");
+                return "Scientific Publication";
             }
         }
 
-        return null;
+        return "";
     }
 }
