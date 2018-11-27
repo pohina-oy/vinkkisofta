@@ -13,7 +13,7 @@ repositories {
 dependencies {
     testCompile 'junit:junit:' + junitVersion
     testCompile 'org.mockito:mockito-core:2.10.0'
-    compile 'com.google.guava:guava:27.0.1-jre'
+    compile 'com.google.guava:guava:20.0'
     compile 'com.sparkjava:spark-core:2.8.0'
     compile 'com.sparkjava:spark-template-thymeleaf:2.7.1'
     compile 'org.slf4j:slf4j-simple:1.7.25'
