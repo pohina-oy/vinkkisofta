@@ -34,6 +34,29 @@ public class BookmarkService {
 
         bookmarkDao.add(bookmark);
     }
+    /**
+     * Creates a new {@link Bookmark} from the specified title, url, author and an array of tags.
+     */
+    public void createBookmark(
+            String title,
+            String url,
+            String author,
+            String tags
+    ) {
+        String id = generateBookmarkId();
+
+        Set<Tag> set = tagSetStringToObject(parseTagsFromString(tags), true);
+
+        Bookmark bookmark = new Bookmark(
+                id,
+                title,
+                url,
+                author,
+                set
+        );
+
+        bookmarkDao.add(bookmark);
+    }
 
     /**
      * Creates a new {@link Tag} from the specified tag name.
@@ -66,17 +89,63 @@ public class BookmarkService {
      * @return tags in a string set
      */
     private Set<String> parseTagsFromString(String tags) {
-        List<String> tagsList = Arrays.asList(tags.split(","));
+        String[] tagsList = tags.split(",");
         Set<String> tagsSet = new HashSet<>();
         
         for (String tag : tagsList) {
-            tag = tag.trim();
-            if (tag.length() > 0 && !tagsSet.contains(tag)) {
+            tag = validateTag(tag);
+
+            if (tag != null) {
                 tagsSet.add(tag);
             }
         }
         
         return tagsSet;
+    }
+
+    /***
+     * Function for validating a tag.
+     * @param tag
+     * @return A validated tag as a string that contains no extra spaces and has only allowed characters.
+     */
+    private String validateTag(String tag) {
+
+        tag = tag.trim().toLowerCase();
+        if (tag.length() == 0) {
+            return null;
+        }
+
+        StringBuilder validated = new StringBuilder();
+        char lastCharacter = ' ';
+
+        for (char c : tag.toCharArray()) {
+            if (allowedCharacter(c, lastCharacter != ' ')) {
+                validated.append(c);
+            }
+            lastCharacter = c;
+        }
+
+        return validated.toString();
+    }
+    private boolean allowedCharacter(char c, boolean allowSpace) {
+
+        if (c >= 'a' && c <= 'z') {
+            return true;
+        }
+
+        if (c >= '0' || c <= '9') {
+            return true;
+        }
+
+        if (c == 'ä' || c == 'ö' || c == 'å') {
+            return true;
+        }
+
+        if (allowSpace && c == ' ') {
+            return true;
+        }
+
+        return false;
     }
     
     /**
