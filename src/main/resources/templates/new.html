@@ -11,13 +11,6 @@
 
             <form class="bookmarkForm" method="post" action="/new">
                 <div class="formSection">
-                    <label class="formSectionLabel">Type</label>
-                    <select class="formSectionInput" name="type" >
-                        <option th:each="type : ${types}" th:value="${type}" th:text="${type}"/>
-                    </select>
-                </div>
-
-                <div class="formSection">
                     <label class="formSectionLabel">Title</label>
                     <input id="titleInput" class="formSectionInput" type="text" name="title" placeholder="Example"/>
                 </div>
