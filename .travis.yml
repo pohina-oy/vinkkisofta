@@ -1,3 +1,13 @@
+sudo: required
+dist: trusty
+
+addons:
+  apt:
+    sources:
+      - google-chrome
+    packages:
+      - google-chrome-stable
+
 language: java
 
 install:
@@ -5,7 +15,7 @@ install:
   - sudo apt-get -qq install -y chromium-chromedriver
 
 script:
-  - gradle check -DchromeDriverBinary=/usr/lib/chromium-browser/chromedriver -DchromeBinary=/usr/bin/chromium-browser 
+  - gradle check
 
 deploy: 
   provider: heroku

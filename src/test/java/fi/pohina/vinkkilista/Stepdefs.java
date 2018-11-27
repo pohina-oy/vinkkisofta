@@ -16,7 +16,7 @@ public class Stepdefs {
     private String baseUrl = "http://localhost:4567/";
     
     public Stepdefs() {
-        ChromeDriverService.Builder builder = new ChromeDriverService.Builder();
+        /*ChromeDriverService.Builder builder = new ChromeDriverService.Builder();
         builder.usingDriverExecutable(new File(System.getProperty("chromeDriverBinary")));
         builder.usingAnyFreePort();
         ChromeDriverService service = builder.build();
@@ -31,7 +31,10 @@ public class Stepdefs {
         opts.addArguments(args);
         opts.setBinary(System.getProperty("chromeBinary"));
         
-        driver = new ChromeDriver(service, opts);
+        driver = new ChromeDriver(service, opts);*/
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--headless");
+        driver = new ChromeDriver(options);
     }
 
     @Given("new bookmark is selected")
