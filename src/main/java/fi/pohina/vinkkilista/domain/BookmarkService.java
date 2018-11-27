@@ -20,13 +20,11 @@ public class BookmarkService {
     public void createBookmark(
         String title,
         String url,
-        String author,
-        String tags
+        String author
     ) {
         String id = generateBookmarkId();
 
-        Set<String> tagStringSet = parseTagsFromString(tags);
-        tagStringSet.add(addTagStringByUrl(url));
+        Set<String> tagStringSet = parseTagsFromString(addTagStringByUrl(url));
         Set<Tag> tagSet = tagSetStringToObject(tagStringSet, true);
 
         Bookmark bookmark = new Bookmark(
@@ -34,13 +32,13 @@ public class BookmarkService {
             title,
             url,
             author,
-
+            tagSet
         );
 
         bookmarkDao.add(bookmark);
     }
     /**
-     * Creates a new {@link Bookmark} from the specified title, url, author and an array of tags.
+     * Creates a new {@link Bookmark} from the specified title, url, author and a string of tags.
      */
     public void createBookmark(
             String title,
@@ -50,14 +48,15 @@ public class BookmarkService {
     ) {
         String id = generateBookmarkId();
 
-        Set<Tag> set = tagSetStringToObject(parseTagsFromString(tags), true);
+        Set<String> tagStringSet = parseTagsFromString(tags + "," + addTagStringByUrl(url));
+        Set<Tag> tagSet = tagSetStringToObject(tagStringSet, true);
 
         Bookmark bookmark = new Bookmark(
                 id,
                 title,
                 url,
                 author,
-                set
+                tagSet
         );
 
         bookmarkDao.add(bookmark);
@@ -175,8 +174,6 @@ public class BookmarkService {
         
         return tagsSet;
     }
-
-
 
     public String addTagStringByUrl(String url) {
         String[] videoUrls = {"youtube.com","vimeo.com"};
