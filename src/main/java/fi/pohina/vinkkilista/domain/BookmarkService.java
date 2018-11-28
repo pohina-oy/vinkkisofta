@@ -22,6 +22,7 @@ public class BookmarkService {
         String title,
         String url,
         String author
+        // Set<String> tags
     ) {
         String id = generateBookmarkId();
 
