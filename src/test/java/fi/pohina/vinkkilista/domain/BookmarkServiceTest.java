@@ -4,6 +4,7 @@ import fi.pohina.vinkkilista.data_access.BookmarkDao;
 import fi.pohina.vinkkilista.data_access.InMemoryBookmarkDao;
 import fi.pohina.vinkkilista.data_access.TagDao;
 import fi.pohina.vinkkilista.data_access.InMemoryTagDao;
+import java.util.*;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -12,7 +13,7 @@ import static org.mockito.Mockito.*;
 
 public class BookmarkServiceTest {
 
-    private BookmarkService bookmarks;
+    private BookmarkService bookmarkService;
     private BookmarkDao bookmarkDao;
     private TagDao tagDao;
 
@@ -21,7 +22,7 @@ public class BookmarkServiceTest {
         bookmarkDao = spy(new InMemoryBookmarkDao());
         tagDao = spy(new InMemoryTagDao());
 
-        bookmarks = new BookmarkService(bookmarkDao, tagDao);
+        bookmarkService = new BookmarkService(bookmarkDao, tagDao);
     }
 
     @Test
@@ -30,7 +31,7 @@ public class BookmarkServiceTest {
             url = "http://foo.com",
             author = "author";
 
-        bookmarks.createBookmark(
+        bookmarkService.createBookmark(
             title,
             url,
             author
@@ -48,49 +49,89 @@ public class BookmarkServiceTest {
 
     @Test
     public void createTagCreatesCorrectTag() {
-    }
+        String tagName = "video";
 
-    @Test
-    public void parseTagsFromStringCorrectlyParsesString() {
+        Tag tag = bookmarkService.createTag(tagName);
+
+        verify(tagDao, times(1)).add(tag);
+
+        Tag createdTag = tagDao.findAll().get(0);
+
+        assertEquals(tagName, createdTag.getName());
     }
 
     @Test
     public void tagSetStringToObjectFindsExistingTags() {
+        String tagString1 = "video";
+        String tagString2 = "blog";
+        String tagString3 = "news";
+
+        Tag tag1 = bookmarkService.createTag(tagString1);
+        Tag tag2 = bookmarkService.createTag(tagString2);
+        Tag tag3 = bookmarkService.createTag(tagString3);
+
+        Set<String> stringSet = new HashSet<>(
+                Arrays.asList(tagString1, tagString2, "journal")
+        );
+
+        Set<Tag> tagSet = bookmarkService.tagSetStringToObject(stringSet, false);
+
+        assertEquals(2, tagSet.size());
+        assertTrue(tagSet.contains(tag1));
+        assertTrue(tagSet.contains(tag2));
     }
 
     @Test
     public void tagSetStringToObjectCreatesMissingTags() {
+        String tagString1 = "video";
+        String tagString2 = "blog";
+        String tagString3 = "news";
+
+        Tag tag1 = bookmarkService.createTag(tagString1);
+        Tag tag2 = bookmarkService.createTag(tagString2);
+        Tag tag3 = bookmarkService.createTag(tagString3);
+
+        Set<String> stringSet = new HashSet<>(
+                Arrays.asList(tagString1, tagString2, "journal")
+        );
+
+        Set<Tag> tagSet = bookmarkService.tagSetStringToObject(stringSet, true);
+
+        assertEquals(3, tagSet.size());
+        assertTrue(tagSet.contains(tag1));
+        assertTrue(tagSet.contains(tag2));
+        assertTrue(tagSet.contains(tagDao.findByName("journal")));
     }
 
     @Test
     public void validateTagReturnsTagsInCorrectForm() {
 
         String tag = "testi";
-        assertEquals("testi", bookmarks.validateTag(tag));
+        assertEquals("testi", bookmarkService.validateTag(tag));
 
         tag = "Testi";
-        assertEquals("testi", bookmarks.validateTag(tag));
+        assertEquals("testi", bookmarkService.validateTag(tag));
 
         tag = "  Testi  ";
-        assertEquals("testi", bookmarks.validateTag(tag));
+        assertEquals("testi", bookmarkService.validateTag(tag));
 
         tag = "tes ti";
-        assertEquals("tes ti", bookmarks.validateTag(tag));
+        assertEquals("tes ti", bookmarkService.validateTag(tag));
 
         tag = "tes           ti";
-        assertEquals("tes ti", bookmarks.validateTag(tag));
+        assertEquals("tes ti", bookmarkService.validateTag(tag));
 
         tag = "testi!#¤%&/()=?:;:   >";
-        assertEquals("testi", bookmarks.validateTag(tag));
+        assertEquals("testi", bookmarkService.validateTag(tag));
 
         tag = "testi < < testi < < < < testi";
-        assertEquals("testi testi testi", bookmarks.validateTag(tag));
+        assertEquals("testi testi testi", bookmarkService.validateTag(tag));
 
         tag = "t<e<s<t<i< < < < < < ";
-        assertEquals("testi", bookmarks.validateTag(tag));
+        assertEquals("testi", bookmarkService.validateTag(tag));
 
         tag = "T3s71";
-        assertEquals("t3s71", bookmarks.validateTag(tag));
+        assertEquals("t3s71", bookmarkService.validateTag(tag));
     }
     @Test
     public void validateTagReturnsTagsInCorrectFormLong() {
@@ -109,7 +150,7 @@ public class BookmarkServiceTest {
 
             String random = getRandomString(chars, 100);
 
-            String validated = bookmarks.validateTag(random);
+            String validated = bookmarkService.validateTag(random);
 
             if (!validated.matches("^[a-z0-9 öäå]*$")) {
                 fail("Validated string contains "
@@ -140,26 +181,26 @@ public class BookmarkServiceTest {
 
     @Test
     public void tagByUrlGetsCorrectTag() {
-        String tag = bookmarks.addTagStringByUrl(
+        String tag = bookmarkService.addTagStringByUrl(
                 "https://www.youtube.com/watch?v=ZgjWOo7IqQY");
         assertEquals("Video", tag);
-        tag = bookmarks.addTagStringByUrl(
+        tag = bookmarkService.addTagStringByUrl(
                 "https://youtu.be/G60llMJepZI");
         assertEquals("Video", tag);
-        tag = bookmarks.addTagStringByUrl(
+        tag = bookmarkService.addTagStringByUrl(
                 "https://tastytreats-blog.blogspot.com/");
         assertEquals("Blog", tag);
-        tag = bookmarks.addTagStringByUrl(
+        tag = bookmarkService.addTagStringByUrl(
                 "https://wordpress.org/showcase/the-dish/");
         assertEquals("Blog", tag);
-        tag = bookmarks.addTagStringByUrl(
+        tag = bookmarkService.addTagStringByUrl(
                 "https://www.suomalainen.com/webapp/wcs"
                 + "/stores/servlet/fi/skk/lazarus-p9789513196455--77");
         assertEquals("Book", tag);
-        tag = bookmarks.addTagStringByUrl(
+        tag = bookmarkService.addTagStringByUrl(
                 "https://ieeexplore.ieee.org/document/8543874");
         assertEquals("Scientific Publication", tag);
-        tag = bookmarks.addTagStringByUrl(
+        tag = bookmarkService.addTagStringByUrl(
                 "https://dl.acm.org/citation.cfm?id=3292530&picked=prox");
         assertEquals("Scientific Publication", tag);
     }

@@ -156,7 +156,7 @@ public class BookmarkService {
      * @param createNew Boolean for whether to create missing tags
      * @return set of tag objects
      */
-    private Set<Tag> tagSetStringToObject(Set<String> tags, Boolean createNew) {
+    public Set<Tag> tagSetStringToObject(Set<String> tags, Boolean createNew) {
         Set<Tag> tagsSet = new HashSet<>();
 
         for (String tagString : tags) {
