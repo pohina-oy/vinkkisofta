@@ -91,6 +91,14 @@ public class CommaSeparatedTagsParserTest {
         );
     }
 
+    @Test
+    public void parseHandlesDuplicates() {
+        testThatInputMatchesOutput(
+            "developers,developers,developers,developers,developers,steve-ballmer,developers,developers,developers,developers,developers",
+            "developers", "steve-ballmer"
+        );
+    }
+
     private void testThatInputMatchesOutput(String input, String... expectedTags) {
         Set<String> output = parser.parse(input);
 
