@@ -2,7 +2,6 @@ package fi.pohina.vinkkilista;
 
 import fi.pohina.vinkkilista.domain.Bookmark;
 import fi.pohina.vinkkilista.domain.BookmarkService;
-import fi.pohina.vinkkilista.domain.BookmarkType;
 import java.util.*;
 import spark.ModelAndView;
 import spark.QueryParamsMap;
@@ -39,7 +38,6 @@ public class App {
 
         get("/new", (req, res) -> {
             Map<String, Object> map = new HashMap<>();
-            map.put("types", BookmarkType.values());
             return render(map, "new");
         });
 
@@ -78,7 +76,7 @@ public class App {
             title,
             url,
             author
-            // tags
+            //tags
         );
 
         return true;
