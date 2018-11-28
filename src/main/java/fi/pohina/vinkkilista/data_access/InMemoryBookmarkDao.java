@@ -1,8 +1,8 @@
 package fi.pohina.vinkkilista.data_access;
 
 import fi.pohina.vinkkilista.domain.Bookmark;
-import java.util.ArrayList;
-import java.util.List;
+import fi.pohina.vinkkilista.domain.Tag;
+import java.util.*;
 
 /**
  * Provides an in-memory implementation of the {@link BookmarkDao} interface,
@@ -35,6 +35,25 @@ public class InMemoryBookmarkDao implements BookmarkDao {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<Bookmark> findByTagSet(Set<Tag> tags) {
+        List<Bookmark> bookmarksList = new ArrayList<>();
+
+        for (Bookmark bookmark : bookmarksDB) {
+            for (Tag tag : bookmark.getTags()) {
+                if (tags.contains(tag)) {
+                    bookmarksList.add(bookmark);
+                    break;
+                }
+            }
+        }
+
+        return bookmarksList;
+    }
+
     @Override
     public List<Bookmark> findAll() {
         // return a new ArrayList so that the consumer cannot change our
@@ -42,6 +61,11 @@ public class InMemoryBookmarkDao implements BookmarkDao {
         return new ArrayList<>(this.bookmarksDB);
     }
 
+    /**
+     * Function for adding a new bookmark
+     *
+     * @param bookmark bookmark which is saved
+     */
     @Override
     public void add(Bookmark bookmark) {
         bookmarksDB.add(bookmark);

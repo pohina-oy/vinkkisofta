@@ -135,4 +135,8 @@ gradle-app.setting
 # Vscode
 .vscode
 .idea/vcs.xml
+
 .idea/inspectionProfiles/Project_Default.xml
+
+# DS_Store
+.DS_Store
