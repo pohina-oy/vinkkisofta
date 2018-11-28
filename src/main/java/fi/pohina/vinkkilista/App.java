@@ -1,7 +1,5 @@
 package fi.pohina.vinkkilista;
 
-import com.google.common.base.Splitter;
-import com.google.common.collect.Sets;
 import fi.pohina.vinkkilista.domain.Bookmark;
 import fi.pohina.vinkkilista.domain.BookmarkService;
 import fi.pohina.vinkkilista.domain.BookmarkType;
@@ -13,6 +11,9 @@ import com.google.common.base.Strings;
 import static spark.Spark.*;
 
 public class App {
+
+    private final CommaSeparatedTagsParser tagParser
+        = new CommaSeparatedTagsParser();
 
     private final BookmarkService bookmarks;
 
@@ -71,7 +72,7 @@ public class App {
             return false;
         }
 
-        Set<String> tags = parseTags(commaSeparatedTags);
+        Set<String> tags = tagParser.parse(commaSeparatedTags);
 
         bookmarks.createBookmark(
             title,
@@ -81,21 +82,6 @@ public class App {
         );
 
         return true;
-    }
-
-    private Set<String> parseTags(String commaSeparatedTags) {
-        if (Strings.isNullOrEmpty(commaSeparatedTags)) {
-            return new HashSet<>();
-        }
-
-        List<String> tags =
-            Splitter.on(',')
-                .trimResults()
-                .splitToList(commaSeparatedTags);
-
-        tags.removeIf(Strings::isNullOrEmpty);
-
-        return Sets.newHashSet(tags);
     }
 
     /**
