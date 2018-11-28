@@ -70,7 +70,7 @@ public class BookmarkServiceTest {
         Tag tag2 = bookmarkService.createTag(tagString2);
         Tag tag3 = bookmarkService.createTag(tagString3);
 
-        Set<String> stringSet = new HashSet<>(
+        HashSet<String> stringSet = new HashSet<>(
                 Arrays.asList(tagString1, tagString2, "journal")
         );
 
@@ -91,7 +91,7 @@ public class BookmarkServiceTest {
         Tag tag2 = bookmarkService.createTag(tagString2);
         Tag tag3 = bookmarkService.createTag(tagString3);
 
-        Set<String> stringSet = new HashSet<>(
+        HashSet<String> stringSet = new HashSet<>(
                 Arrays.asList(tagString1, tagString2, "journal")
         );
 
@@ -133,6 +133,7 @@ public class BookmarkServiceTest {
         tag = "T3s71";
         assertEquals("t3s71", bookmarkService.validateTag(tag));
     }
+
     @Test
     public void validateTagReturnsTagsInCorrectFormLong() {
 
@@ -177,6 +178,39 @@ public class BookmarkServiceTest {
         }
 
         return word.toString();
+    }
+
+    @Test
+    public void validateTagDoesntReturnEmptyTags() {
+        String tag = "";
+        assertEquals(null, bookmarkService.validateTag(tag));
+
+        tag = "        ";
+        assertEquals(null, bookmarkService.validateTag(tag));
+
+        tag = "&/(";
+        assertEquals(null, bookmarkService.validateTag(tag));
+    }
+
+    @Test
+    public void validateTagSetReturnsCorrectSet() {
+        HashSet<String> tags = new HashSet<>();
+        tags.add("   11   ");
+        tags.add("22");
+        tags.add("33");
+        tags.add("&)(/");
+        tags.add("     ");
+        tags.add("4&/(4   ");
+        tags.add("55");
+        tags.add("66");
+
+        //bookmarkService.validateTagSet(tags);
+
+        int i = 0;
+        for (String tag : tags) {
+            i++;
+            assertEquals("" + i + i, tag);
+        }
     }
 
     @Test

@@ -25,8 +25,9 @@ public class BookmarkService {
     ) {
         String id = generateBookmarkId();
 
-        Set<String> tagStringSet = parseTagsFromString(addTagStringByUrl(url));
-        Set<Tag> tagSet = tagSetStringToObject(tagStringSet, true);
+        HashSet<String> tags = new HashSet<>();
+        tags.add(addTagStringByUrl(url));
+        HashSet<Tag> tagSet = tagSetStringToObject(tags, true);
 
         Bookmark bookmark = new Bookmark(
             id,
@@ -46,13 +47,12 @@ public class BookmarkService {
             String title, 
             String url, 
             String author, 
-            String tags
+            HashSet<String> tags
     ) {
         String id = generateBookmarkId();
 
-        Set<String> tagStringSet = parseTagsFromString(
-                tags + "," + addTagStringByUrl(url));
-        Set<Tag> tagSet = tagSetStringToObject(tagStringSet, true);
+        tags.add(addTagStringByUrl(url));
+        HashSet<Tag> tagSet = tagSetStringToObject(tags, true);
 
         Bookmark bookmark = new Bookmark(
                 id,
@@ -90,16 +90,15 @@ public class BookmarkService {
     }
     
     /**
-     * Function for parsing tags from a comma-delimited string to a string set.
+     * Checks and fixes the given tag set.
      *
-     * @param tags comma-separated string list of tags
-     * @return tags in a string set
+     * @param tags Tags in a string set
+     * @return Tags in a string set
      */
-    private Set<String> parseTagsFromString(String tags) {
-        String[] tagsList = tags.split(",");
-        Set<String> tagsSet = new HashSet<>();
+    public HashSet<String> validateTagSet(HashSet<String> tags) {
+        HashSet<String> tagsSet = new HashSet<>();
         
-        for (String tag : tagsList) {
+        for (String tag : tags) {
             tag = validateTag(tag);
 
             if (tag != null) {
@@ -114,15 +113,12 @@ public class BookmarkService {
      * Function for validating a tag.
      * @param tag
      * @return A validated tag as a string that contains no extra spaces and 
-     * has only allowed characters.
+     * has only allowed characters. Null if length is 0.
      * Currently Only allows alpha-numeric characters.
      */
     public String validateTag(String tag) {
 
         tag = tag.toLowerCase();
-        if (tag.length() == 0) {
-            return null;
-        }
 
         StringBuilder validated = new StringBuilder();
 
@@ -134,7 +130,13 @@ public class BookmarkService {
             }
         }
 
-        return validated.toString().trim().replaceAll(" +", " ");
+        tag = validated.toString().trim().replaceAll(" +", " ");
+
+        if (tag.length() == 0) {
+            return null;
+        }
+
+        return tag;
     }
     private boolean allowedCharacter(char c) {
 
@@ -151,16 +153,20 @@ public class BookmarkService {
     
     /**
      * Function for converting string tag set to a set of existing tag objects,
-     * and alternatively also creates missing tags if specified.
+     * and alternatively also creates missing tags if specified. Validates
+     * the given set of tags.
      *
      * @param tags comma-separated string list of tags
      * @param createNew Boolean for whether to create missing tags
      * @return set of tag objects
      */
-    public Set<Tag> tagSetStringToObject(Set<String> tags, Boolean createNew) {
-        Set<Tag> tagsSet = new HashSet<>();
+    public HashSet<Tag> tagSetStringToObject(HashSet<String> tags, Boolean createNew) {
+        HashSet<Tag> tagsSet = new HashSet<>();
+
+        tags = validateTagSet(tags);
 
         for (String tagString : tags) {
+
             Tag tagObject = tagDao.findByName(tagString);
             if (tagObject != null && !tagsSet.contains(tagObject)) {
                 tagsSet.add(tagObject);
@@ -174,10 +180,10 @@ public class BookmarkService {
 
     /**
      * Takes the URL given and returns the appropriate tag 
-     * related to that URL as string.
+     * related to that URL as a string.
      *
      * @param url The URL of the bookmark
-     * @return Name of the tag as string
+     * @return Name of the tag as string, empty if no match
      */
     public String addTagStringByUrl(String url) {
         String[] videoUrls = {"youtube.com", "vimeo.com", "youtu.be"};
