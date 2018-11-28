@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Provides an in-memory implementation of the {@link BookmarkDao} interface,
@@ -88,7 +89,7 @@ public class PostgreBookmarkDao implements BookmarkDao {
             String query = "INSERT INTO bookmarks (id, title, url, author) "
                 + " values (?, ? ,? ,?)";
             PreparedStatement st = this.db.prepareStatement(query);
-            st.setString(1, bookmark.getId());
+            st.setString(1, UUID.randomUUID().toString());
             st.setString(2, bookmark.getTitle());
             st.setString(3, bookmark.getUrl());
             st.setString(4, bookmark.getAuthor());
