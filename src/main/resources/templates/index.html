@@ -1,28 +1,30 @@
 <!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 
-<head>
-    <title>Vinkkisofta</title>
-    <meta charset="utf-8"/>
-    <link rel="stylesheet" th:href="@{main.css}" type="text/css"/>
-</head>
+    <head>
+        <title>Vinkkisofta</title>
+        <meta charset="utf-8"/>
+        <link rel="stylesheet" th:href="@{main.css}" type="text/css"/>
+    </head>
 
-<body>
-<div class="container">
-    <h1>Vinkkilista</h1>
-    <ul>
-        <li th:each="bookmark : ${bookmarks}">
-            Bookmark:
-            <a th:href="${bookmark.url}">
-                <span th:text="${bookmark.title}"></span>
-            </a>
-            <span th:if="${bookmark.author != null}"
-                  th:text="${'by ' + bookmark.author}">
-            </span>
-        </li>
-    </ul>
-    <a id="newBookmarkLink" href="/new">Add new bookmark</a>
-    <a class="searchBookmarkLink" id="searchBookmarkLink" href="/search">Search bookmarks</a>
-</div>
-</body>
+    <body>
+        <div class="container">
+            <h1>Vinkkilista</h1>
+            <div class="bookmarkList">
+                <div class="bookmark" th:each="bookmark : ${bookmarks}">
+                    <a class="bookmarkLink" th:href="${bookmark.url}">
+                        <span class="bookmarkTitle" th:text="${bookmark.title}"></span>
+                        <div class="bookmarkTags">
+                            <span class="bookmarkTag" th:each="tag : ${bookmark.tags}" th:text="${tag.name}"></span>
+                        </div>
+                        <span class="bookmarkAuthor" th:if="${bookmark.author != null}"
+                              th:text="${'by ' + bookmark.author}">
+                        </span>
+                    </a>
+                </div>
+            </div>
+            <a class="newBookmarkLink" id="newBookmarkLink" href="/new">Add new bookmark</a>
+            <a class="searchBookmarkLink" id="searchBookmarkLink" href="/search">Search bookmarks</a>
+        </div>
+    </body>
 </html>
