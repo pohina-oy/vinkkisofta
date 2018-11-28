@@ -30,8 +30,9 @@ public class CommaSeparatedTagsParser {
     }
 
     private List<String> splitAndTrimTags(String commaSeparatedTags) {
-        // splitToList returns an immutable list - we need to remove null/empty
-        // tags so we need a mutable list
+        // Create a new ArrayList from split's iterable instead of using
+        // splitToList because it returns an immutable list. We need to remove
+        // null/empty tags so the list needs to be mutable.
         return Lists.newArrayList(
             Splitter.on(DELIMITER)
                 .trimResults()
