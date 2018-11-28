@@ -51,22 +51,6 @@ public class BookmarkService {
         bookmarkDao.add(bookmark);
     }
 
-    /**
-     * Creates a new {@link Tag} from the specified tag name.
-     *
-     * @param name the name of the new tag to be created
-     * @return reference to the new tag
-     */
-    public Tag createTag(String name) {
-        String id = generateBookmarkId();
-
-        Tag tag = new Tag(id, name);
-
-        tagDao.add(tag);
-
-        return tag;
-    }
-
     public Collection<Bookmark> getAllBookmarks() {
         return bookmarkDao.findAll();
     }
@@ -137,6 +121,69 @@ public class BookmarkService {
         
         return false;
     }
+
+    /**
+     * Creates a new {@link Tag} from the specified tag name.
+     *
+     * @param name the name of the new tag to be created
+     * @return reference to the new tag
+     */
+    public Tag findOrCreateTag(String name) {
+
+        Tag tag = tagDao.findByName(name);
+        if (tag != null) {
+            return tag;
+        }
+
+        String id = generateBookmarkId();
+
+        tag = new Tag(id, name);
+
+        tagDao.add(tag);
+
+        return tag;
+    }
+
+    public Tag findTag(String name) {
+        return tagDao.findByName(name);
+    }
+
+    /**
+     * Function for converting string tag set to a set of existing tag objects,
+     * and alternatively also creates missing tags if specified. Validates
+     * the given set of tags.
+     *
+     * @param tags comma-separated string list of tags
+     * @param createNew Boolean for whether to create missing tags
+     * @return set of tag objects
+     */
+    public Set<Tag> tagSetStringToObject(Set<String> tags) {
+        Set<Tag> tagsSet = new HashSet<>();
+
+        tags = validateTagSet(tags);
+
+        for (String tagString : tags) {
+            tagsSet.add(findOrCreateTag(tagString));
+        }
+
+        return tagsSet;
+    }
+
+    public Set<Tag> tagSetStringToObjectNoCreate(Set<String> tags) {
+        Set<Tag> tagsSet = new HashSet<>();
+
+        tags = validateTagSet(tags);
+
+        for (String tagString : tags) {
+            Tag tagObject = findTag(tagString);
+
+            if (tagObject != null) {
+                tagsSet.add(tagObject);
+            }
+        }
+
+        return tagsSet;
+    }
     
     /**
      * Function for converting string tag set to a set of existing tag objects,
@@ -147,7 +194,7 @@ public class BookmarkService {
      * @param createNew Boolean for whether to create missing tags
      * @return set of tag objects
      */
-    public Set<Tag> tagSetStringToObject(Set<String> tags, Boolean createNew) {
+    public Set<Tag> tagSetStringToObject2(Set<String> tags, Boolean createNew) {
         Set<Tag> tagsSet = new HashSet<>();
 
         tags = validateTagSet(tags);
