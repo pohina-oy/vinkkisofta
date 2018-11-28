@@ -88,7 +88,19 @@ public class BookmarkService {
     private String generateBookmarkId() {
         return UUID.randomUUID().toString();
     }
-    
+
+    /**
+     * Function for retrieving bookmarks with any of the tags specified as a
+     * set of strings.
+     *
+     * @param stringTags set of tags as string
+     * @return matching bookmarks
+     */
+    public Collection<Bookmark> getBookmarksByTags(Set<String> stringTags) {
+        Set<Tag> tagSet = tagSetStringToObject(stringTags, false);
+        return bookmarkDao.findByTagSet(tagSet);
+    }
+
     /**
      * Function for parsing tags from a comma-delimited string to a string set.
      *
