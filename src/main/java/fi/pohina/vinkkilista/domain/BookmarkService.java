@@ -18,8 +18,8 @@ public class BookmarkService {
      * Creates a new {@link Bookmark} from the specified title, url and author.
      */
     public void createBookmark(
-        String title,
-        String url,
+        String title, 
+        String url, 
         String author
     ) {
         String id = generateBookmarkId();
@@ -38,17 +38,19 @@ public class BookmarkService {
         bookmarkDao.add(bookmark);
     }
     /**
-     * Creates a new {@link Bookmark} from the specified title, url, author and a string of tags.
+     * Creates a new {@link Bookmark} from the specified title, url, author and 
+     * a string of tags.
      */
     public void createBookmark(
-            String title,
-            String url,
-            String author,
+            String title, 
+            String url, 
+            String author, 
             String tags
     ) {
         String id = generateBookmarkId();
 
-        Set<String> tagStringSet = parseTagsFromString(tags + "," + addTagStringByUrl(url));
+        Set<String> tagStringSet = parseTagsFromString(
+                tags + "," + addTagStringByUrl(url));
         Set<Tag> tagSet = tagSetStringToObject(tagStringSet, true);
 
         Bookmark bookmark = new Bookmark(
@@ -110,7 +112,9 @@ public class BookmarkService {
     /***
      * Function for validating a tag.
      * @param tag
-     * @return A validated tag as a string that contains no extra spaces and has only allowed characters. Only allows alpha-numeric characters.
+     * @return A validated tag as a string that contains no extra spaces and 
+     * has only allowed characters.
+     * Currently Only allows alpha-numeric characters.
      */
     public String validateTag(String tag) {
 
@@ -137,14 +141,10 @@ public class BookmarkService {
             return true;
         }
 
-        if (c >= '0' && c <= '9') {
+        if ((c >= '0' && c <= '9') || c == ' ') {
             return true;
         }
-
-        if (c == 'ä' || c == 'ö' || c == 'å' || c == ' ') {
-            return true;
-        }
-
+        
         return false;
     }
     
@@ -172,16 +172,19 @@ public class BookmarkService {
     }
 
     /**
-     * Takes the URL given and returns the appropriate tag related to that URL as string.
+     * Takes the URL given and returns the appropriate tag 
+     * related to that URL as string.
      *
      * @param url The URL of the bookmark
      * @return Name of the tag as string
      */
     public String addTagStringByUrl(String url) {
-        String[] videoUrls = {"youtube.com","vimeo.com","youtu.be"};
-        String[] blogUrls = {"blogger.com","blogs.helsinki.fi","wordpress.org","blogspot.com"};
-        String[] bookUrls = {".suomalainen.com",};
-        String[] scienceUrls = {"dl.acm.org","ieeexplore.ieee.org"};
+        String[] videoUrls = {"youtube.com", "vimeo.com", "youtu.be"};
+        String[] blogUrls = {
+            "blogger.com", "blogs.helsinki.fi", 
+            "wordpress.org", "blogspot.com"};
+        String[] bookUrls = {".suomalainen.com"};
+        String[] scienceUrls = {"dl.acm.org", "ieeexplore.ieee.org"};
 
         for (String videoUrl : videoUrls) {
             if (url.contains(videoUrl)) {
