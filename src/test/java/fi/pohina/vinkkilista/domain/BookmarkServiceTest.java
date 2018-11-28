@@ -204,13 +204,15 @@ public class BookmarkServiceTest {
         tags.add("55");
         tags.add("66");
 
-        //bookmarkService.validateTagSet(tags);
+        tags = bookmarkService.validateTagSet(tags);
 
         int i = 0;
         for (String tag : tags) {
             i++;
-            assertEquals("" + i + i, tag);
+            assertEquals(true, tags.contains("" + i + i));
         }
+
+        assertEquals(6, tags.size());
     }
 
     @Test
