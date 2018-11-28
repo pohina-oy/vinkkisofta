@@ -9,6 +9,7 @@
     </head>
     <body>
         <div class="container">
+            <h1>Vinkkilista</h1>
             <h2>Search bookmarks by tags</h2>
 
             <form class="bookmarkForm" method="post" action="/search">
@@ -21,25 +22,26 @@
                     <button class="formSectionInput" type="submit">Search</button>
                 </div>
             </form>
-            <a href="/">Back</a>
         </div>
-        <div class="container" style="visibility: hidden">
-            <h2>Matching bookmarks</h2>
-            <ul>
-                <li th:each="bookmark : ${bookmarks}">
-                    Bookmark:
-                    <a th:href="${bookmark.url}">
-                        <span th:text="${bookmark.title}"></span>
+        <div class="container">
+            <div class="bookmarkList">
+                <div class="bookmark" th:each="bookmark : ${bookmarks}">
+                    <a class="bookmarkLink" th:href="${bookmark.url}">
+                        <span class="bookmarkTitle" th:text="${bookmark.title}"></span>
+                        <div class="bookmarkTags">
+                            <!--<span class="bookmarkTag" th:each="tag : ${bookmarks.tags}">tags</span> -->
+
+                            <span class="bookmarkTag">video</span>
+                            <span class="bookmarkTag">blog</span>
+                            <span class="bookmarkTag">education</span>
+                        </div>
+                        <span class="bookmarkAuthor" th:if="${bookmark.author != null}"
+                              th:text="${'by ' + bookmark.author}">
+                        </span>
                     </a>
-                    <span th:if="${bookmark.author != null}"
-                          th:text="${' by ' + bookmark.author}">
-                    </span>
-                    <span th:each="bookmark.tag : ${bookmarks.tags}"
-                          th:text="${ bookmark.tag}">
-                    </span>
-                </li>
-            </ul>
-            <a href="/">Back</a>
+                </div>
+            </div>
+            <a class="backLink" id="backLink" href="/">Back</a>
         </div>
     </body>
 </html>
