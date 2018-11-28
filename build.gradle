@@ -4,10 +4,7 @@ apply plugin: 'checkstyle'
 
 project.ext {
     junitVersion = '4.12'
-}
-
-repositories {
-    jcenter()
+    seleniumVersion = '2.41.0'
 }
 
 dependencies {
@@ -17,6 +14,15 @@ dependencies {
     compile 'com.sparkjava:spark-core:2.8.0'
     compile 'com.sparkjava:spark-template-thymeleaf:2.7.1'
     compile 'org.slf4j:slf4j-simple:1.7.25'
+    testCompile 'io.cucumber:cucumber-java:4.2.0'
+    testCompile 'io.cucumber:cucumber-junit:4.2.0'
+    compile group: 'org.seleniumhq.selenium', name: 'selenium-api', version:seleniumVersion
+    compile group: 'org.seleniumhq.selenium', name: 'selenium-java', version:seleniumVersion
+}
+
+repositories {
+    jcenter()
+    mavenCentral()
 }
 
 test {
