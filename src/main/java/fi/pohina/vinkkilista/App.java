@@ -36,7 +36,6 @@ public class App {
 
         get("/new", (req, res) -> {
             Map<String, Object> map = new HashMap<>();
-            map.put("types", BookmarkType.values());
             return render(map, "new");
         });
 

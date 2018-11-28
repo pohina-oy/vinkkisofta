@@ -15,6 +15,8 @@
                     <a class="bookmarkLink" th:href="${bookmark.url}">
                         <span class="bookmarkTitle" th:text="${bookmark.title}"></span>
                         <div class="bookmarkTags">
+                            <!--<span class="bookmarkTag" th:each="tag : ${bookmarks.tags}">tags</span> -->
+                            
                             <span class="bookmarkTag">video</span>
                             <span class="bookmarkTag">blog</span>
                             <span class="bookmarkTag">education</span>
@@ -25,7 +27,7 @@
                     </a>
                 </div>
             </div>
-            <a class="newBookmarkLink" href="/new">Add new bookmark</a>
+            <a class="newBookmarkLink" id="newBookmarkLink" href="/new">Add new bookmark</a>
         </div>
     </body>
 </html>
