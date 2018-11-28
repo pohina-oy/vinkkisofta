@@ -184,33 +184,6 @@ public class BookmarkService {
 
         return tagsSet;
     }
-    
-    /**
-     * Function for converting string tag set to a set of existing tag objects,
-     * and alternatively also creates missing tags if specified. Validates
-     * the given set of tags.
-     *
-     * @param tags comma-separated string list of tags
-     * @param createNew Boolean for whether to create missing tags
-     * @return set of tag objects
-     */
-    public Set<Tag> tagSetStringToObject2(Set<String> tags, Boolean createNew) {
-        Set<Tag> tagsSet = new HashSet<>();
-
-        tags = validateTagSet(tags);
-
-        for (String tagString : tags) {
-
-            Tag tagObject = tagDao.findByName(tagString);
-            if (tagObject != null && !tagsSet.contains(tagObject)) {
-                tagsSet.add(tagObject);
-            } else if (createNew) {
-                tagsSet.add(createTag(tagString));
-            }
-        }
-        
-        return tagsSet;
-    }
 
     /**
      * Takes the URL given and returns the appropriate tag 
