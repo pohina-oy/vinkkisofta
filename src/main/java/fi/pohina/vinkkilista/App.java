@@ -2,7 +2,6 @@ package fi.pohina.vinkkilista;
 
 import fi.pohina.vinkkilista.domain.Bookmark;
 import fi.pohina.vinkkilista.domain.BookmarkService;
-import fi.pohina.vinkkilista.domain.BookmarkType;
 import java.util.*;
 import spark.ModelAndView;
 import spark.QueryParamsMap;
