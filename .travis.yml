@@ -2,7 +2,6 @@ language: java
 
 script:
   - gradle check
-  - gradle test
 
 deploy: 
   provider: heroku
