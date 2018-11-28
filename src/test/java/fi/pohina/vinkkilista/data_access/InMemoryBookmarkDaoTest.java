@@ -98,19 +98,4 @@ public class InMemoryBookmarkDaoTest {
         assertEquals(addedId, bookmarkDao.findById(addedId).getId());
         assertThat(bookmarkDao.findAll(), hasItem(newEntry));
     }
-    
-    /**
-     * Tests that finding bookmarks by tags returns only matching bookmarks
-     */
-    @Test
-    public void findByTagSetReturnsCorrectBookmarks() {
-    }
-    
-    /**
-     * Tests that finding bookmarks by tags returns an empty list if there
-     * are no matching bookmarks
-     */
-    @Test
-    public void findByTagSetReturnsEmptyListIfNoMatches() {
-    }
 }

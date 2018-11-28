@@ -8,8 +8,8 @@ public interface TagDao {
     /**
      * Finds and returns a tag by the specified ID, or <c>null</c> if not found.
      *
-     * @param id the id of the bookmark.
-     * @return the bookmark if found, otherwise <c>null</c>.
+     * @param id the id of the tag.
+     * @return the tag if found, otherwise <c>null</c>.
      */
     Tag findById(String id);
     
