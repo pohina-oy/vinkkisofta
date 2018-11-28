@@ -9,7 +9,6 @@ import spark.template.thymeleaf.ThymeleafTemplateEngine;
 import com.google.common.base.Strings;
 import static spark.Spark.*;
 
-
 public class App {
 
     private final CommaSeparatedTagsParser tagParser

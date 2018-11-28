@@ -1,7 +1,5 @@
 require('dotenv').config()
 
-console.log
-
 module.exports = {
   client: 'pg',
   connection: {
