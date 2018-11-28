@@ -120,14 +120,14 @@ public class BookmarkServiceTest {
             "third",
             "https://www.nature.com",
             "Editor",
-            "video,journal"
+            new HashSet<>(Arrays.asList("video", "journal"))
         );
 
         bookmarkService.createBookmark(
             "fourth",
             "https://www.videosite.net",
             "Firstname Lastname",
-            "video"
+            new HashSet<>(Arrays.asList("video"))
         );
     }
 
@@ -176,7 +176,6 @@ public class BookmarkServiceTest {
 
     @Test
     public void validateTagReturnsTagsInCorrectForm() {
-
         String tag = "testi";
         assertEquals("testi", bookmarkService.validateTag(tag));
 
@@ -204,9 +203,9 @@ public class BookmarkServiceTest {
         tag = "T3s71";
         assertEquals("t3s71", bookmarkService.validateTag(tag));
     }
+
     @Test
     public void validateTagReturnsTagsInCorrectFormLong() {
-
         char[] chars = new char[95];
 
         int index = 0;
@@ -216,9 +215,7 @@ public class BookmarkServiceTest {
             index++;
         }
 
-
         for (int i = 0; i < 1000; i++) {
-
             String random = getRandomString(chars, 100);
 
             String validated = bookmarkService.validateTag(random);
@@ -238,6 +235,7 @@ public class BookmarkServiceTest {
             }
         }
     }
+
     private String getRandomString(char[] chars, int length) {
 
         StringBuilder word = new StringBuilder();
@@ -251,26 +249,67 @@ public class BookmarkServiceTest {
     }
 
     @Test
+    public void validateTagDoesntReturnEmptyTags() {
+        String tag = "";
+        assertEquals(null, bookmarkService.validateTag(tag));
+
+        tag = "        ";
+        assertEquals(null, bookmarkService.validateTag(tag));
+
+        tag = "&/(";
+        assertEquals(null, bookmarkService.validateTag(tag));
+    }
+
+    @Test
+    public void validateTagSetReturnsCorrectSet() {
+        Set<String> tags = new HashSet<>();
+        tags.add("   11   ");
+        tags.add("22");
+        tags.add("33");
+        tags.add("&)(/");
+        tags.add("     ");
+        tags.add("4&/(4   ");
+        tags.add("55");
+        tags.add("66");
+
+        tags = bookmarkService.validateTagSet(tags);
+
+        int i = 0;
+        for (String tag : tags) {
+            i++;
+            assertEquals(true, tags.contains("" + i + i));
+        }
+
+        assertEquals(6, tags.size());
+    }
+
+    @Test
     public void tagByUrlGetsCorrectTag() {
         String tag = bookmarkService.addTagStringByUrl(
                 "https://www.youtube.com/watch?v=ZgjWOo7IqQY");
         assertEquals("Video", tag);
+
         tag = bookmarkService.addTagStringByUrl(
                 "https://youtu.be/G60llMJepZI");
         assertEquals("Video", tag);
+
         tag = bookmarkService.addTagStringByUrl(
                 "https://tastytreats-blog.blogspot.com/");
         assertEquals("Blog", tag);
+
         tag = bookmarkService.addTagStringByUrl(
                 "https://wordpress.org/showcase/the-dish/");
         assertEquals("Blog", tag);
+
         tag = bookmarkService.addTagStringByUrl(
                 "https://www.suomalainen.com/webapp/wcs"
                 + "/stores/servlet/fi/skk/lazarus-p9789513196455--77");
         assertEquals("Book", tag);
+
         tag = bookmarkService.addTagStringByUrl(
                 "https://ieeexplore.ieee.org/document/8543874");
         assertEquals("Scientific Publication", tag);
+
         tag = bookmarkService.addTagStringByUrl(
                 "https://dl.acm.org/citation.cfm?id=3292530&picked=prox");
         assertEquals("Scientific Publication", tag);

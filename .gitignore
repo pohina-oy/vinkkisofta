@@ -135,6 +135,7 @@ gradle-app.setting
 # Vscode
 .vscode
 .idea/vcs.xml
+<<<<<<< HEAD
 
 .idea/inspectionProfiles/Project_Default.xml
 

@@ -15,7 +15,7 @@
             <form class="bookmarkForm" method="post" action="/search">
                 <div class="formSection">
                     <label class="formSectionLabel">Tags</label>
-                    <input class="formSectionInput" type="text" name="tag" placeholder="tag1, tag2"/>
+                    <input class="formSectionInput" type="text" name="tags" placeholder="tag1, tag2"/>
                 </div>
 
                 <div class="formSection">
@@ -29,11 +29,7 @@
                     <a class="bookmarkLink" th:href="${bookmark.url}">
                         <span class="bookmarkTitle" th:text="${bookmark.title}"></span>
                         <div class="bookmarkTags">
-                            <!--<span class="bookmarkTag" th:each="tag : ${bookmarks.tags}">tags</span> -->
-
-                            <span class="bookmarkTag">video</span>
-                            <span class="bookmarkTag">blog</span>
-                            <span class="bookmarkTag">education</span>
+                            <span class="bookmarkTag" th:each="tag : ${bookmark.tags}" th:text="${tag.name}"></span>
                         </div>
                         <span class="bookmarkAuthor" th:if="${bookmark.author != null}"
                               th:text="${'by ' + bookmark.author}">

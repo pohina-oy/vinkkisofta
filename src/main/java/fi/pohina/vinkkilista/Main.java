@@ -5,6 +5,7 @@ import fi.pohina.vinkkilista.data_access.InMemoryBookmarkDao;
 import fi.pohina.vinkkilista.data_access.TagDao;
 import fi.pohina.vinkkilista.data_access.InMemoryTagDao;
 import fi.pohina.vinkkilista.domain.BookmarkService;
+import java.util.*;
 
 public class Main {
     public static void main(String[] args) {
@@ -28,7 +29,8 @@ public class Main {
         bookmarks.createBookmark(
             "GitHub Blog",
             "https://blog.github.com",
-            "GitHub"
+            "GitHub",
+            new HashSet<>(Arrays.asList("blog"))
         );
         bookmarks.createBookmark(
             "Domain Driven Design Weekly",
@@ -38,12 +40,14 @@ public class Main {
         bookmarks.createBookmark(
             "the morning paper",
             "https://blog.acolyer.org",
-            "Adrian Colyer"
+            "Adrian Colyer",
+            new HashSet<>(Arrays.asList("blog"))
         );
         bookmarks.createBookmark(
             "An Industrial-Strength Audio Search Algorithm",
             "https://www.ee.columbia.edu/~dpwe/papers/Wang03-shazam.pdf",
-            "Avery Li-Chun Wang"
+            "Avery Li-Chun Wang",
+            new HashSet<>(Arrays.asList("scientific publication"))
         );
     }
 }

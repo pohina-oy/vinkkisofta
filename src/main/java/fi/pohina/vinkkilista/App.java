@@ -58,7 +58,7 @@ public class App {
 
         post("/search", (req, res) -> {
             Map<String, Object> map = new HashMap<>();
-            Collection<Bookmark> bookmarks = this.bookmarks.getAllBookmarks();
+            Collection<Bookmark> bookmarks = searchBookmarks(req.queryMap());
             map.put("bookmarks", bookmarks);
             return render(map, "search");
         });
@@ -87,8 +87,8 @@ public class App {
         bookmarks.createBookmark(
             title,
             url,
-            author
-            //tags
+            author,
+            tags
         );
 
         return true;
@@ -104,9 +104,12 @@ public class App {
         String commaSeparatedTags = params.get("tags").value();
 
         Set<String> tags = tagParser.parse(commaSeparatedTags);
+        
+        for (String tag : tags) {
+            System.out.println("tag");
+        }
 
-        return bookmarks.getAllBookmarks();
-        //return bookmarks.getBookmarksByTags(tags);
+        return bookmarks.getBookmarksByTags(tags);
     }
 
     /**
