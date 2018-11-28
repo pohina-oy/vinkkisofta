@@ -23,7 +23,7 @@ public class Main {
 
         BookmarkService service = new BookmarkService(bookmarkDao, tagDao);
 
-        if (!stage.equals("production")) {
+        if (stage != null && !stage.equals("production")) {
             addMockBookmarks(service);
         }
 
