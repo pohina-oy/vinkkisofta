@@ -11,6 +11,9 @@ import static spark.Spark.*;
 
 public class App {
 
+    private final CommaSeparatedTagsParser tagParser
+        = new CommaSeparatedTagsParser();
+
     private final BookmarkService bookmarks;
 
     public App(BookmarkService bookmarks) {
@@ -61,15 +64,19 @@ public class App {
         String title = params.get("title").value();
         String url = params.get("url").value();
         String author = params.get("author").value();
+        String commaSeparatedTags = params.get("tags").value();
 
         if (Strings.isNullOrEmpty(title) || Strings.isNullOrEmpty(url)) {
             return false;
         }
 
+        Set<String> tags = tagParser.parse(commaSeparatedTags);
+
         bookmarks.createBookmark(
             title,
             url,
             author
+            // tags
         );
 
         return true;
