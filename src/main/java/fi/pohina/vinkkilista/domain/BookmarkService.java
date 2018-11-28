@@ -21,24 +21,10 @@ public class BookmarkService {
         String title, 
         String url, 
         String author
-        // Set<String> tags
     ) {
-        String id = generateBookmarkId();
-
-        HashSet<String> tags = new HashSet<>();
-        tags.add(addTagStringByUrl(url));
-        HashSet<Tag> tagSet = tagSetStringToObject(tags, true);
-
-        Bookmark bookmark = new Bookmark(
-            id,
-            title,
-            url,
-            author,
-            tagSet
-        );
-
-        bookmarkDao.add(bookmark);
+        createBookmark(title, url, author, new HashSet<>());
     }
+
     /**
      * Creates a new {@link Bookmark} from the specified title, url, author and 
      * a string of tags.
@@ -47,12 +33,12 @@ public class BookmarkService {
             String title, 
             String url, 
             String author, 
-            HashSet<String> tags
+            Set<String> tags
     ) {
         String id = generateBookmarkId();
 
         tags.add(addTagStringByUrl(url));
-        HashSet<Tag> tagSet = tagSetStringToObject(tags, true);
+        Set<Tag> tagSet = tagSetStringToObject(tags, true);
 
         Bookmark bookmark = new Bookmark(
                 id,
@@ -88,16 +74,16 @@ public class BookmarkService {
     private String generateBookmarkId() {
         return UUID.randomUUID().toString();
     }
-    
+
     /**
      * Checks and fixes the given tag set.
      *
      * @param tags Tags in a string set
      * @return Tags in a string set
      */
-    public HashSet<String> validateTagSet(HashSet<String> tags) {
-        HashSet<String> tagsSet = new HashSet<>();
-        
+    public Set<String> validateTagSet(Set<String> tags) {
+        Set<String> tagsSet = new HashSet<>();
+
         for (String tag : tags) {
             tag = validateTag(tag);
 
@@ -138,6 +124,7 @@ public class BookmarkService {
 
         return tag;
     }
+
     private boolean allowedCharacter(char c) {
 
         if (c >= 'a' && c <= 'z') {
@@ -160,8 +147,8 @@ public class BookmarkService {
      * @param createNew Boolean for whether to create missing tags
      * @return set of tag objects
      */
-    public HashSet<Tag> tagSetStringToObject(HashSet<String> tags, Boolean createNew) {
-        HashSet<Tag> tagsSet = new HashSet<>();
+    public Set<Tag> tagSetStringToObject(Set<String> tags, Boolean createNew) {
+        Set<Tag> tagsSet = new HashSet<>();
 
         tags = validateTagSet(tags);
 

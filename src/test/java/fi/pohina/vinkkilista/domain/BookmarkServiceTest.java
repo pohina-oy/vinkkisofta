@@ -105,7 +105,6 @@ public class BookmarkServiceTest {
 
     @Test
     public void validateTagReturnsTagsInCorrectForm() {
-
         String tag = "testi";
         assertEquals("testi", bookmarkService.validateTag(tag));
 
@@ -136,7 +135,6 @@ public class BookmarkServiceTest {
 
     @Test
     public void validateTagReturnsTagsInCorrectFormLong() {
-
         char[] chars = new char[95];
 
         int index = 0;
@@ -146,9 +144,7 @@ public class BookmarkServiceTest {
             index++;
         }
 
-
         for (int i = 0; i < 1000; i++) {
-
             String random = getRandomString(chars, 100);
 
             String validated = bookmarkService.validateTag(random);
@@ -168,6 +164,7 @@ public class BookmarkServiceTest {
             }
         }
     }
+
     private String getRandomString(char[] chars, int length) {
 
         StringBuilder word = new StringBuilder();
@@ -194,7 +191,7 @@ public class BookmarkServiceTest {
 
     @Test
     public void validateTagSetReturnsCorrectSet() {
-        HashSet<String> tags = new HashSet<>();
+        Set<String> tags = new HashSet<>();
         tags.add("   11   ");
         tags.add("22");
         tags.add("33");
@@ -220,22 +217,28 @@ public class BookmarkServiceTest {
         String tag = bookmarkService.addTagStringByUrl(
                 "https://www.youtube.com/watch?v=ZgjWOo7IqQY");
         assertEquals("Video", tag);
+
         tag = bookmarkService.addTagStringByUrl(
                 "https://youtu.be/G60llMJepZI");
         assertEquals("Video", tag);
+
         tag = bookmarkService.addTagStringByUrl(
                 "https://tastytreats-blog.blogspot.com/");
         assertEquals("Blog", tag);
+
         tag = bookmarkService.addTagStringByUrl(
                 "https://wordpress.org/showcase/the-dish/");
         assertEquals("Blog", tag);
+
         tag = bookmarkService.addTagStringByUrl(
                 "https://www.suomalainen.com/webapp/wcs"
                 + "/stores/servlet/fi/skk/lazarus-p9789513196455--77");
         assertEquals("Book", tag);
+
         tag = bookmarkService.addTagStringByUrl(
                 "https://ieeexplore.ieee.org/document/8543874");
         assertEquals("Scientific Publication", tag);
+
         tag = bookmarkService.addTagStringByUrl(
                 "https://dl.acm.org/citation.cfm?id=3292530&picked=prox");
         assertEquals("Scientific Publication", tag);

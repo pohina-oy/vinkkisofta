@@ -77,8 +77,8 @@ public class App {
         bookmarks.createBookmark(
             title,
             url,
-            author
-            // tags
+            author,
+            tags
         );
 
         return true;
