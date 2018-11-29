@@ -1,0 +1,16 @@
+{
+  "name": "name",
+  "description": "description",
+  "authors": "author",
+  "version": "1.0.0",
+  "main": "pathToMain",
+  "dependencies": {
+    "knex": "^0.15.2",
+    "pg": "^7.6.1",
+    "dotenv": "^6.1.0"
+  },
+  "scripts": {
+    "knex": "./node_modules/.bin/knex",
+    "migrate-latest": "./node_modules/.bin/knex migrate:latest"
+  }
+}

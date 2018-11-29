@@ -6,22 +6,33 @@ import fi.pohina.vinkkilista.data_access.TagDao;
 import fi.pohina.vinkkilista.data_access.InMemoryTagDao;
 import fi.pohina.vinkkilista.domain.BookmarkService;
 import java.util.*;
+import fi.pohina.vinkkilista.data_access.PostgreBookmarkDao;
+import io.github.cdimascio.dotenv.Dotenv;
 
 public class Main {
     public static void main(String[] args) {
-        BookmarkDao bookmarkDao = new InMemoryBookmarkDao();
+        Dotenv dotenv = Dotenv
+            .configure()
+            .ignoreIfMissing()
+            .load();
+        String stage = dotenv.get("STAGE");
+
+        BookmarkDao bookmarkDao = getBookmarkDao(dotenv);
         TagDao tagDao = new InMemoryTagDao();
 
         BookmarkService service = new BookmarkService(bookmarkDao, tagDao);
-        addMockBookmarks(service);
 
-        int port = getPort();
+        if (stage == null || !stage.equals("production")) {
+            addMockBookmarks(service);
+        }
+
+        int port = getPort(dotenv);
 
         new App(service).startServer(port);
     }
 
-    private static int getPort() {
-        String port = System.getenv("PORT");
+    private static int getPort(Dotenv dotenv) {
+        String port = dotenv.get("PORT");
         return port == null ? 4567 : Integer.parseInt(port);
     }
 
@@ -49,5 +60,17 @@ public class Main {
             "Avery Li-Chun Wang",
             new HashSet<>(Arrays.asList("scientific publication"))
         );
+    }
+
+    private static BookmarkDao getBookmarkDao(Dotenv dotenv) {
+        String stage = dotenv.get("STAGE");
+        if (stage == null || !stage.equals("production")) {
+            return new InMemoryBookmarkDao();
+        }
+        String dbHost = dotenv.get("DB_HOST");
+        String dbUser = dotenv.get("DB_USER");
+        String dbPassword = dotenv.get("DB_PASSWORD");
+        String db = dotenv.get("DB_DATABASE");
+        return new PostgreBookmarkDao(dbHost, dbUser, dbPassword, db); 
     }
 }

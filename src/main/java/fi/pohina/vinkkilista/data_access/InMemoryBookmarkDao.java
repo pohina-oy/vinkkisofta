@@ -3,6 +3,7 @@ package fi.pohina.vinkkilista.data_access;
 import fi.pohina.vinkkilista.domain.Bookmark;
 import fi.pohina.vinkkilista.domain.Tag;
 import java.util.*;
+import fi.pohina.vinkkilista.domain.Tag;
 
 /**
  * Provides an in-memory implementation of the {@link BookmarkDao} interface,
@@ -70,4 +71,10 @@ public class InMemoryBookmarkDao implements BookmarkDao {
     public void add(Bookmark bookmark) {
         bookmarksDB.add(bookmark);
     }
+
+    @Override
+	public List<Bookmark> findByTagName(Set<Tag> tagSet) {
+		return null;
+	}
+    
 }

@@ -38,6 +38,16 @@ public class Stepdefs {
         typeToElementWithId("authorInput", author);
         submitElementWithId("submitForm");
     }
+    
+     @When("valid title {string} and valid url {string} and valid author {string} and valid tags {string} are given")
+    public void valid_title_and_valid_url_and_valid_author_and_valid_tags_are_given(String title, String url, String author, String tags) {
+        typeToElementWithId("titleInput", title);
+        typeToElementWithId("urlInput", url);
+        typeToElementWithId("authorInput", author);
+        typeToElementWithId("tagsInput", tags);
+        submitElementWithId("submitForm");
+    }
+
 
     @When("missing title {string} and valid url {string} are given")
     public void missing_title_and_valid_url_are_given(String title, String url) {
@@ -56,6 +66,17 @@ public class Stepdefs {
     @Then("a new bookmark is created")
     public void a_new_bookmark_is_created() {
         pageUrlIs(baseUrl);
+        pageHasContent("testBookmark");
+    }
+    
+    @Then("a new bookmark is created with given inputs")
+    public void a_new_bookmark_is_created_with_given_inputs() {
+        pageUrlIs(baseUrl);
+        pageHasContent("This is the title");
+        pageHasContent("by The Author");
+        pageHasContent("blog");
+        pageHasContent("testing");
+        
     }
 
     @Then("a new bookmark is not created")
