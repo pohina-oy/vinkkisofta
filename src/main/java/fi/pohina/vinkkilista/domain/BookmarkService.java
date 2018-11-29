@@ -60,6 +60,17 @@ public class BookmarkService {
     }
 
     /**
+     * Function for retrieving bookmarks with any of the tags specified as a
+     * set of strings.
+     *
+     * @param stringTags set of tags as string
+     * @return matching bookmarks
+     */
+    public Collection<Bookmark> getBookmarksByTags(Set<String> stringTags) {
+        return bookmarkDao.findByTagSet(validateTagSet(stringTags));
+    }
+
+    /**
      * Checks and fixes the given tag set.
      *
      * @param tags Tags in a string set

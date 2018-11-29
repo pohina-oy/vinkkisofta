@@ -15,6 +15,15 @@ public interface BookmarkDao {
      */
     Bookmark findById(String id);
 
+    /**
+     * Function for finding saved bookmarks matching any of the tags specified
+     * in input set.
+     *
+     * @param tags set of tags to search for bookmarks
+     * @return found bookmarks as an ArrayList
+     */
+    List<Bookmark> findByTagSet(Set<String> tags);
+
     List<Bookmark> findAll();
 
     void add(Bookmark bookmark);

@@ -2,7 +2,7 @@ package fi.pohina.vinkkilista.data_access;
 
 import fi.pohina.vinkkilista.domain.Bookmark;
 import fi.pohina.vinkkilista.domain.Tag;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,8 +22,6 @@ public class InMemoryBookmarkDaoTest {
             "first",
             "https://www.abc.fi"
         );
-
-        Tag tag = new Tag("tag-1", "blog");
 
         Bookmark second = new Bookmark(
             "second-id",
@@ -97,5 +95,76 @@ public class InMemoryBookmarkDaoTest {
 
         assertEquals(addedId, bookmarkDao.findById(addedId).getId());
         assertThat(bookmarkDao.findAll(), hasItem(newEntry));
+    }
+
+    /**
+     * Tests that finding bookmarks by tags returns only matching bookmarks
+     */
+    @Test
+    public void findByTagSetReturnsCorrectBookmarks() {
+        Tag tagVideo = new Tag("tag1", "video");
+        Tag tagJournal = new Tag("tag3", "journal");
+
+        Bookmark third = new Bookmark(
+            "third-id",
+            "third",
+            "https://www.nature.com",
+            "Editor",
+            new HashSet<>(Arrays.asList(tagVideo, tagJournal))
+        );
+
+        Bookmark fourth = new Bookmark(
+            "fourth-id",
+            "fourth",
+            "https://www.videosite.net",
+            "Firstname Lastname",
+            new HashSet<>(Arrays.asList(tagVideo))
+        );
+
+        bookmarkDao.add(third);
+        bookmarkDao.add(fourth);
+
+        List<String> foundIdsVideo = bookmarkDao
+            .findByTagSet(new HashSet<>(Arrays.asList("video")))
+            .stream()
+            .map(Bookmark::getId)
+            .collect(Collectors.toList());
+
+        assertEquals(2, foundIdsVideo.size());
+        assertThat(foundIdsVideo, hasItems("third-id", "fourth-id"));
+
+        List<String> foundIdsJournal = bookmarkDao
+            .findByTagSet(new HashSet<>(Arrays.asList("journal")))
+            .stream()
+            .map(Bookmark::getId)
+            .collect(Collectors.toList());
+
+        assertEquals(1, foundIdsJournal.size());
+        assertThat(foundIdsJournal, hasItems("third-id"));
+    }
+
+    /**
+     * Tests that finding bookmarks by tags returns an empty list if there
+     * are no matching bookmarks
+     */
+    @Test
+    public void findByTagSetReturnsEmptyListIfNoMatches() {
+        Tag tagVideo = new Tag("tag1", "video");
+        Tag tagBlog = new Tag("tag2", "blog");
+
+        Bookmark fourth = new Bookmark(
+            "fourth-id",
+            "fourth",
+            "https://www.videosite.net",
+            "Firstname Lastname",
+            new HashSet<>(Arrays.asList(tagVideo))
+        );
+
+        bookmarkDao.add(fourth);
+
+        List<Bookmark> foundBookmarks = bookmarkDao
+            .findByTagSet(new HashSet<>(Arrays.asList("blog")));
+
+        assertEquals(0, foundBookmarks.size());
     }
 }
