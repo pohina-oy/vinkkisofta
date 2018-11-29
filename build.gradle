@@ -18,6 +18,8 @@ dependencies {
     testCompile 'io.cucumber:cucumber-junit:4.2.0'
     compile group: 'org.seleniumhq.selenium', name: 'selenium-api', version:seleniumVersion
     compile group: 'org.seleniumhq.selenium', name: 'selenium-java', version:seleniumVersion
+    compile group: 'postgresql', name: 'postgresql', version: '9.0-801.jdbc4'
+    compile group: 'io.github.cdimascio', name: 'java-dotenv', version: '3.1.7'
 }
 
 repositories {
