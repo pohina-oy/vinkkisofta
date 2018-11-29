@@ -1,7 +1,7 @@
 package fi.pohina.vinkkilista.data_access;
 
 import fi.pohina.vinkkilista.domain.Bookmark;
-import java.util.List;
+import java.util.*;
 
 public interface BookmarkDao {
 

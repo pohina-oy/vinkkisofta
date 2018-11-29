@@ -1,8 +1,7 @@
 package fi.pohina.vinkkilista.data_access;
 
 import fi.pohina.vinkkilista.domain.Bookmark;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Provides an in-memory implementation of the {@link BookmarkDao} interface,
@@ -42,6 +41,11 @@ public class InMemoryBookmarkDao implements BookmarkDao {
         return new ArrayList<>(this.bookmarksDB);
     }
 
+    /**
+     * Function for adding a new bookmark
+     *
+     * @param bookmark bookmark which is saved
+     */
     @Override
     public void add(Bookmark bookmark) {
         bookmarksDB.add(bookmark);
