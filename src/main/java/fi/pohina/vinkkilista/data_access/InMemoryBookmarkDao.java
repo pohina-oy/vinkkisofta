@@ -39,12 +39,12 @@ public class InMemoryBookmarkDao implements BookmarkDao {
      * {@inheritDoc}
      */
     @Override
-    public List<Bookmark> findByTagSet(Set<Tag> tags) {
+    public List<Bookmark> findByTagSet(Set<String> tags) {
         List<Bookmark> bookmarksList = new ArrayList<>();
 
         for (Bookmark bookmark : bookmarksDB) {
             for (Tag tag : bookmark.getTags()) {
-                if (tags.contains(tag)) {
+                if (tags.contains(tag.getName())) {
                     bookmarksList.add(bookmark);
                     break;
                 }

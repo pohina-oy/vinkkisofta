@@ -125,7 +125,7 @@ public class InMemoryBookmarkDaoTest {
         bookmarkDao.add(fourth);
 
         List<String> foundIdsVideo = bookmarkDao
-            .findByTagSet(new HashSet<>(Arrays.asList(tagVideo)))
+            .findByTagSet(new HashSet<>(Arrays.asList("video")))
             .stream()
             .map(Bookmark::getId)
             .collect(Collectors.toList());
@@ -134,7 +134,7 @@ public class InMemoryBookmarkDaoTest {
         assertThat(foundIdsVideo, hasItems("third-id", "fourth-id"));
 
         List<String> foundIdsJournal = bookmarkDao
-            .findByTagSet(new HashSet<>(Arrays.asList(tagJournal)))
+            .findByTagSet(new HashSet<>(Arrays.asList("journal")))
             .stream()
             .map(Bookmark::getId)
             .collect(Collectors.toList());
@@ -163,7 +163,7 @@ public class InMemoryBookmarkDaoTest {
         bookmarkDao.add(fourth);
 
         List<Bookmark> foundBookmarks = bookmarkDao
-            .findByTagSet(new HashSet<>(Arrays.asList(tagBlog)));
+            .findByTagSet(new HashSet<>(Arrays.asList("blog")));
 
         assertEquals(0, foundBookmarks.size());
     }

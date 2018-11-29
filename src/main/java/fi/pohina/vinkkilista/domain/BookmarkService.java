@@ -67,8 +67,7 @@ public class BookmarkService {
      * @return matching bookmarks
      */
     public Collection<Bookmark> getBookmarksByTags(Set<String> stringTags) {
-        Set<Tag> tagSet = tagSetStringToObjectNoCreate(stringTags);
-        return bookmarkDao.findByTagSet(tagSet);
+        return bookmarkDao.findByTagSet(validateTagSet(stringTags));
     }
 
     /**
