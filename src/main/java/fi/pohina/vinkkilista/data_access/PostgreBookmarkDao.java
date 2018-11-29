@@ -1,6 +1,7 @@
 package fi.pohina.vinkkilista.data_access;
 
 import fi.pohina.vinkkilista.domain.Bookmark;
+import fi.pohina.vinkkilista.domain.Tag;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -80,11 +81,83 @@ public class PostgreBookmarkDao implements BookmarkDao {
         try {
             String query = "INSERT INTO bookmarks (id, title, url, author) " + " values (?, ? ,? ,?)";
             PreparedStatement st = this.db.prepareStatement(query);
-            st.setString(1, UUID.randomUUID().toString());
+            String bookmarkId = UUID.randomUUID().toString();
+            st.setString(1, bookmarkId);
             st.setString(2, bookmark.getTitle());
             st.setString(3, bookmark.getUrl());
             st.setString(4, bookmark.getAuthor());
             st.executeQuery();
+            for (Tag t : bookmark.getTags()) {
+                addBookmarkTag(t.getName(), bookmarkId);
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    /**
+     * Gets a tag by name
+     * @param tagName
+     * @return
+     */
+    private Tag getTag(String tagName) {
+        try {
+            String query = "SELECT * FROM tags where name = ?";
+            PreparedStatement st = this.db.prepareStatement(query);
+            st.setString(1, tagName);
+            ResultSet rs = st.executeQuery();
+            if (rs.first()) {
+                String tagId = rs.getString("id");
+                return new Tag(tagId, tagName);
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Creates a tag
+     * @param tagName
+     * @return
+     */
+    private String createTag(String tagName) {
+        try {
+            String query = "INSERT INTO tags (id, name) values (?, ?)";
+            PreparedStatement st = this.db.prepareStatement(query);
+            String tagId = UUID.randomUUID().toString();
+            st.setString(1, tagId);
+            st.setString(2, tagName);
+            st.execute();
+            return tagId;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Links a bookmark and tags    
+     * @param tagName
+     * @param bookmarkId
+     */
+    private void addBookmarkTag(String tagName, String bookmarkId) {
+        Tag tag = getTag(tagName);
+        String query = "INSERT INTO bookmark_tags (bookmarkId, tagId) values (?, ?)";
+        try {
+            if (tag != null) {
+                PreparedStatement st = this.db.prepareStatement(query);
+                st.setString(1, bookmarkId);
+                st.setString(2, tag.getId());
+                st.executeQuery();
+            } else {
+                String tagId = createTag(tagName);
+                PreparedStatement st = this.db.prepareStatement(query);
+                st.setString(1, bookmarkId);
+                st.setString(2, tagId);
+                st.executeQuery();
+            }
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
