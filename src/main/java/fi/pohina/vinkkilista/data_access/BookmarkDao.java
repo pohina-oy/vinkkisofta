@@ -21,7 +21,7 @@ public interface BookmarkDao {
      * @param tags set of tags to search for bookmarks
      * @return found bookmarks as an ArrayList
      */
-    List<Bookmark> findByTagSet(Set<String> tags);
+    List<Bookmark> findByTagSet(Set<String> tagSet);
 
     List<Bookmark> findAll();
 
