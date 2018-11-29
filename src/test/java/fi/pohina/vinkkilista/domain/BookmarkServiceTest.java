@@ -185,14 +185,14 @@ public class BookmarkServiceTest {
         tag = "tes           ti";
         assertEquals("tes ti", bookmarkService.validateTag(tag));
 
-        tag = "testi!#¤%&/()=?:;:   >";
-        assertEquals("testi", bookmarkService.validateTag(tag));
+        tag = "testi!#¤%&";
+        assertEquals(tag.toLowerCase(), bookmarkService.validateTag(tag));
 
         tag = "testi < < testi < < < < testi";
-        assertEquals("testi testi testi", bookmarkService.validateTag(tag));
+        assertEquals("testi < < testi < < < < testi", bookmarkService.validateTag(tag));
 
-        tag = "t<e<s<t<i< < < < < < ";
-        assertEquals("testi", bookmarkService.validateTag(tag));
+        tag = "TE&/(    STI   !#";
+        assertEquals("te&/( sti !#", bookmarkService.validateTag(tag));
 
         tag = "T3s71";
         assertEquals("t3s71", bookmarkService.validateTag(tag));
@@ -214,12 +214,15 @@ public class BookmarkServiceTest {
 
             String validated = bookmarkService.validateTag(random);
 
-            if (!validated.matches("^[a-z0-9 öäå]*$")) {
-                fail("Validated string contains "
-                + "forbidden characters: " + validated);
-            }
-
             for (int j = 0; j < validated.length() - 1; j++) {
+                if (validated.charAt(0) == ' ') {
+                    fail("Validated string has a space in front: " + validated);
+                }
+
+                if (validated.charAt(validated.length() - 1) == ' ') {
+                    fail("Validated string has a space at the end: " + validated);
+                }
+
                 if (validated.charAt(j) == ' ') {
                     if (validated.charAt(j + 1) == ' ') {
                         fail("Validated string has 2 or "
@@ -249,9 +252,6 @@ public class BookmarkServiceTest {
 
         tag = "        ";
         assertEquals(null, bookmarkService.validateTag(tag));
-
-        tag = "&/(";
-        assertEquals(null, bookmarkService.validateTag(tag));
     }
 
     @Test
@@ -260,9 +260,8 @@ public class BookmarkServiceTest {
         tags.add("   11   ");
         tags.add("22");
         tags.add("33");
-        tags.add("&)(/");
         tags.add("     ");
-        tags.add("4&/(4   ");
+        tags.add("44   ");
         tags.add("55");
         tags.add("66");
 
