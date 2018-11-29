@@ -80,46 +80,20 @@ public class BookmarkService {
     }
 
     /***
-     * Function for validating a tag.
+     * Function for validating and cleaning a tag.
      * @param tag
      * @return A validated tag as a string that contains no extra spaces and 
      * has only allowed characters. Null if length is 0.
      * Currently Only allows alpha-numeric characters.
      */
     public String validateTag(String tag) {
+        String cleanedTag = tag
+            .toLowerCase()
+            .replaceAll("[^a-z0-9 ]", "")
+            .trim()
+            .replaceAll(" +", " ");
 
-        tag = tag.toLowerCase();
-
-        StringBuilder validated = new StringBuilder();
-
-        for (int i = 0; i < tag.length(); i++) {
-            char c = tag.charAt(i);
-
-            if (allowedCharacter(c)) {
-                validated.append(c);
-            }
-        }
-
-        tag = validated.toString().trim().replaceAll(" +", " ");
-
-        if (tag.length() == 0) {
-            return null;
-        }
-
-        return tag;
-    }
-
-    private boolean allowedCharacter(char c) {
-
-        if (c >= 'a' && c <= 'z') {
-            return true;
-        }
-
-        if ((c >= '0' && c <= '9') || c == ' ') {
-            return true;
-        }
-        
-        return false;
+        return cleanedTag.length() == 0 ? null : cleanedTag;
     }
 
     /**
