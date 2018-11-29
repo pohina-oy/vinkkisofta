@@ -3,13 +3,16 @@ package fi.pohina.vinkkilista.data_access;
 import fi.pohina.vinkkilista.domain.Bookmark;
 import fi.pohina.vinkkilista.domain.Tag;
 
+import java.sql.Array;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -144,7 +147,7 @@ public class PostgreBookmarkDao implements BookmarkDao {
      */
     private void addBookmarkTag(String tagName, String bookmarkId) {
         Tag tag = getTag(tagName);
-        String query = "INSERT INTO bookmark_tags (bookmarkId, tagId) values (?, ?)";
+        String query = "INSERT INTO bookmark_tags (\"bookmarkId\", \"tagId\") values (?, ?)";
         try {
             if (tag != null) {
                 PreparedStatement st = this.db.prepareStatement(query);
@@ -162,4 +165,31 @@ public class PostgreBookmarkDao implements BookmarkDao {
             System.out.println(e.getMessage());
         }
     }
+
+    @Override
+    public List<Bookmark> findByTagName(Set<Tag> tagSet) {
+        ArrayList<String> tagArray = new ArrayList<>();
+        for (Tag t : tagSet) {
+            tagArray.add(t.getName());
+        }
+        String query = "select bookmarks.* from bookmark_tags inner join bookmarks on bookmark_tags.\"bookmarkId\" = bookmarks.id inner join tags on  tags.id = bookmark_tags.\"tagId\"  where tags.name = ANY(?)";
+        try {
+            PreparedStatement st = this.db.prepareStatement(query);
+            Array array = this.db.createArrayOf("VARCHAR", tagArray.toArray());
+            st.setArray(1, array);
+            ResultSet rs = st.executeQuery();
+            HashSet<Bookmark> bookmarks = new HashSet<>();
+            while(rs.next()) {
+                String bookmarkId = rs.getString("id");
+                String bookmarkTile = rs.getString("title");
+                String bookmarkUrl = rs.getString("url");
+                String bookmarkAuthor = rs.getString("author");
+                bookmarks.add(new Bookmark(bookmarkId, bookmarkTile, bookmarkUrl, bookmarkAuthor));
+            }
+            return new ArrayList<Bookmark>(bookmarks);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+	}
 }
