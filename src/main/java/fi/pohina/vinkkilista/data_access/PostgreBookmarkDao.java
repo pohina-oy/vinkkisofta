@@ -91,10 +91,11 @@ public class PostgreBookmarkDao implements BookmarkDao {
             st.setString(2, bookmark.getTitle());
             st.setString(3, bookmark.getUrl());
             st.setString(4, bookmark.getAuthor());
-            st.executeQuery();
+            st.executeUpdate();
             for (Tag t : bookmark.getTags()) {
                 addBookmarkTag(t.getName(), bookmarkId);
             }
+            st.executeQuery();
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -175,7 +176,7 @@ public class PostgreBookmarkDao implements BookmarkDao {
             st.setString(1, bookmarkId);
             ResultSet rs = st.executeQuery();
             Set<Tag> tagSet = new HashSet<>();
-            while(rs.next()) {
+            while (rs.next()) {
                 String id = rs.getString("id");
                 String name = rs.getString("name");
                 Tag t = new Tag(id, name);
