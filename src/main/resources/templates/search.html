@@ -1,15 +1,29 @@
 <!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
-
     <head>
-        <title>Vinkkisofta</title>
-        <meta charset="utf-8"/>
+        <title>Vinkkisofta - Search Bookmark</title>
+        <meta charset="UTF-8"/>
         <link rel="stylesheet" th:href="@{main.css}" type="text/css"/>
+        <link rel="stylesheet" th:href="@{new.css}" type="text/css"/>
+        <link rel="stylesheet" th:href="@{search.css}" type="text/css"/>
     </head>
-
     <body>
         <div class="container">
             <h1>Vinkkilista</h1>
+            <h2>Search bookmarks by tags</h2>
+
+            <form class="bookmarkForm" method="post" action="/search">
+                <div class="formSection">
+                    <label class="formSectionLabel">Tags</label>
+                    <input class="formSectionInput" type="text" name="tags" placeholder="blog,video"/>
+                </div>
+
+                <div class="formSection">
+                    <button class="formSectionInput" type="submit">Search</button>
+                </div>
+            </form>
+        </div>
+        <div class="container">
             <div class="bookmarkList">
                 <div class="bookmark" th:each="bookmark : ${bookmarks}">
                     <a class="bookmarkLink" th:href="${bookmark.url}">
@@ -23,8 +37,7 @@
                     </a>
                 </div>
             </div>
-            <a class="newBookmarkLink" id="newBookmarkLink" href="/new">Add new bookmark</a>
-            <a class="searchBookmarkLink" id="searchBookmarkLink" href="/search">Search bookmarks</a>
+            <a class="backLink" id="backLink" href="/">Back</a>
         </div>
     </body>
 </html>

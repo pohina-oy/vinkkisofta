@@ -136,10 +136,10 @@ gradle-app.setting
 .vscode
 .idea/vcs.xml
 
-# DS_Store
-.DS_Store
 .idea/inspectionProfiles/Project_Default.xml
 
+# DS_Store
+.DS_Store
 
 # Created by https://www.gitignore.io/api/node
 # Edit at https://www.gitignore.io/?templates=node

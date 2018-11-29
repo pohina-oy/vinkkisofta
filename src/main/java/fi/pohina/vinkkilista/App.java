@@ -41,6 +41,11 @@ public class App {
             return render(map, "new");
         });
 
+        get("/search", (req, res) -> {
+            Map<String, Object> map = new HashMap<>();
+            return render(map, "search");
+        });
+
         post("/new", (req, res) -> {
             if (validateAndCreateBookmark(req.queryMap())) {
                 res.redirect("/");
@@ -49,6 +54,13 @@ public class App {
                 res.redirect("/new");
                 return "Bookmark could not be created";
             }
+        });
+
+        post("/search", (req, res) -> {
+            Map<String, Object> map = new HashMap<>();
+            Collection<Bookmark> bookmarks = searchBookmarks(req.queryMap());
+            map.put("bookmarks", bookmarks);
+            return render(map, "search");
         });
     }
 
@@ -80,6 +92,20 @@ public class App {
         );
 
         return true;
+    }
+
+    /**
+     * Searches for bookmarks based on filter forms, e.g. tags.
+     *
+     * @param params the query parameters of the request.
+     * @return list of bookmarks that match the query.
+     */
+    private Collection<Bookmark> searchBookmarks(QueryParamsMap params) {
+        String commaSeparatedTags = params.get("tags").value();
+
+        Set<String> tags = tagParser.parse(commaSeparatedTags);
+
+        return bookmarks.getBookmarksByTags(tags);
     }
 
     /**
