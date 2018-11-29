@@ -71,9 +71,4 @@ public class InMemoryBookmarkDao implements BookmarkDao {
         bookmarksDB.add(bookmark);
     }
 
-    @Override
-	public List<Bookmark> findByTagName(Set<Tag> tagSet) {
-		return null;
-	}
-    
 }
