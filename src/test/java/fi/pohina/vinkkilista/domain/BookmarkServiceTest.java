@@ -24,7 +24,7 @@ public class BookmarkServiceTest {
         bookmarkDao = spy(new InMemoryBookmarkDao());
         tagDao = spy(new InMemoryTagDao());
 
-        bookmarkService = new BookmarkService(bookmarkDao, tagDao);
+        bookmarkService = spy(new BookmarkService(bookmarkDao, tagDao));
     }
 
     @Test
@@ -53,7 +53,7 @@ public class BookmarkServiceTest {
     public void createTagCreatesCorrectTag() {
         String tagName = "video";
 
-        Tag tag = bookmarkService.createTag(tagName);
+        Tag tag = bookmarkService.findOrCreateTag(tagName);
 
         verify(tagDao, times(1)).add(tag);
 
@@ -132,46 +132,51 @@ public class BookmarkServiceTest {
     }
 
     @Test
-    public void tagSetStringToObjectFindsExistingTags() {
-        String tagString1 = "video";
-        String tagString2 = "blog";
-        String tagString3 = "news";
-
-        Tag tag1 = bookmarkService.createTag(tagString1);
-        Tag tag2 = bookmarkService.createTag(tagString2);
-        Tag tag3 = bookmarkService.createTag(tagString3);
-
-        Set<String> stringSet = new HashSet<>(
-            Arrays.asList(tagString1, tagString2, "journal")
-        );
-
-        Set<Tag> tagSet = bookmarkService.tagSetStringToObject(stringSet, false);
-
-        assertEquals(2, tagSet.size());
-        assertTrue(tagSet.contains(tag1));
-        assertTrue(tagSet.contains(tag2));
-    }
-
-    @Test
     public void tagSetStringToObjectCreatesMissingTags() {
         String tagString1 = "video";
         String tagString2 = "blog";
         String tagString3 = "news";
 
-        Tag tag1 = bookmarkService.createTag(tagString1);
-        Tag tag2 = bookmarkService.createTag(tagString2);
-        Tag tag3 = bookmarkService.createTag(tagString3);
+        Tag tag1 = bookmarkService.findOrCreateTag(tagString1);
+        Tag tag2 = bookmarkService.findOrCreateTag(tagString2);
+        Tag tag3 = bookmarkService.findOrCreateTag(tagString3);
 
         Set<String> stringSet = new HashSet<>(
             Arrays.asList(tagString1, tagString2, "journal")
         );
 
-        Set<Tag> tagSet = bookmarkService.tagSetStringToObject(stringSet, true);
+        Set<Tag> tagSet = bookmarkService.tagSetStringToObject(stringSet);
+
+        verify(bookmarkService, times(1)).findOrCreateTag("journal");
 
         assertEquals(3, tagSet.size());
         assertTrue(tagSet.contains(tag1));
         assertTrue(tagSet.contains(tag2));
         assertTrue(tagSet.contains(tagDao.findByName("journal")));
+    }
+
+    @Test
+    public void tagSetStringToObjectNoCreateFindsExistingTags() {
+        String tagString1 = "video";
+        String tagString2 = "blog";
+        String tagString3 = "news";
+
+        Tag tag1 = bookmarkService.findOrCreateTag(tagString1);
+        Tag tag2 = bookmarkService.findOrCreateTag(tagString2);
+        Tag tag3 = bookmarkService.findOrCreateTag(tagString3);
+
+        Set<String> stringSet = new HashSet<>(
+            Arrays.asList(tagString1, tagString2, "journal")
+        );
+
+        Set<Tag> tagSet = bookmarkService.tagSetStringToObjectNoCreate(stringSet);
+
+        verify(bookmarkService, times(0)).findOrCreateTag("journal");
+        verify(bookmarkService, times(1)).findTag("journal");
+
+        assertEquals(2, tagSet.size());
+        assertTrue(tagSet.contains(tag1));
+        assertTrue(tagSet.contains(tag2));
     }
 
     @Test
