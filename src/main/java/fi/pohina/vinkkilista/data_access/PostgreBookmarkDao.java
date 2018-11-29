@@ -179,7 +179,7 @@ public class PostgreBookmarkDao implements BookmarkDao {
             st.setArray(1, array);
             ResultSet rs = st.executeQuery();
             HashSet<Bookmark> bookmarks = new HashSet<>();
-            while(rs.next()) {
+            while (rs.next()) {
                 String bookmarkId = rs.getString("id");
                 String bookmarkTile = rs.getString("title");
                 String bookmarkUrl = rs.getString("url");
