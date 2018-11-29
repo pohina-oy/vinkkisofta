@@ -114,8 +114,8 @@ public class App {
                 .stream()
                 .filter(nvp -> nvp.getName().equals("access_token"))
                 .findFirst()
-                .get()
-                .getValue();
+                .map(NameValuePair::getValue)
+                .orElse(null);
 
             // 2. get user info
             String userInfoJson =
