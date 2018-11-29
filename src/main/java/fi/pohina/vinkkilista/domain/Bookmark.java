@@ -51,4 +51,9 @@ public class Bookmark {
     public Set<Tag> getTags() {
         return tags;
     }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
 }
