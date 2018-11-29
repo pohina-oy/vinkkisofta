@@ -1,9 +1,8 @@
 package fi.pohina.vinkkilista;
 
 import cucumber.api.java.After;
-import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
-import cucumber.api.java.en.When;
+import cucumber.api.java.en.*;
+import java.util.*;
 import static org.junit.Assert.*;
 import org.openqa.selenium.*;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
@@ -11,10 +10,14 @@ import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 public class Stepdefs {
     private WebDriver driver;
     private String baseUrl = "http://localhost:4567/";
+    private final CommaSeparatedTagsParser tagParser
+        = new CommaSeparatedTagsParser();
     
     public Stepdefs() {
         driver = new HtmlUnitDriver();
     }
+
+    // Create Bookmark
 
     @Given("new bookmark is selected")
     public void new_bookmark_is_selected() {
@@ -38,7 +41,7 @@ public class Stepdefs {
         submitElementWithId("submitForm");
     }
     
-     @When("valid title {string} and valid url {string} and valid author {string} and valid tags {string} are given")
+    @When("valid title {string} and valid url {string} and valid author {string} and valid tags {string} are given")
     public void valid_title_and_valid_url_and_valid_author_and_valid_tags_are_given(String title, String url, String author, String tags) {
         typeToElementWithId("titleInput", title);
         typeToElementWithId("urlInput", url);
@@ -46,7 +49,6 @@ public class Stepdefs {
         typeToElementWithId("tagsInput", tags);
         submitElementWithId("submitForm");
     }
-
 
     @When("missing title {string} and valid url {string} are given")
     public void missing_title_and_valid_url_are_given(String title, String url) {
@@ -83,18 +85,73 @@ public class Stepdefs {
         pageUrlIs(baseUrl + "new");
     }
 
+    @Given("search bookmarks is selected")
+    public void search_bookmarks_is_selected() {
+        driver.get(baseUrl);
+        WebElement element = driver.findElement(By.id("searchBookmarkLink"));
+        element.click();
+    }
+
+    // Search Bookmark By Tags
+
+    @When("valid tag {string} is given as search input")
+    public void valid_tag_is_given_as_search_input(String tag) {
+        searchByTags(tag);
+    }
+
+    @When("valid tags {string} are given as search input")
+    public void valid_tags_are_given_as_search_input(String tag) {
+        searchByTags(tag);
+    }
+
+    @When("valid tags {string} and unmatching tags {string} are given as search input")
+    public void valid_tags_and_unmatching_tags_are_given_as_search_input(String matchingTags, String unmatchingTags) {
+        searchByTags(matchingTags + "," + unmatchingTags);
+    }
+
+    @When("no valid tag {string} is given as search input")
+    public void no_valid_tag_is_given_as_search_input(String tag) {
+        searchByTags(tag);
+    }
+
+    @When("no matching valid tags {string} are given as search input")
+    public void no_matching_valid_tags_are_given_as_search_input(String tag) {
+        searchByTags(tag);
+    }
+
+    @Then("only bookmarks with tag {string} are listed")
+    public void only_bookmarks_with_tag_are_listed(String tag) {
+        pageUrlIs(baseUrl + "search");
+
+        pageHasContent("Search bookmarks by tags");
+        allBookmarksHaveTags(tag);
+    }
+
+    @Then("only bookmarks with one of the tags {string} are listed")
+    public void only_bookmarks_with_one_of_the_tags_are_listed(String tags) {
+        pageUrlIs(baseUrl + "search");
+
+        pageHasContent("Search bookmarks by tags");
+        allBookmarksHaveTags(tags);
+    }
+
+    @Then("no bookmarks are listed")
+    public void no_bookmarks_are_listed() {
+        assertEquals(0, driver.findElements(By.className("bookmark")).size());
+    }
+
     @After
     public void tearDown() {
         driver.quit();
     }
-    
+
     // Helper functions
-    
+
     private void submitElementWithId(String id) {
         WebElement element = driver.findElement(By.id(id));
         element.submit();
     }
-    
+
     private void typeToElementWithId(String id, String text) {
         WebElement element = driver.findElement(By.id(id));
         element.sendKeys(text);
@@ -106,5 +163,42 @@ public class Stepdefs {
 
     private void pageHasContent(String content) {
         assertTrue(driver.getPageSource().contains(content));
+    }
+
+    private void searchByTags(String tag) {
+        typeToElementWithId("tagsInput", tag);
+        submitElementWithId("submitForm");
+    }
+
+    private void allBookmarksHaveTags(String tags) {
+        assertTrue(
+            eachTagElementHasAnyGivenTag(
+                driver.findElements(By.className("bookmarkTags")),
+                tagParser.parse(tags)
+            )
+        );
+        correctNumberOfBookmarksWithTags();
+    }
+
+    private void correctNumberOfBookmarksWithTags() {
+        assertEquals(
+            driver.findElements(By.className("bookmark")).size(),
+            driver.findElements(By.className("bookmarkTags")).size()
+        );
+    }
+
+    private Boolean eachTagElementHasAnyGivenTag(
+        List<WebElement> tagsByBookmarks,
+        Set<String> tagSet
+    ) {
+        for (WebElement tagsOfBookmark : tagsByBookmarks) {
+            for (String tag : tagSet) {
+                if (tagsOfBookmark.getText().contains(tag)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }
