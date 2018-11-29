@@ -2,7 +2,6 @@ package fi.pohina.vinkkilista.data_access;
 
 import fi.pohina.vinkkilista.domain.Bookmark;
 import java.util.*;
-import fi.pohina.vinkkilista.domain.Tag;
 
 public interface BookmarkDao {
 
@@ -27,6 +26,4 @@ public interface BookmarkDao {
     List<Bookmark> findAll();
 
     void add(Bookmark bookmark);
-
-    List<Bookmark> findByTagName(Set<Tag> tagSet);
 }

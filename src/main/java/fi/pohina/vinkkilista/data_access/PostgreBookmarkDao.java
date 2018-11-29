@@ -167,10 +167,10 @@ public class PostgreBookmarkDao implements BookmarkDao {
     }
 
     @Override
-    public List<Bookmark> findByTagName(Set<Tag> tagSet) {
+    public List<Bookmark> findByTagSet(Set<String> tags) {
         ArrayList<String> tagArray = new ArrayList<>();
-        for (Tag t : tagSet) {
-            tagArray.add(t.getName());
+        for (String tag : tags) {
+            tagArray.add(tag);
         }
         String query = "select bookmarks.* from bookmark_tags inner join bookmarks on bookmark_tags.\"bookmarkId\" = bookmarks.id inner join tags on  tags.id = bookmark_tags.\"tagId\"  where tags.name = ANY(?)";
         try {
