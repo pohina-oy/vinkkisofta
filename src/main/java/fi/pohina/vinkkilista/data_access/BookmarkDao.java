@@ -2,7 +2,6 @@ package fi.pohina.vinkkilista.data_access;
 
 import fi.pohina.vinkkilista.domain.Bookmark;
 import java.util.*;
-import fi.pohina.vinkkilista.domain.Tag;
 
 public interface BookmarkDao {
 
@@ -22,11 +21,9 @@ public interface BookmarkDao {
      * @param tags set of tags to search for bookmarks
      * @return found bookmarks as an ArrayList
      */
-    List<Bookmark> findByTagSet(Set<String> tags);
+    List<Bookmark> findByTagSet(Set<String> tagSet);
 
     List<Bookmark> findAll();
 
     void add(Bookmark bookmark);
-
-    List<Bookmark> findByTagName(Set<Tag> tagSet);
 }
