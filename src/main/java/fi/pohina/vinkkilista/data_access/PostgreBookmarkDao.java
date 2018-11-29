@@ -65,11 +65,13 @@ public class PostgreBookmarkDao implements BookmarkDao {
                 String title = rs.getString("title");
                 String url = rs.getString("url");
                 String author = rs.getString("author");
+                Set<Tag> tags = findBookmarkTags(id);
                 bookmarks.add(new Bookmark(
                     id, 
                     title, 
                     url, 
-                    author
+                    author,
+                    tags
                 ));                
             }
             return bookmarks;
@@ -89,10 +91,11 @@ public class PostgreBookmarkDao implements BookmarkDao {
             st.setString(2, bookmark.getTitle());
             st.setString(3, bookmark.getUrl());
             st.setString(4, bookmark.getAuthor());
-            st.executeQuery();
+            st.executeUpdate();
             for (Tag t : bookmark.getTags()) {
                 addBookmarkTag(t.getName(), bookmarkId);
             }
+            st.executeQuery();
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -166,6 +169,26 @@ public class PostgreBookmarkDao implements BookmarkDao {
         }
     }
 
+    private Set<Tag> findBookmarkTags(String bookmarkId) {
+        try {
+            String query = "SELECT tags.* FROM bookmark_tags inner join tags on tags.id = bookmark_tags.\"tagId\" where bookmark_tags.\"bookmarkId\" = ?";
+            PreparedStatement st = this.db.prepareStatement(query);
+            st.setString(1, bookmarkId);
+            ResultSet rs = st.executeQuery();
+            Set<Tag> tagSet = new HashSet<>();
+            while (rs.next()) {
+                String id = rs.getString("id");
+                String name = rs.getString("name");
+                Tag t = new Tag(id, name);
+                tagSet.add(t);
+            }
+            return tagSet;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+
     @Override
     public List<Bookmark> findByTagSet(Set<String> tags) {
         ArrayList<String> tagArray = new ArrayList<>();
@@ -184,7 +207,8 @@ public class PostgreBookmarkDao implements BookmarkDao {
                 String bookmarkTile = rs.getString("title");
                 String bookmarkUrl = rs.getString("url");
                 String bookmarkAuthor = rs.getString("author");
-                bookmarks.add(new Bookmark(bookmarkId, bookmarkTile, bookmarkUrl, bookmarkAuthor));
+                Set<Tag> tags = findBookmarkTags(bookmarkId);
+                bookmarks.add(new Bookmark(bookmarkId, bookmarkTile, bookmarkUrl, bookmarkAuthor, tags));
             }
             return new ArrayList<Bookmark>(bookmarks);
         } catch (Exception e) {
