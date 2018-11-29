@@ -104,10 +104,6 @@ public class App {
         String commaSeparatedTags = params.get("tags").value();
 
         Set<String> tags = tagParser.parse(commaSeparatedTags);
-        
-        for (String tag : tags) {
-            System.out.println("tag");
-        }
 
         return bookmarks.getBookmarksByTags(tags);
     }
