@@ -23,3 +23,6 @@
 - testaus
 - integrointi
 - dokumentointi
+
+## Test Coverage
+[JaCoCo](https://htmlpreview.github.io/?https://github.com/pohina-oy/vinkkisofta/blob/jacoco/documents/jacoco/index.html)
