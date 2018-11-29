@@ -12,22 +12,14 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Provides an in-memory implementation of the {@link BookmarkDao} interface,
+ * Provides an PostgreSQL implementation of the {@link BookmarkDao} interface,
  * backed by a {@link List<Bookmark>}.
  */
 public class PostgreBookmarkDao implements BookmarkDao {
     private Connection db;
 
-    public PostgreBookmarkDao(
-        String dbHost, 
-        String dbUser, 
-        String dbPassowrd, 
-        String dbName) {
-        String url = "jdbc:postgresql://" 
-            + dbHost + "/" 
-            + dbName 
-            + "?user=" + dbUser 
-            + "&password=" + dbPassowrd;
+    public PostgreBookmarkDao(String dbHost, String dbUser, String dbPassowrd, String dbName) {
+        String url = "jdbc:postgresql://" + dbHost + "/" + dbName + "?user=" + dbUser + "&password=" + dbPassowrd;
         try { 
             this.db = DriverManager.getConnection(url);
         } catch (Exception e) {
@@ -86,8 +78,7 @@ public class PostgreBookmarkDao implements BookmarkDao {
     @Override
     public void add(Bookmark bookmark) {
         try {
-            String query = "INSERT INTO bookmarks (id, title, url, author) "
-                + " values (?, ? ,? ,?)";
+            String query = "INSERT INTO bookmarks (id, title, url, author) " + " values (?, ? ,? ,?)";
             PreparedStatement st = this.db.prepareStatement(query);
             st.setString(1, UUID.randomUUID().toString());
             st.setString(2, bookmark.getTitle());
