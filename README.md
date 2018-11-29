@@ -1,4 +1,5 @@
-# vinkkisofta
+# Vinkkisofta [![Build Status](https://travis-ci.org/pohina-oy/vinkkisofta.svg?branch=master)](https://travis-ci.org/pohina-oy/vinkkisofta)
+
 
 ## Resursseja
 
@@ -23,3 +24,6 @@
 - testaus
 - integrointi
 - dokumentointi
+
+## Test Coverage
+[JaCoCo](https://htmlpreview.github.io/?https://github.com/pohina-oy/vinkkisofta/blob/jacoco/documents/jacoco/index.html)

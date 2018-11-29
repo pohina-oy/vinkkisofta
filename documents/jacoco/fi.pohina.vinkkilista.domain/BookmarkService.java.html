@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BookmarkService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">vinkkilista</a> &gt; <a href="index.source.html" class="el_package">fi.pohina.vinkkilista.domain</a> &gt; <span class="el_source">BookmarkService.java</span></div><h1>BookmarkService.java</h1><pre class="source lang-java linenums">package fi.pohina.vinkkilista.domain;
+
+import fi.pohina.vinkkilista.data_access.BookmarkDao;
+import fi.pohina.vinkkilista.data_access.TagDao;
+import java.util.*;
+
+public class BookmarkService {
+
+    private final BookmarkDao bookmarkDao;
+    private final TagDao tagDao;
+
+<span class="fc" id="L12">    public BookmarkService(BookmarkDao bookmarkDao, TagDao tagDao) {</span>
+<span class="fc" id="L13">        this.bookmarkDao = bookmarkDao;</span>
+<span class="fc" id="L14">        this.tagDao = tagDao;</span>
+<span class="fc" id="L15">    }</span>
+
+    /**
+     * Creates a new {@link Bookmark} from the specified title, url and author.
+     */
+    public void createBookmark(
+        String title, 
+        String url, 
+        String author
+    ) {
+<span class="fc" id="L25">        createBookmark(title, url, author, new HashSet&lt;&gt;());</span>
+<span class="fc" id="L26">    }</span>
+
+    /**
+     * Creates a new {@link Bookmark} from the specified title, url, author and 
+     * a string of tags.
+     */
+    public void createBookmark(
+            String title, 
+            String url, 
+            String author, 
+            Set&lt;String&gt; tags
+    ) {
+<span class="fc" id="L38">        String id = generateBookmarkId();</span>
+
+<span class="fc" id="L40">        tags.add(addTagStringByUrl(url));</span>
+<span class="fc" id="L41">        Set&lt;Tag&gt; tagSet = findOrCreateTags(tags);</span>
+
+<span class="fc" id="L43">        Bookmark bookmark = new Bookmark(</span>
+                id,
+                title,
+                url,
+                author,
+                tagSet
+        );
+
+<span class="fc" id="L51">        bookmarkDao.add(bookmark);</span>
+<span class="fc" id="L52">    }</span>
+
+    public Collection&lt;Bookmark&gt; getAllBookmarks() {
+<span class="fc" id="L55">        return bookmarkDao.findAll();</span>
+    }
+
+    private String generateBookmarkId() {
+<span class="fc" id="L59">        return UUID.randomUUID().toString();</span>
+    }
+
+    /**
+     * Checks and fixes the given tag set.
+     *
+     * @param tags Tags in a string set
+     * @return Tags in a string set
+     */
+    public Set&lt;String&gt; validateTagSet(Set&lt;String&gt; tags) {
+<span class="fc" id="L69">        Set&lt;String&gt; tagsSet = new HashSet&lt;&gt;();</span>
+
+<span class="fc bfc" id="L71" title="All 2 branches covered.">        for (String tag : tags) {</span>
+<span class="fc" id="L72">            tag = validateTag(tag);</span>
+
+<span class="fc bfc" id="L74" title="All 2 branches covered.">            if (tag != null) {</span>
+<span class="fc" id="L75">                tagsSet.add(tag);</span>
+            }
+<span class="fc" id="L77">        }</span>
+
+<span class="fc" id="L79">        return tagsSet;</span>
+    }
+
+    /***
+     * Function for validating and cleaning a tag.
+     * @param tag
+     * @return A validated tag as a string that contains no extra spaces and 
+     * has only allowed characters. Null if length is 0.
+     * Currently Only allows alpha-numeric characters.
+     */
+    public String validateTag(String tag) {
+<span class="fc" id="L90">        String cleanedTag = tag</span>
+<span class="fc" id="L91">            .toLowerCase()</span>
+<span class="fc" id="L92">            .replaceAll(&quot;[^a-z0-9 ]&quot;, &quot;&quot;)</span>
+<span class="fc" id="L93">            .trim()</span>
+<span class="fc" id="L94">            .replaceAll(&quot; +&quot;, &quot; &quot;);</span>
+
+<span class="fc bfc" id="L96" title="All 2 branches covered.">        return cleanedTag.length() == 0 ? null : cleanedTag;</span>
+    }
+
+    /**
+     * Finds existing {@link Tag} using the specified name, otherwise creates
+     * a new one.
+     *
+     * @param name the name of the new tag to be created
+     * @return reference to the matching or new tag
+     */
+    public Tag findOrCreateTag(String name) {
+<span class="fc" id="L107">        Tag tag = tagDao.findByName(name);</span>
+<span class="fc bfc" id="L108" title="All 2 branches covered.">        if (tag != null) {</span>
+<span class="fc" id="L109">            return tag;</span>
+        }
+
+<span class="fc" id="L112">        String id = generateBookmarkId();</span>
+
+<span class="fc" id="L114">        tag = new Tag(id, name);</span>
+
+<span class="fc" id="L116">        tagDao.add(tag);</span>
+
+<span class="fc" id="L118">        return tag;</span>
+    }
+
+    /**
+     * Function for converting string tag set to a set of tag objects, asking
+     * for new tags to be created if no matching ones are found. Validates
+     * the given set of tags.
+     *
+     * @param tags set of tag strings
+     * @return set of tag objects
+     */
+    public Set&lt;Tag&gt; findOrCreateTags(Set&lt;String&gt; tags) {
+<span class="fc" id="L130">        Set&lt;Tag&gt; tagsSet = new HashSet&lt;&gt;();</span>
+
+<span class="fc" id="L132">        tags = validateTagSet(tags);</span>
+
+<span class="fc bfc" id="L134" title="All 2 branches covered.">        for (String tagString : tags) {</span>
+<span class="fc" id="L135">            tagsSet.add(findOrCreateTag(tagString));</span>
+<span class="fc" id="L136">        }</span>
+
+<span class="fc" id="L138">        return tagsSet;</span>
+    }
+
+    /**
+     * Takes the URL given and returns the appropriate tag 
+     * related to that URL as a string.
+     *
+     * @param url The URL of the bookmark
+     * @return Name of the tag as string, empty if no match
+     */
+    public String addTagStringByUrl(String url) {
+<span class="fc" id="L149">        String[] videoUrls = {&quot;youtube.com&quot;, &quot;vimeo.com&quot;, &quot;youtu.be&quot;};</span>
+<span class="fc" id="L150">        String[] blogUrls = {</span>
+            &quot;blogger.com&quot;, &quot;blogs.helsinki.fi&quot;, 
+            &quot;wordpress.org&quot;, &quot;blogspot.com&quot;};
+<span class="fc" id="L153">        String[] bookUrls = {&quot;.suomalainen.com&quot;};</span>
+<span class="fc" id="L154">        String[] scienceUrls = {&quot;dl.acm.org&quot;, &quot;ieeexplore.ieee.org&quot;};</span>
+
+<span class="fc bfc" id="L156" title="All 2 branches covered.">        for (String videoUrl : videoUrls) {</span>
+<span class="fc bfc" id="L157" title="All 2 branches covered.">            if (url.contains(videoUrl)) {</span>
+<span class="fc" id="L158">                return &quot;Video&quot;;</span>
+            }
+        }
+
+<span class="fc bfc" id="L162" title="All 2 branches covered.">        for (String blogUrl : blogUrls) {</span>
+<span class="fc bfc" id="L163" title="All 2 branches covered.">            if (url.contains(blogUrl)) {</span>
+<span class="fc" id="L164">                return &quot;Blog&quot;;</span>
+            }
+        }
+
+<span class="fc bfc" id="L168" title="All 2 branches covered.">        for (String bookUrl : bookUrls) {</span>
+<span class="fc bfc" id="L169" title="All 2 branches covered.">            if (url.contains(bookUrl)) {</span>
+<span class="fc" id="L170">                return &quot;Book&quot;;</span>
+            }
+        }
+
+<span class="fc bfc" id="L174" title="All 2 branches covered.">        for (String scienceUrl : scienceUrls) {</span>
+<span class="fc bfc" id="L175" title="All 2 branches covered.">            if (url.contains(scienceUrl)) {</span>
+<span class="fc" id="L176">                return &quot;Scientific Publication&quot;;</span>
+            }
+        }
+
+<span class="fc" id="L180">        return &quot;&quot;;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.1.201803210924</span></div></body></html>

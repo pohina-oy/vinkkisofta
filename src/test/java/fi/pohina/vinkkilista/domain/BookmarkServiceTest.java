@@ -5,6 +5,8 @@ import fi.pohina.vinkkilista.data_access.InMemoryBookmarkDao;
 import fi.pohina.vinkkilista.data_access.TagDao;
 import fi.pohina.vinkkilista.data_access.InMemoryTagDao;
 import java.util.*;
+import java.util.stream.Collectors;
+import static org.hamcrest.CoreMatchers.hasItems;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -60,6 +62,89 @@ public class BookmarkServiceTest {
         assertEquals(tagName, createdTag.getName());
     }
 
+    /**
+     * Tests that searching for bookmarks by tags returns a list of only
+     * matching bookmarks
+     */
+    @Test
+    public void canSearchBookmarksByTags() {
+        addTaggedBookmarks();
+
+        Collection<Bookmark> foundBookmarks = bookmarkService.getBookmarksByTags(
+            new HashSet<>(Arrays.asList("video"))
+        );
+
+        assertEquals(2, foundBookmarks.size());
+        assertThat(
+            foundBookmarks.stream()
+                .map(Bookmark::getTitle)
+                .collect(Collectors.toList()),
+            hasItems("third", "fourth")
+        );
+
+        foundBookmarks = bookmarkService.getBookmarksByTags(
+            new HashSet<>(Arrays.asList("journal"))
+        );
+
+        assertEquals(1, foundBookmarks.size());
+        assertThat(
+            foundBookmarks.stream()
+                .map(Bookmark::getTitle)
+                .collect(Collectors.toList()),
+            hasItems("third")
+        );
+    }
+
+    /**
+     * Tests that searching for bookmarks by tags not in dao does not result in
+     * creating new tags.
+     */
+    @Test
+    public void searchBookmarksByTagsDoesNotCreateNewTags() {
+        addTaggedBookmarks();
+
+        Collection<Bookmark> foundBookmarks = bookmarkService
+            .getBookmarksByTags(new HashSet<>(Arrays.asList("blog")));
+
+        assertEquals(0, foundBookmarks.size());
+    }
+
+    /**
+     * Tests that searching for bookmarks by tags returns an empty list if no
+     * matching bookmarks are found
+     */
+    @Test
+    public void searchBookmarksByTagsReturnsEmptyListIfNoMatches() {
+        addTaggedBookmarks();
+
+        Collection<Bookmark> foundBookmarks = bookmarkService
+            .getBookmarksByTags(new HashSet<>(Arrays.asList("blog")));
+
+        assertEquals(0, foundBookmarks.size());
+    }
+
+    private void addTaggedBookmarks() {
+        bookmarkService.createBookmark(
+            "no tags",
+            "www.tagless.com",
+            "unknown"
+        );
+
+        bookmarkService.createBookmark(
+            "third",
+            "https://www.nature.com",
+            "Editor",
+            new HashSet<>(Arrays.asList("video", "journal"))
+        );
+
+        bookmarkService.createBookmark(
+            "fourth",
+            "https://www.videosite.net",
+            "Firstname Lastname",
+            new HashSet<>(Arrays.asList("video"))
+        );
+    }
+
     @Test
     public void tagSetStringToObjectCreatesMissingTags() {
         String tagString1 = "video";
@@ -70,8 +155,8 @@ public class BookmarkServiceTest {
         Tag tag2 = bookmarkService.findOrCreateTag(tagString2);
         Tag tag3 = bookmarkService.findOrCreateTag(tagString3);
 
-        HashSet<String> stringSet = new HashSet<>(
-                Arrays.asList(tagString1, tagString2, "journal")
+        Set<String> stringSet = new HashSet<>(
+            Arrays.asList(tagString1, tagString2, "journal")
         );
 
         Set<Tag> tagSet = bookmarkService.findOrCreateTags(stringSet);
@@ -84,7 +169,6 @@ public class BookmarkServiceTest {
         assertTrue(tagSet.contains(tagDao.findByName("journal")));
     }
 
-    @Test
     public void validateTagReturnsTagsInCorrectForm() {
         String tag = "testi";
         assertEquals("testi", bookmarkService.validateTag(tag));
