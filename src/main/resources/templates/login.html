@@ -1,0 +1,21 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Kirjaudu sisään | Vinkkisofta</title>
+    <meta charset="utf-8"/>
+    <link rel="stylesheet" href="/main.css" type="text/css"/>
+</head>
+
+<body>
+<div class="container">
+    <h1>Vinkkilista</h1>
+
+    <div>
+        <a th:href="${'https://github.com/login/oauth/authorize?client_id=' + clientId + '&scope=user:email%20read:user'}">
+            Sign in with Github
+        </a>
+    </div>
+</div>
+</body>
+</html>

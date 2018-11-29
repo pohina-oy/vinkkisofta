@@ -4,12 +4,17 @@
     <head>
         <title>Vinkkisofta</title>
         <meta charset="utf-8"/>
-        <link rel="stylesheet" th:href="@{main.css}" type="text/css"/>
+        <link rel="stylesheet" href="/main.css" type="text/css"/>
     </head>
 
     <body>
         <div class="container">
             <h1>Vinkkilista</h1>
+
+            <div>
+                User: <span th:text="${user.username}"></span>
+            </div>
+
             <div class="bookmarkList">
                 <div class="bookmark" th:each="bookmark : ${bookmarks}">
                     <a class="bookmarkLink" th:href="${bookmark.url}">
