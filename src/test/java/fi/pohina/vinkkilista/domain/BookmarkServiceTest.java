@@ -96,6 +96,21 @@ public class BookmarkServiceTest {
     }
 
     /**
+     * Tests that searching for bookmarks by tags not in dao does not result in
+     * creating new tags.
+     */
+    @Test
+    public void searchBookmarksByTagsDoesNotCreateNewTags() {
+        addTaggedBookmarks();
+
+        Collection<Bookmark> foundBookmarks = bookmarkService
+            .getBookmarksByTags(new HashSet<>(Arrays.asList("blog")));
+
+        assertEquals(null, bookmarkService.findTag("blog"));
+        assertEquals(0, foundBookmarks.size());
+    }
+
+    /**
      * Tests that searching for bookmarks by tags returns an empty list if no
      * matching bookmarks are found
      */
