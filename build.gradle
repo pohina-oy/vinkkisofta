@@ -45,6 +45,13 @@ jar {
     }
 }
 
+jacocoTestReport {
+    reports {
+        xml.enabled true
+        html.enabled true
+    }
+}
+
 task stage(dependsOn: ['jar', 'clean'])
 jar.mustRunAfter clean
 
