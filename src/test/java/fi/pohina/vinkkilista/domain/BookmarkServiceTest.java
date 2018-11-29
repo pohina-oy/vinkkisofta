@@ -106,7 +106,6 @@ public class BookmarkServiceTest {
         Collection<Bookmark> foundBookmarks = bookmarkService
             .getBookmarksByTags(new HashSet<>(Arrays.asList("blog")));
 
-        assertEquals(null, bookmarkService.findTag("blog"));
         assertEquals(0, foundBookmarks.size());
     }
 
@@ -160,7 +159,7 @@ public class BookmarkServiceTest {
             Arrays.asList(tagString1, tagString2, "journal")
         );
 
-        Set<Tag> tagSet = bookmarkService.tagSetStringToObject(stringSet);
+        Set<Tag> tagSet = bookmarkService.findOrCreateTags(stringSet);
 
         verify(bookmarkService, times(1)).findOrCreateTag("journal");
 
@@ -170,31 +169,6 @@ public class BookmarkServiceTest {
         assertTrue(tagSet.contains(tagDao.findByName("journal")));
     }
 
-    @Test
-    public void tagSetStringToObjectNoCreateFindsExistingTags() {
-        String tagString1 = "video";
-        String tagString2 = "blog";
-        String tagString3 = "news";
-
-        Tag tag1 = bookmarkService.findOrCreateTag(tagString1);
-        Tag tag2 = bookmarkService.findOrCreateTag(tagString2);
-        Tag tag3 = bookmarkService.findOrCreateTag(tagString3);
-
-        Set<String> stringSet = new HashSet<>(
-            Arrays.asList(tagString1, tagString2, "journal")
-        );
-
-        Set<Tag> tagSet = bookmarkService.tagSetStringToObjectNoCreate(stringSet);
-
-        verify(bookmarkService, times(0)).findOrCreateTag("journal");
-        verify(bookmarkService, times(1)).findTag("journal");
-
-        assertEquals(2, tagSet.size());
-        assertTrue(tagSet.contains(tag1));
-        assertTrue(tagSet.contains(tag2));
-    }
-
-    @Test
     public void validateTagReturnsTagsInCorrectForm() {
         String tag = "testi";
         assertEquals("testi", bookmarkService.validateTag(tag));
