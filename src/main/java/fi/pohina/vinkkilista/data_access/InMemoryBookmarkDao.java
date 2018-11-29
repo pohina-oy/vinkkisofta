@@ -1,6 +1,7 @@
 package fi.pohina.vinkkilista.data_access;
 
 import fi.pohina.vinkkilista.domain.Bookmark;
+import fi.pohina.vinkkilista.domain.Tag;
 import java.util.*;
 import fi.pohina.vinkkilista.domain.Tag;
 
@@ -33,6 +34,25 @@ public class InMemoryBookmarkDao implements BookmarkDao {
         }
 
         return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<Bookmark> findByTagSet(Set<String> tags) {
+        List<Bookmark> bookmarksList = new ArrayList<>();
+
+        for (Bookmark bookmark : bookmarksDB) {
+            for (Tag tag : bookmark.getTags()) {
+                if (tags.contains(tag.getName())) {
+                    bookmarksList.add(bookmark);
+                    break;
+                }
+            }
+        }
+
+        return bookmarksList;
     }
 
     @Override
