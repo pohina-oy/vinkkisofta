@@ -89,9 +89,8 @@ public class BookmarkService {
     public String validateTag(String tag) {
         String cleanedTag = tag
             .toLowerCase()
-            .replaceAll("[^a-z0-9 ]", "")
-            .trim()
-            .replaceAll(" +", " ");
+            .replaceAll(" +", " ")
+            .trim();
 
         return cleanedTag.length() == 0 ? null : cleanedTag;
     }
