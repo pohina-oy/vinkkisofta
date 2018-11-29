@@ -191,5 +191,32 @@ public class PostgreBookmarkDao implements BookmarkDao {
             System.out.println(e.getMessage());
         }
         return null;
-	}
+    }
+
+    @Override
+    public List<Bookmark> findByTagSet(Set<String> tags) {
+        ArrayList<String> tagArray = new ArrayList<>();
+        for (String tag : tags) {
+            tagArray.add(tag);
+        }
+        String query = "select bookmarks.* from bookmark_tags inner join bookmarks on bookmark_tags.\"bookmarkId\" = bookmarks.id inner join tags on  tags.id = bookmark_tags.\"tagId\"  where tags.name = ANY(?)";
+        try {
+            PreparedStatement st = this.db.prepareStatement(query);
+            Array array = this.db.createArrayOf("varchar", tagArray.toArray());
+            st.setArray(1, array);
+            ResultSet rs = st.executeQuery();
+            HashSet<Bookmark> bookmarks = new HashSet<>();
+            while (rs.next()) {
+                String bookmarkId = rs.getString("id");
+                String bookmarkTile = rs.getString("title");
+                String bookmarkUrl = rs.getString("url");
+                String bookmarkAuthor = rs.getString("author");
+                bookmarks.add(new Bookmark(bookmarkId, bookmarkTile, bookmarkUrl, bookmarkAuthor));
+            }
+            return new ArrayList<Bookmark>(bookmarks);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
 }
