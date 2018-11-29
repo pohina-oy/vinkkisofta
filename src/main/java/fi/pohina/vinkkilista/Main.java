@@ -7,7 +7,6 @@ import fi.pohina.vinkkilista.data_access.InMemoryTagDao;
 import fi.pohina.vinkkilista.domain.BookmarkService;
 import java.util.*;
 import fi.pohina.vinkkilista.data_access.PostgreBookmarkDao;
-import fi.pohina.vinkkilista.domain.BookmarkService;
 import io.github.cdimascio.dotenv.Dotenv;
 
 public class Main {
