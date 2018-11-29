@@ -2,7 +2,6 @@ language: java
 
 script:
   - gradle check
-  - ./gradlew check
   - ./gradlew jacocoTestReport
 
 deploy: 
