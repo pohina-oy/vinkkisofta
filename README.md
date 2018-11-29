@@ -1,5 +1,4 @@
-# Vinkkisofta [![Build Status](https://travis-ci.org/pohina-oy/vinkkisofta.svg?branch=master)](https://travis-ci.org/pohina-oy/vinkkisofta)
-[![codecov](https://codecov.io/gh/pohina-oy/vinkkisofta/branch/master/graph/badge.svg)](https://codecov.io/gh/pohina-oy/vinkkisofta)
+# Vinkkisofta [![Build Status](https://travis-ci.org/pohina-oy/vinkkisofta.svg?branch=master)](https://travis-ci.org/pohina-oy/vinkkisofta)[![codecov](https://codecov.io/gh/pohina-oy/vinkkisofta/branch/master/graph/badge.svg)](https://codecov.io/gh/pohina-oy/vinkkisofta)
 
 
 ## Resursseja
