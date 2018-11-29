@@ -1,4 +1,4 @@
-# vinkkisofta [![Build Status](https://travis-ci.org/pohina-oy/vinkkisofta.svg?branch=master)](https://travis-ci.org/pohina-oy/vinkkisofta)
+# Vinkkisofta [![Build Status](https://travis-ci.org/pohina-oy/vinkkisofta.svg?branch=master)](https://travis-ci.org/pohina-oy/vinkkisofta)
 
 
 ## Resursseja
