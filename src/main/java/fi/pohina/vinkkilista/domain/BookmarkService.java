@@ -38,7 +38,7 @@ public class BookmarkService {
         String id = generateBookmarkId();
 
         tags.add(addTagStringByUrl(url));
-        Set<Tag> tagSet = tagSetStringToObject(tags, true);
+        Set<Tag> tagSet = tagSetStringToObject(tags);
 
         Bookmark bookmark = new Bookmark(
                 id,
@@ -123,13 +123,13 @@ public class BookmarkService {
     }
 
     /**
-     * Creates a new {@link Tag} from the specified tag name.
+     * Finds existing {@link Tag} using the specified name, otherwise creates
+     * a new one.
      *
      * @param name the name of the new tag to be created
-     * @return reference to the new tag
+     * @return reference to the matching or new tag
      */
     public Tag findOrCreateTag(String name) {
-
         Tag tag = tagDao.findByName(name);
         if (tag != null) {
             return tag;
@@ -144,17 +144,22 @@ public class BookmarkService {
         return tag;
     }
 
+    /**
+     * Finds existing {@link Tag} using the specified name.
+     *
+     * @param name the name of the new tag to be created
+     * @return reference to the matching or new tag
+     */
     public Tag findTag(String name) {
         return tagDao.findByName(name);
     }
 
     /**
-     * Function for converting string tag set to a set of existing tag objects,
-     * and alternatively also creates missing tags if specified. Validates
+     * Function for converting string tag set to a set of tag objects, asking
+     * for new tags to be created if no matching ones are found. Validates
      * the given set of tags.
      *
-     * @param tags comma-separated string list of tags
-     * @param createNew Boolean for whether to create missing tags
+     * @param tags set of tag strings
      * @return set of tag objects
      */
     public Set<Tag> tagSetStringToObject(Set<String> tags) {
@@ -169,6 +174,13 @@ public class BookmarkService {
         return tagsSet;
     }
 
+    /**
+     * Function for converting string tag set to a set of tag objects that
+     * already exist. Validates the given set of tags.
+     *
+     * @param tags set of tag strings
+     * @return set of tag objects
+     */
     public Set<Tag> tagSetStringToObjectNoCreate(Set<String> tags) {
         Set<Tag> tagsSet = new HashSet<>();
 
