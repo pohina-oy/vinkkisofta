@@ -16,6 +16,10 @@
 
 - [Google sheet](https://docs.google.com/spreadsheets/d/1WJLLhJqwL1v81oGyYei8ar9JIhcWjHWNv2a0IJMCbBo/edit#gid=410557751)
 
+## Test coverage report
+
+- [See JaCoCo report on CodeCov](https://codecov.io/gh/pohina-oy/vinkkisofta)
+
 ## Definition of done
 
 - suunnittelu 
@@ -25,5 +29,3 @@
 - integrointi
 - dokumentointi
 
-## Test Coverage
-[JaCoCo](https://htmlpreview.github.io/?https://github.com/pohina-oy/vinkkisofta/blob/jacoco/documents/jacoco/index.html)
