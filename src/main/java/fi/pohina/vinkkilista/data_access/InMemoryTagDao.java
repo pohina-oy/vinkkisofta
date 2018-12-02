@@ -4,8 +4,8 @@ import fi.pohina.vinkkilista.domain.Tag;
 import java.util.*;
 
 /**
- * Provides an in-memory implementation of the {@link BookmarkDao} interface,
- * backed by a {@link List<Bookmark>}.
+ * Provides an in-memory implementation of the {@link TagDao} interface,
+ * backed by a {@link List<Tag>}.
  */
 public class InMemoryTagDao implements TagDao {
 
