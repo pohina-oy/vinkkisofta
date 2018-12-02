@@ -53,7 +53,7 @@ public class InMemoryUserDao implements UserDao {
     @Override
     public List<User> findAll() {
         // return a new ArrayList so that the consumer cannot change our
-        // internal copy of the bookmark list
+        // internal copy of the user list
         return new ArrayList<>(usersDB);
     }
 

@@ -51,7 +51,7 @@ public class InMemoryTagDao implements TagDao {
     @Override
     public List<Tag> findAll() {
         // return a new ArrayList so that the consumer cannot change our
-        // internal copy of the bookmark list
+        // internal copy of the tag list
         return new ArrayList<>(this.tagsDB);
     }
 
