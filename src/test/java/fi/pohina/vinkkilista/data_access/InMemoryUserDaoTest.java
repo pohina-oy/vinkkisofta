@@ -69,7 +69,7 @@ public class InMemoryUserDaoTest {
     }
 
     @Test
-    public void findAllCorrectlyFindsInitiallyAddedBookmarks() {
+    public void findAllCorrectlyFindsInitiallyAddedUsers() {
         List<String> foundIds = userDao.findAll()
             .stream()
             .map(User::getId)
@@ -80,7 +80,7 @@ public class InMemoryUserDaoTest {
     }
 
     @Test
-    public void findAllFindsPreviousBookmarksAfterAdd() {
+    public void findAllFindsPreviousUsersAfterAdd() {
         String newId = "new-123";
         User newEntry = new User(
             newId,
@@ -102,7 +102,7 @@ public class InMemoryUserDaoTest {
     }
 
     @Test
-    public void addCorrectlyAddsNewBookmark() {
+    public void addCorrectlyAddsNewUser() {
         String addedId = "user-3";
         User newEntry = new User(
             addedId,
