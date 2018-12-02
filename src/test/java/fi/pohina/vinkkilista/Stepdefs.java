@@ -124,7 +124,7 @@ public class Stepdefs {
         pageUrlIs(baseUrl + "search");
 
         pageHasContent("Search bookmarks by tags");
-        allBookmarksHaveTags(tag);
+        allBookmarksHaveAnyOfTags(getBookmarkWebElements("bookmarkList"), tag);
     }
 
     @Then("only bookmarks with one of the tags {string} are listed")
@@ -132,12 +132,12 @@ public class Stepdefs {
         pageUrlIs(baseUrl + "search");
 
         pageHasContent("Search bookmarks by tags");
-        allBookmarksHaveTags(tags);
+        allBookmarksHaveAnyOfTags(getBookmarkWebElements("bookmarkList"), tags);
     }
 
     @Then("no bookmarks are listed")
     public void no_bookmarks_are_listed() {
-        assertEquals(0, driver.findElements(By.className("bookmark")).size());
+        assertEquals(0, getBookmarkWebElements("bookmarkList").size());
     }
 
     @After
@@ -170,32 +170,33 @@ public class Stepdefs {
         submitElementWithId("submitForm");
     }
 
-    private void allBookmarksHaveTags(String tags) {
-        assertTrue(
-            eachTagElementHasAnyGivenTag(
-                driver.findElements(By.className("bookmarkTags")),
-                tagParser.parse(tags)
-            )
-        );
-        correctNumberOfBookmarksWithTags();
+    private List<WebElement> getBookmarkWebElements(String containerClassName) {
+        return driver.findElement(By.className(containerClassName))
+            .findElements(By.className("bookmark"));
     }
 
-    private void correctNumberOfBookmarksWithTags() {
-        assertEquals(
-            driver.findElements(By.className("bookmark")).size(),
-            driver.findElements(By.className("bookmarkTags")).size()
-        );
+    private void allBookmarksHaveAnyOfTags(
+        List<WebElement> bookmarks,
+        String tags
+    ) {
+        for (WebElement bookmark : bookmarks) {
+            assertTrue(
+                bookmarkHasAnyOfTags(bookmark, tagParser.parse(tags))
+            );
+        }
     }
 
-    private Boolean eachTagElementHasAnyGivenTag(
-        List<WebElement> tagsByBookmarks,
+    private Boolean bookmarkHasAnyOfTags(
+        WebElement bookmark,
         Set<String> tagSet
     ) {
-        for (WebElement tagsOfBookmark : tagsByBookmarks) {
-            for (String tag : tagSet) {
-                if (tagsOfBookmark.getText().contains(tag)) {
-                    return true;
-                }
+        WebElement tagsOfBookmark = bookmark.findElement(
+            By.className("bookmarkTags")
+        );
+
+        for (String tag : tagSet) {
+            if (tagsOfBookmark.getText().contains(tag)) {
+                return true;
             }
         }
 
