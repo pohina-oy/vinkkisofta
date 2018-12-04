@@ -1,27 +1,32 @@
 package fi.pohina.vinkkilista;
 
-import fi.pohina.vinkkilista.domain.Bookmark;
-import fi.pohina.vinkkilista.domain.BookmarkService;
-import fi.pohina.vinkkilista.api.*;
-
-import java.lang.reflect.Type;
-import java.util.*;
-
+import com.google.common.base.Strings;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import org.apache.http.client.fluent.Form;
-
+import fi.pohina.vinkkilista.api.GithubEmail;
+import fi.pohina.vinkkilista.api.GithubUser;
+import fi.pohina.vinkkilista.data_access.InMemoryUserDao;
+import fi.pohina.vinkkilista.domain.Bookmark;
+import fi.pohina.vinkkilista.domain.BookmarkService;
 import fi.pohina.vinkkilista.domain.User;
+import fi.pohina.vinkkilista.domain.UserService;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.fluent.Form;
 import org.apache.http.client.utils.URLEncodedUtils;
 import spark.ModelAndView;
 import spark.QueryParamsMap;
 import spark.template.thymeleaf.ThymeleafTemplateEngine;
-import com.google.common.base.Strings;
+
+import java.lang.reflect.Type;
+import java.util.*;
+
 import static spark.Spark.*;
 
 public class App {
+
+    private static final String SESSION_ATTRIBUTE_USERID = "github-user";
+    private static final String REQ_ATTRIBUTE_USER = "user";
 
     private static final String GITHUB_CLIENT_ID = "censored";
     private static final String GITHUB_CLIENT_SECRET = "censored";
@@ -31,10 +36,12 @@ public class App {
 
     private final BookmarkService bookmarks;
     private final AppConfig config;
+    private final UserService users;
 
     public App(BookmarkService bookmarks, AppConfig config) {
         this.bookmarks = bookmarks;
         this.config = config;
+        this.users = new UserService(new InMemoryUserDao());
     }
 
     /**
@@ -152,7 +159,7 @@ public class App {
                 List<GithubEmail> userEmails = new Gson().fromJson(userEmailsJson, emailListType);
 
                 GithubEmail primaryEmail = userEmails.stream()
-                            .filter(email -> email.primary)
+                            .filter(email -> email.isPrimary())
                             .findFirst()
                             .orElse(userEmails.get(0));
 
