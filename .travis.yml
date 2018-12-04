@@ -1,8 +1,19 @@
-language: java
+dist: trusty
+sudo: required
+language: generic
+
+addons:
+  apt:
+    packages:
+      - docker-ce
 
 script:
-  - gradle check
-  - ./gradlew jacocoTestReport
+  - docker-composer build
+  - docker-compose up -d psql
+  - sleep 5
+  - docker-compose run web npm run db:init
+  - docker-compose run web npm run migrate-latest
+  - docker-compose run web gradle check
 
 deploy: 
   provider: heroku

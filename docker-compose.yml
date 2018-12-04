@@ -1,0 +1,26 @@
+version: '3.7'
+services:
+  psql:
+    image: postgres
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+    ports:
+      - 5432:5432
+  web:
+    build:
+      context: .
+      shm_size: 1G
+    ports:
+      - "8080:8080"
+    depends_on:
+      - psql
+    command: gradle run
+    environment:
+      PORT: 8080
+      DB_HOST: psql
+      DB_PORT: 5432
+      DB_USER: root
+      DB_PASSWORD: root
+      DB_NAME: vinkkisofta
+      STAGE: production
