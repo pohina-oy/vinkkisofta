@@ -146,12 +146,12 @@ public class App {
 
                 System.out.println("  - GET /user/emails\n     * " + userEmailsJson);
 
-                Type emailListType = new TypeToken<List<GithubUserEmail>>() {
+                Type emailListType = new TypeToken<List<GithubEmail>>() {
                 }.getType();
 
-                List<GithubUserEmail> userEmails = new Gson().fromJson(userEmailsJson, emailListType);
+                List<GithubEmail> userEmails = new Gson().fromJson(userEmailsJson, emailListType);
 
-                GithubUserEmail primaryEmail = userEmails.stream()
+                GithubEmail primaryEmail = userEmails.stream()
                             .filter(email -> email.primary)
                             .findFirst()
                             .orElse(userEmails.get(0));
