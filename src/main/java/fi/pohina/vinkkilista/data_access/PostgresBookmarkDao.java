@@ -38,7 +38,7 @@ public class PostgresBookmarkDao implements BookmarkDao {
                 String url = rs.getString("url");
                 String author = rs.getString("author");
                 Set<Tag> tags = findBookmarkTags(id);
-                return new Bookmark(id, title, url, author, tags);
+                return new Bookmark(id, title, url, author, null, tags);
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -54,7 +54,7 @@ public class PostgresBookmarkDao implements BookmarkDao {
         List<Bookmark> bookmarks = new ArrayList<>();
         try {
             Statement st = this.db.createStatement();
-            ResultSet rs = st.executeQuery("SELECT * FROM bookmarks");
+            ResultSet rs = st.executeQuery("SELECT * FROM bookmars.*, users.*, users.id as userId inner join users on (bookmarks.\"creatorId\" = users.id)");
             while (rs.next()) {
                 String id = rs.getString("id");
                 String title = rs.getString("title");
@@ -66,6 +66,7 @@ public class PostgresBookmarkDao implements BookmarkDao {
                     title, 
                     url, 
                     author,
+                    null,
                     tags
                 ));                
             }
@@ -153,7 +154,7 @@ public class PostgresBookmarkDao implements BookmarkDao {
                 String bookmarkUrl = rs.getString("url");
                 String bookmarkAuthor = rs.getString("author");
                 Set<Tag> tags = findBookmarkTags(bookmarkId);
-                bookmarks.add(new Bookmark(bookmarkId, bookmarkTile, bookmarkUrl, bookmarkAuthor, tags));
+                bookmarks.add(new Bookmark(bookmarkId, bookmarkTile, bookmarkUrl, bookmarkAuthor, null, tags));
             }
             return new ArrayList<Bookmark>(bookmarks);
         } catch (Exception e) {
