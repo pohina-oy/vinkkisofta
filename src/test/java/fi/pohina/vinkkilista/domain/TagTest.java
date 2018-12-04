@@ -26,6 +26,7 @@ public class TagTest {
         Tag tag1 = new Tag("id", "name");
         Tag tag2 = new Tag("id", "name");
         Tag tag3 = new Tag("foo", "bar");
+        Tag tag4 = new Tag("id", "bar");
 
         assertEquals(true, tag1.equals(tag2));
         assertEquals(true, tag2.equals(tag1));
@@ -34,6 +35,9 @@ public class TagTest {
         assertEquals(false, tag3.equals(tag1));
         assertEquals(false, tag3.equals(tag2));
         assertEquals(false, tag2.equals(tag3));
+
+        assertEquals(false, tag4.equals(tag1));
+        assertEquals(false, tag1.equals("foobar"));
     }
 
     @Test
