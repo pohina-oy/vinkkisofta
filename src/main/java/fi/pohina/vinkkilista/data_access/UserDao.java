@@ -1,6 +1,7 @@
 package fi.pohina.vinkkilista.data_access;
 
 import fi.pohina.vinkkilista.domain.User;
+<<<<<<< HEAD
 import java.util.*;
 
 public interface UserDao {
@@ -37,3 +38,12 @@ public interface UserDao {
      */
     void add(User user);
 }
+=======
+
+public interface UserDao {
+
+    User findUserById(String id);
+
+    User findUserByGithubId(int githubId);
+}
+>>>>>>> f4c82ca... Add initial user dao and in-memory implementation
