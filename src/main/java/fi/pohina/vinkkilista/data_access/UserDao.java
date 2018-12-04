@@ -45,5 +45,11 @@ public interface UserDao {
     User findUserById(String id);
 
     User findUserByGithubId(int githubId);
+<<<<<<< HEAD
 }
 >>>>>>> f4c82ca... Add initial user dao and in-memory implementation
+=======
+
+    void add(User user);
+}
+>>>>>>> aad98df... Implement in-memory user fetching

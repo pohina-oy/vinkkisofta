@@ -1,5 +1,6 @@
 package fi.pohina.vinkkilista.data_access;
 
+import java.util.ArrayList;
 import fi.pohina.vinkkilista.domain.User;
 import java.util.*;
 
@@ -29,7 +30,6 @@ public class InMemoryUserDao implements UserDao {
                 return user;
             }
         }
-
         return null;
     }
 
