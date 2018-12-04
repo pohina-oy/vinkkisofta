@@ -6,6 +6,10 @@ import fi.pohina.vinkkilista.domain.BookmarkService;
 import java.lang.reflect.Type;
 import java.util.*;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import org.apache.http.client.fluent.Form;
+
 import fi.pohina.vinkkilista.domain.User;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
