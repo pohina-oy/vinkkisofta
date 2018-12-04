@@ -38,6 +38,7 @@ public class TagTest {
 
         assertEquals(false, tag4.equals(tag1));
         assertEquals(false, tag1.equals("foobar"));
+        assertEquals(false, tag1.equals(null));
     }
 
     @Test
