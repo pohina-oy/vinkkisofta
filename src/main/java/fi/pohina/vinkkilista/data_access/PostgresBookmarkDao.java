@@ -88,10 +88,10 @@ public class PostgresBookmarkDao implements BookmarkDao {
             st.setString(2, bookmark.getTitle());
             st.setString(3, bookmark.getUrl());
             st.setString(4, bookmark.getAuthor());
+            st.executeUpdate();
             for (Tag t : bookmark.getTags()) {
                 addBookmarkTag(bookmark.getId(), t.getId());
             }
-            st.executeUpdate();
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
