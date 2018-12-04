@@ -147,7 +147,7 @@ public class Stepdefs {
         pageUrlIs(baseUrl + "search");
         
         pageHasContent("Search bookmarks by tags");
-        pageHasContent("Rick Roll");        
+        pageHasContent(title);        
     }
 
     @After
