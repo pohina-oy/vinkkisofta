@@ -2,10 +2,8 @@ package fi.pohina.vinkkilista.domain;
 
 import fi.pohina.vinkkilista.Main;
 import fi.pohina.vinkkilista.data_access.BookmarkDao;
-import fi.pohina.vinkkilista.data_access.InMemoryBookmarkDao;
 import fi.pohina.vinkkilista.data_access.TagDao;
 import io.github.cdimascio.dotenv.Dotenv;
-import fi.pohina.vinkkilista.data_access.InMemoryTagDao;
 import java.util.*;
 import java.util.stream.Collectors;
 import static org.hamcrest.CoreMatchers.hasItems;
