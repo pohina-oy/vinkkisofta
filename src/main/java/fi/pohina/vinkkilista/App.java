@@ -15,9 +15,11 @@ public class App {
         = new CommaSeparatedTagsParser();
 
     private final BookmarkService bookmarks;
+    private final AppConfig config;
 
-    public App(BookmarkService bookmarks) {
+    public App(BookmarkService bookmarks, AppConfig config) {
         this.bookmarks = bookmarks;
+        this.config = config;
     }
 
     /**
@@ -61,6 +63,12 @@ public class App {
             Collection<Bookmark> bookmarks = searchBookmarks(req.queryMap());
             map.put("bookmarks", bookmarks);
             return render(map, "search");
+        });
+
+        get("/login", (req, res) -> {
+            Map<String, Object> map = new HashMap<>();
+            map.put("clientId", config.getGithubClientId());
+            return render(map, "login");
         });
     }
 

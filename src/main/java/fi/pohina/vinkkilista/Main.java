@@ -28,13 +28,21 @@ public class Main {
         }
 
         int port = getPort(dotenv);
+        AppConfig config = getConfig(dotenv);
 
-        new App(service).startServer(port);
+        new App(service, config).startServer(port);
     }
 
     private static int getPort(Dotenv dotenv) {
         String port = dotenv.get("PORT");
         return port == null ? 4567 : Integer.parseInt(port);
+    }
+
+    private static AppConfig getConfig(Dotenv dotenv) {
+        return new AppConfig(
+            dotenv.get("GITHUB_CLIENT_ID"),
+            dotenv.get("GITHUB_CLIENT_SECRET")
+        );
     }
 
     private static void addMockBookmarks(BookmarkService bookmarks) {
