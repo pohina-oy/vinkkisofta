@@ -1,9 +1,12 @@
 package fi.pohina.vinkkilista.domain;
 
+import org.junit.Test;
+
+import java.util.HashSet;
+import java.util.Set;
+
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.*;
-import java.util.*;
-import org.junit.Test;
 
 public class BookmarkTest {
 
@@ -47,5 +50,17 @@ public class BookmarkTest {
         String author = bookmark.getAuthor();
 
         assertNull(author);
+    }
+
+    @Test
+    public void bookmarkReturnsCorrectHashCode() {
+
+        String id = "foobar";
+
+        Bookmark bookmark = new Bookmark(
+                id, "title", "url"
+        );
+
+        assertEquals(id.hashCode(), bookmark.hashCode());
     }
 }
