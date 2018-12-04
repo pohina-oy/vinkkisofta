@@ -1,19 +1,35 @@
 dist: trusty
 sudo: required
-language: generic
+language: ruby
+
+env:
+  - DOCKER_COMPOSE_VERSION=1.22.0
 
 addons:
   apt:
     packages:
       - docker-ce
 
-script:
+before_install:
+  - sudo rm /usr/local/bin/docker-compose
+  - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
+  - chmod +x docker-compose
+  - sudo mv docker-compose /usr/local/bin
+  - docker --version
+  - docker-compose --version
+
+install:
   - docker-composer build
   - docker-compose up -d psql
   - sleep 5
   - docker-compose run web npm run db:init
   - docker-compose run web npm run migrate-latest
+
+script:
   - docker-compose run web gradle check
+
+after_script:
+  - docker-compose down
 
 deploy: 
   provider: heroku
