@@ -9,7 +9,8 @@ import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
 public class Stepdefs {
     private WebDriver driver;
-    private String baseUrl = "http://localhost:4567/";
+    //private String baseUrl = "http://localhost:4567/";
+    private String baseUrl = "http://localhost:4567/bookmarks/";
     private final CommaSeparatedTagsParser tagParser
         = new CommaSeparatedTagsParser();
     
