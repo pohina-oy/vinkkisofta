@@ -63,7 +63,7 @@ public class Main {
         );
     }
 
-    private static BookmarkDao getBookmarkDao(Dotenv dotenv) {
+    public static BookmarkDao getBookmarkDao(Dotenv dotenv) {
         String stage = dotenv.get("STAGE");
         if (stage == null || !stage.equals("production")) {
             return new InMemoryBookmarkDao();
@@ -75,7 +75,7 @@ public class Main {
         return new PostgresBookmarkDao(dbHost, dbUser, dbPassword, db);
     }
 
-    private static TagDao getTagDao(Dotenv dotenv) {
+    public static TagDao getTagDao(Dotenv dotenv) {
         String stage = dotenv.get("STAGE");
         if (stage == null || !stage.equals("production")) {
             return new InMemoryTagDao();

@@ -1,8 +1,10 @@
 package fi.pohina.vinkkilista.domain;
 
+import fi.pohina.vinkkilista.Main;
 import fi.pohina.vinkkilista.data_access.BookmarkDao;
 import fi.pohina.vinkkilista.data_access.InMemoryBookmarkDao;
 import fi.pohina.vinkkilista.data_access.TagDao;
+import io.github.cdimascio.dotenv.Dotenv;
 import fi.pohina.vinkkilista.data_access.InMemoryTagDao;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -21,8 +23,12 @@ public class BookmarkServiceTest {
 
     @Before
     public void setUp() {
-        bookmarkDao = spy(new InMemoryBookmarkDao());
-        tagDao = spy(new InMemoryTagDao());
+        Dotenv dotenv = Dotenv
+            .configure()
+            .ignoreIfMissing()
+            .load();
+        bookmarkDao = spy(Main.getBookmarkDao(dotenv));
+        tagDao = spy(Main.getTagDao(dotenv));
 
         bookmarkService = spy(new BookmarkService(bookmarkDao, tagDao));
     }
