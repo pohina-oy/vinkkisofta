@@ -2,6 +2,7 @@ package fi.pohina.vinkkilista;
 
 import fi.pohina.vinkkilista.domain.Bookmark;
 import fi.pohina.vinkkilista.domain.BookmarkService;
+import fi.pohina.vinkkilista.api.*;
 
 import java.lang.reflect.Type;
 import java.util.*;
