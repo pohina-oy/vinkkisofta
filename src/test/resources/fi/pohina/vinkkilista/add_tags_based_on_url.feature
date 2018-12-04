@@ -37,3 +37,10 @@ Feature: Tags are added to a bookmark based on url
         And valid tag "scientific publication" is given as search input
         Then a bookmark with title "Scientific Article 1" is listed
         And a bookmark with title "Scientific Article 2" is listed
+
+    Scenario: A Scientific article bookmark has no mismatching tags automatically added
+        Given new bookmark is selected
+        When valid title "Scientific Article 1" and valid url "https://ieeexplore.ieee.org/document/8253363" are given
+        And search bookmarks is selected
+        And valid tags "video,book,blog" are given as search input
+        Then a bookmark with title "Scientific Article 1" is not listed
