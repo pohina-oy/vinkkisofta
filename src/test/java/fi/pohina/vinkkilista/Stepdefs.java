@@ -139,6 +139,16 @@ public class Stepdefs {
     public void no_bookmarks_are_listed() {
         assertEquals(0, getBookmarkWebElements("bookmarkList").size());
     }
+    
+    // Add Tags Based On Url
+    
+    @Then("a bookmark with title {string} is listed")
+    public void a_bookmark_with_title_is_listed(String title) {
+        pageUrlIs(baseUrl + "search");
+        
+        pageHasContent("Search bookmarks by tags");
+        pageHasContent("Rick Roll");        
+    }
 
     @After
     public void tearDown() {
