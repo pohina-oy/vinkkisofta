@@ -28,8 +28,8 @@ public class App {
     private static final String SESSION_ATTRIBUTE_USERID = "github-user";
     private static final String REQ_ATTRIBUTE_USER = "user";
 
-    private static final String GITHUB_CLIENT_ID = "censored";
-    private static final String GITHUB_CLIENT_SECRET = "censored";
+    private static String GITHUB_CLIENT_ID = "censored";
+    private static String GITHUB_CLIENT_SECRET = "censored";
 
     private final CommaSeparatedTagsParser tagParser
         = new CommaSeparatedTagsParser();
@@ -42,6 +42,9 @@ public class App {
         this.bookmarks = bookmarks;
         this.config = config;
         this.users = new UserService(new InMemoryUserDao());
+
+        GITHUB_CLIENT_ID = System.getenv("GITHUB_CLIENT_ID");
+        GITHUB_CLIENT_SECRET = System.getenv("GITHUB_CLIENT_SECRET");
     }
 
     /**
