@@ -19,6 +19,9 @@ public class Bookmark {
         this(id, title, url, author, creator, new HashSet<>());
     }
 
+    public Bookmark(String id, String title, String url, String author) {
+        this(id, title, url, author, null, new HashSet<>());
+    }
     public Bookmark(
         String id,
         String title,
