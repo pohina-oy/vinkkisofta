@@ -10,6 +10,7 @@ import fi.pohina.vinkkilista.domain.Bookmark;
 import fi.pohina.vinkkilista.domain.BookmarkService;
 import fi.pohina.vinkkilista.domain.User;
 import fi.pohina.vinkkilista.domain.UserService;
+import io.github.cdimascio.dotenv.Dotenv;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.fluent.Form;
@@ -43,8 +44,14 @@ public class App {
         this.config = config;
         this.users = new UserService(new InMemoryUserDao());
 
-        GITHUB_CLIENT_ID = System.getenv("GITHUB_CLIENT_ID");
-        GITHUB_CLIENT_SECRET = System.getenv("GITHUB_CLIENT_SECRET");
+        Dotenv dotenv = Dotenv
+                .configure()
+                .ignoreIfMissing()
+                .load();
+
+
+        GITHUB_CLIENT_ID = dotenv.get("GITHUB_CLIENT_ID");
+        GITHUB_CLIENT_SECRET = dotenv.get("GITHUB_CLIENT_SECRET");
     }
 
     /**
@@ -98,6 +105,7 @@ public class App {
 
         get("/auth/gh-callback", (req, res) -> {
             System.out.println("App::githubCallback");
+            System.out.println("Github variables:\nGITHUB_CLIENT_ID: " + GITHUB_CLIENT_ID + "\nGITHUB_LOGIN_SECRET: " + GITHUB_CLIENT_SECRET);
 
             String callbackCode = req.queryParams("code");
             String url = "https://github.com/login/oauth/access_token";
