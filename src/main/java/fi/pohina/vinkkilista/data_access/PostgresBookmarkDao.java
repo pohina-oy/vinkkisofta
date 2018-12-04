@@ -164,7 +164,7 @@ public class PostgresBookmarkDao implements BookmarkDao {
                 String username = rs.getString("username");
                 User creator = new User(userId, null, username, 0);
                 Set<Tag> tags = findBookmarkTags(bookmarkId);
-                bookmarks.add(new Bookmark(bookmarkId, bookmarkTile, bookmarkUrl, bookmarkAuthor, userId != null ? creator : null , tags));
+                bookmarks.add(new Bookmark(bookmarkId, bookmarkTile, bookmarkUrl, bookmarkAuthor, userId != null ? creator : null, tags));
             }
             return new ArrayList<Bookmark>(bookmarks);
         } catch (Exception e) {
