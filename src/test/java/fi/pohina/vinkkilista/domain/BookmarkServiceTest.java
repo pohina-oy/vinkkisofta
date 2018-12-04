@@ -1,7 +1,10 @@
 package fi.pohina.vinkkilista.domain;
 
-import fi.pohina.vinkkilista.Main;
 import fi.pohina.vinkkilista.data_access.BookmarkDao;
+import fi.pohina.vinkkilista.data_access.InMemoryBookmarkDao;
+import fi.pohina.vinkkilista.data_access.InMemoryTagDao;
+import fi.pohina.vinkkilista.data_access.PostgresBookmarkDao;
+import fi.pohina.vinkkilista.data_access.PostgresTagDao;
 import fi.pohina.vinkkilista.data_access.TagDao;
 import io.github.cdimascio.dotenv.Dotenv;
 import java.util.*;
@@ -25,8 +28,14 @@ public class BookmarkServiceTest {
             .configure()
             .ignoreIfMissing()
             .load();
-        bookmarkDao = spy(Main.getBookmarkDao(dotenv));
-        tagDao = spy(Main.getTagDao(dotenv));
+        try {
+            Runtime.getRuntime().exec("npm run knex -- migrate:rollback");
+            Runtime.getRuntime().exec("npm run migrate-latest");
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        bookmarkDao = spy(this.getBookmarkDao(dotenv));
+        tagDao = spy(this.getTagDao(dotenv));
 
         bookmarkService = spy(new BookmarkService(bookmarkDao, tagDao));
     }
@@ -310,5 +319,29 @@ public class BookmarkServiceTest {
         tag = bookmarkService.addTagStringByUrl(
                 "https://dl.acm.org/citation.cfm?id=3292530&picked=prox");
         assertEquals("Scientific Publication", tag);
+    }
+
+    public BookmarkDao getBookmarkDao(Dotenv dotenv) {
+        String stage = dotenv.get("STAGE");
+        if (stage == null || !stage.equals("production")) {
+            return new InMemoryBookmarkDao();
+        }
+        String dbHost = dotenv.get("DB_HOST");
+        String dbUser = dotenv.get("DB_USER");
+        String dbPassword = dotenv.get("DB_PASSWORD");
+        String db = dotenv.get("DB_DATABASE");
+        return new PostgresBookmarkDao(dbHost, dbUser, dbPassword, db);
+    }
+
+    public TagDao getTagDao(Dotenv dotenv) {
+        String stage = dotenv.get("STAGE");
+        if (stage == null || !stage.equals("production")) {
+            return new InMemoryTagDao();
+        }
+        String dbHost = dotenv.get("DB_HOST");
+        String dbUser = dotenv.get("DB_USER");
+        String dbPassword = dotenv.get("DB_PASSWORD");
+        String db = dotenv.get("DB_DATABASE");
+        return new PostgresTagDao(dbHost, dbUser, dbPassword, db);
     }
 }
