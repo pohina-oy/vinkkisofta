@@ -168,9 +168,9 @@ public class App {
 
 
             // 3. get user emails because if user has multiple emails, we need to find the primary one
-            if (githubUser.getEmail() == null)
+            if (githubUser.getEmail() == null) {
                 githubUser.setEmail(getPrimaryUserEmail(accessToken));
-
+            }
 
 
             User user = users.findOrCreateByGithubUser(githubUser);
