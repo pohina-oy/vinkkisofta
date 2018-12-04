@@ -14,6 +14,7 @@ import io.github.cdimascio.dotenv.Dotenv;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.fluent.Form;
+import spark.*;
 import org.apache.http.client.utils.URLEncodedUtils;
 import spark.ModelAndView;
 import spark.QueryParamsMap;
@@ -63,39 +64,59 @@ public class App {
         staticFileLocation("/static");
         port(portNumber);
 
-        get("/", (req, res) -> {
-            Map<String, Object> map = new HashMap<>();
-            Collection<Bookmark> bookmarks = this.bookmarks.getAllBookmarks();
-            map.put("bookmarks", bookmarks);
-            return render(map, "index");
+        before("/", this::authenticationFilter);
+        before("/bookmarks/*", this::authenticationFilter);
+        redirect.any("/", "/bookmarks/");
+
+        path("/bookmarks", () -> {
+            get("/", (req, res) -> {
+                Map<String, Object> map = new HashMap<>();
+                Collection<Bookmark> bookmarks = this.bookmarks.getAllBookmarks();
+                map.put("bookmarks", bookmarks);
+
+                User user = req.attribute(REQ_ATTRIBUTE_USER);
+                System.out.println("App::bookmarkIndexHandler\n  user:" + user);
+                map.put("user", user);
+
+                return render(map, "index");
+            });
+
+            //Turha
+            get("/bookmarks", (req, res) -> {
+                Map<String, Object> map = new HashMap<>();
+                Collection<Bookmark> bookmarks = this.bookmarks.getAllBookmarks();
+                map.put("bookmarks", bookmarks);
+                return render(map, "index");
+            });
+
+            get("/new", (req, res) -> {
+                Map<String, Object> map = new HashMap<>();
+                return render(map, "new");
+            });
+
+            get("/search", (req, res) -> {
+                Map<String, Object> map = new HashMap<>();
+                return render(map, "search");
+            });
+
+            post("/new", (req, res) -> {
+                if (validateAndCreateBookmark(req.queryMap())) {
+                    res.redirect("/");
+                    return "New bookmark added";
+                } else {
+                    res.redirect("/new");
+                    return "Bookmark could not be created";
+                }
+            });
+
+            post("/search", (req, res) -> {
+                Map<String, Object> map = new HashMap<>();
+                Collection<Bookmark> bookmarks = searchBookmarks(req.queryMap());
+                map.put("bookmarks", bookmarks);
+                return render(map, "search");
+            });
         });
 
-        get("/new", (req, res) -> {
-            Map<String, Object> map = new HashMap<>();
-            return render(map, "new");
-        });
-
-        get("/search", (req, res) -> {
-            Map<String, Object> map = new HashMap<>();
-            return render(map, "search");
-        });
-
-        post("/new", (req, res) -> {
-            if (validateAndCreateBookmark(req.queryMap())) {
-                res.redirect("/");
-                return "New bookmark added";
-            } else {
-                res.redirect("/new");
-                return "Bookmark could not be created";
-            }
-        });
-
-        post("/search", (req, res) -> {
-            Map<String, Object> map = new HashMap<>();
-            Collection<Bookmark> bookmarks = searchBookmarks(req.queryMap());
-            map.put("bookmarks", bookmarks);
-            return render(map, "search");
-        });
 
         get("/login", (req, res) -> {
             Map<String, Object> map = new HashMap<>();
@@ -189,6 +210,25 @@ public class App {
             res.redirect("/bookmarks/");
             return "";
         });
+    }
+
+    private void authenticationFilter(Request req, Response res) {
+        String userId = getUserIdFromSession(req.session());
+        User user = users.findById(userId);
+
+        System.out.println("App::authenticationFilter\n  user: " + user);
+
+        if (user == null) {
+            res.redirect("/login");
+            halt();
+            return;
+        }
+
+        req.attribute(REQ_ATTRIBUTE_USER, user);
+    }
+
+    private String getUserIdFromSession(Session session) {
+        return session.attribute(SESSION_ATTRIBUTE_USERID);
     }
 
     /**
