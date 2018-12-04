@@ -6,7 +6,8 @@ import fi.pohina.vinkkilista.data_access.TagDao;
 import fi.pohina.vinkkilista.data_access.InMemoryTagDao;
 import fi.pohina.vinkkilista.domain.BookmarkService;
 import java.util.*;
-import fi.pohina.vinkkilista.data_access.PostgreBookmarkDao;
+import fi.pohina.vinkkilista.data_access.PostgresBookmarkDao;
+import fi.pohina.vinkkilista.data_access.PostgresTagDao;
 import io.github.cdimascio.dotenv.Dotenv;
 
 public class Main {
@@ -18,7 +19,7 @@ public class Main {
         String stage = dotenv.get("STAGE");
 
         BookmarkDao bookmarkDao = getBookmarkDao(dotenv);
-        TagDao tagDao = new InMemoryTagDao();
+        TagDao tagDao = getTagDao(dotenv);
 
         BookmarkService service = new BookmarkService(bookmarkDao, tagDao);
 
@@ -71,6 +72,18 @@ public class Main {
         String dbUser = dotenv.get("DB_USER");
         String dbPassword = dotenv.get("DB_PASSWORD");
         String db = dotenv.get("DB_DATABASE");
-        return new PostgreBookmarkDao(dbHost, dbUser, dbPassword, db); 
+        return new PostgresBookmarkDao(dbHost, dbUser, dbPassword, db);
+    }
+
+    private static TagDao getTagDao(Dotenv dotenv) {
+        String stage = dotenv.get("STAGE");
+        if (stage == null || !stage.equals("production")) {
+            return new InMemoryTagDao();
+        }
+        String dbHost = dotenv.get("DB_HOST");
+        String dbUser = dotenv.get("DB_USER");
+        String dbPassword = dotenv.get("DB_PASSWORD");
+        String db = dotenv.get("DB_DATABASE");
+        return new PostgresTagDao(dbHost, dbUser, dbPassword, db);
     }
 }
