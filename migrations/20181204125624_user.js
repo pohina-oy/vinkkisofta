@@ -6,7 +6,7 @@ exports.up = function(knex, Promise) {
         t.string('id').primary()
         t.string('email')
         t.string('username')
-        t.integer('githubId')
+        t.integer('githubId').unique()
       })
     }
   })
