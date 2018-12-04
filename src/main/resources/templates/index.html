@@ -10,6 +10,11 @@
     <body>
         <div class="container">
             <h1>Vinkkilista</h1>
+
+            <div>
+                User: <span th:text="${user.username}"></span>
+            </div>
+			
             <div class="bookmarkList">
                 <div class="bookmark" th:each="bookmark : ${bookmarks}">
                     <a class="bookmarkLink" th:href="${bookmark.url}">
