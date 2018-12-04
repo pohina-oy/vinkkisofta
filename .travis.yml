@@ -19,7 +19,7 @@ before_install:
   - docker-compose --version
 
 install:
-  - docker-composer build
+  - docker-compose build
   - docker-compose up -d psql
   - sleep 5
   - docker-compose run web npm run db:init
