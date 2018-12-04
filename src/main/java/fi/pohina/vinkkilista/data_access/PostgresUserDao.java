@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.List;
+
 import fi.pohina.vinkkilista.domain.User;
 
 public class PostgresUserDao implements UserDao {
@@ -19,7 +21,7 @@ public class PostgresUserDao implements UserDao {
     }
 
     @Override
-    public User findUserById(String id) {
+    public User findById(String id) {
         String query = "SELECT * FROM users where id = ?";
         try {
             PreparedStatement st = this.db.prepareStatement(query);
@@ -39,7 +41,7 @@ public class PostgresUserDao implements UserDao {
     }
 
     @Override
-    public User findUserByGithubId(int githubId) {
+    public User findByGithubId(int githubId) {
         String query = "SELECT * FROM users where \"githubId\" = ?";
         try {
             PreparedStatement st = this.db.prepareStatement(query);
@@ -72,4 +74,9 @@ public class PostgresUserDao implements UserDao {
             System.out.println(e.getMessage());
         }
     }
+
+    @Override
+    public List<User> findAll() {
+		return null;
+	}
 }
