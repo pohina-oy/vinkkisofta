@@ -8,7 +8,7 @@ public class AppConfigTest {
 
     @Test
     public void getGithubClientIdReturnsCorrectId() {
-        config = new AppConfig("foobar", null);
+        config = new AppConfig("foobar", null, "production");
 
         String result = config.getGithubClientId();
 
@@ -17,10 +17,19 @@ public class AppConfigTest {
 
     @Test
     public void getGithubClientSecretReturnsCorrectSecret() {
-        config = new AppConfig("foobar", "barfoo");
+        config = new AppConfig("foobar", "barfoo", null);
 
         String result = config.getGithubClientSecret();
 
         assertEquals("barfoo", result);
+    }
+
+    @Test
+    public void getStageReturnsCorrectStage() {
+        config = new AppConfig("githubClientId", "githubClientSecret", "test");
+
+        String result = config.getStage();
+
+        assertEquals("test", result);
     }
 }
