@@ -8,7 +8,7 @@ public class AppConfigTest {
 
     @Test
     public void getGithubClientIdReturnsCorrectId() {
-        config = new AppConfig("foobar", null);
+        config = new AppConfig("foobar", null, null);
 
         String result = config.getGithubClientId();
 
@@ -17,7 +17,7 @@ public class AppConfigTest {
 
     @Test
     public void getGithubClientSecretReturnsCorrectSecret() {
-        config = new AppConfig("foobar", "barfoo");
+        config = new AppConfig("foobar", "barfoo", null);
 
         String result = config.getGithubClientSecret();
 

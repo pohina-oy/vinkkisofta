@@ -58,23 +58,28 @@ public class Main {
             "GitHub Blog",
             "https://blog.github.com",
             "GitHub",
+            null,
             new HashSet<>(Arrays.asList("blog"))
         );
         bookmarks.createBookmark(
             "Domain Driven Design Weekly",
             "http://dddweekly.com",
+            null,
+            null,
             null
         );
         bookmarks.createBookmark(
             "the morning paper",
             "https://blog.acolyer.org",
             "Adrian Colyer",
+            null,
             new HashSet<>(Arrays.asList("blog"))
         );
         bookmarks.createBookmark(
             "An Industrial-Strength Audio Search Algorithm",
             "https://www.ee.columbia.edu/~dpwe/papers/Wang03-shazam.pdf",
             "Avery Li-Chun Wang",
+            null,
             new HashSet<>(Arrays.asList("scientific publication"))
         );
     }

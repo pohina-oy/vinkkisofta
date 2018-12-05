@@ -48,6 +48,13 @@
     color: #bbb;
 }
 
+.bookmarkCreator {
+    display: block;
+    font-size: 10px;
+    color: #bbb;
+    margin-top: 5px;
+}
+
 .newBookmarkLink {
     display: block;
     margin: 10px 0;

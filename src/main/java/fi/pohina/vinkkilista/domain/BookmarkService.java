@@ -15,24 +15,14 @@ public class BookmarkService {
     }
 
     /**
-     * Creates a new {@link Bookmark} from the specified title, url and author.
-     */
-    public void createBookmark(
-        String title, 
-        String url, 
-        String author
-    ) {
-        createBookmark(title, url, author, new HashSet<>());
-    }
-
-    /**
      * Creates a new {@link Bookmark} from the specified title, url, author and 
      * a string of tags.
      */
     public void createBookmark(
             String title, 
             String url, 
-            String author, 
+            String author,
+            User creator,
             Set<String> tags
     ) {
         String id = generateBookmarkId();
@@ -45,7 +35,7 @@ public class BookmarkService {
                 title,
                 url,
                 author,
-                null, // Implement after users are completely implemented
+                creator,
                 tagSet
         );
 

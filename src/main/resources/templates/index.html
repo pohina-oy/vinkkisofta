@@ -25,6 +25,9 @@
                         <span class="bookmarkAuthor" th:if="${bookmark.author != null}"
                               th:text="${'by ' + bookmark.author}">
                         </span>
+                        <span class="bookmarkCreator" th:if="${bookmark.creator != null}"
+                              th:text="${bookmark.creator.username}">
+                        </span>
                     </a>
                 </div>
             </div>
