@@ -35,11 +35,7 @@ public class User {
     }
 
     public String getBookmarkReadStatus(String bookmarkId) {
-        if (bookmarkReadDates.containsKey(bookmarkId)) {
-            return bookmarkReadDates.get(bookmarkId);
-        }
-
-        return null;
+        return bookmarkReadDates.get(bookmarkId);
     }
 
     public void setBookmarkReadStatus(String bookmarkId, String dateRead) {
