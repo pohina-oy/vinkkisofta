@@ -27,6 +27,8 @@ import static spark.Spark.*;
 
 public class App {
 
+    private static String STAGE = "";
+
     private static final String SESSION_ATTRIBUTE_USERID = "github-user";
     private static final String REQ_ATTRIBUTE_USER = "user";
 
@@ -53,6 +55,7 @@ public class App {
 
         GITHUB_CLIENT_ID = dotenv.get("GITHUB_CLIENT_ID");
         GITHUB_CLIENT_SECRET = dotenv.get("GITHUB_CLIENT_SECRET");
+        STAGE = dotenv.get("STAGE");
     }
 
     /**
@@ -64,8 +67,11 @@ public class App {
         staticFileLocation("/static");
         port(portNumber);
 
-        before("/", this::authenticationFilter);
-        before("/bookmarks/*", this::authenticationFilter);
+        System.out.println("\nStage: " + STAGE);
+        if ("production".equals(STAGE)) {
+            before("/", this::authenticationFilter);
+            before("/bookmarks/*", this::authenticationFilter);
+       }
         redirect.any("/", "/bookmarks/");
 
         path("/bookmarks", () -> {
@@ -76,7 +82,11 @@ public class App {
 
                 User user = req.attribute(REQ_ATTRIBUTE_USER);
                 System.out.println("App::bookmarkIndexHandler\n  user:" + user);
-                map.put("user", user);
+                if (user != null) {
+                    map.put("user", user);
+                } else {
+                    map.put("user", new User("undefined", "undefined", "guest", 0));
+                }
 
                 return render(map, "index");
             });
@@ -101,10 +111,10 @@ public class App {
 
             post("/new", (req, res) -> {
                 if (validateAndCreateBookmark(req.queryMap())) {
-                    res.redirect("/");
+                    res.redirect("/bookmarks/");
                     return "New bookmark added";
                 } else {
-                    res.redirect("/new");
+                    res.redirect("new");
                     return "Bookmark could not be created";
                 }
             });
