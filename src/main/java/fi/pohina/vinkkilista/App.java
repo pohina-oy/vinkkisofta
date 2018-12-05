@@ -23,13 +23,8 @@ import static spark.Spark.*;
 
 public class App {
 
-    private static String stage = "";
-
     private static final String SESSION_ATTRIBUTE_USERID = "github-user";
     private static final String REQ_ATTRIBUTE_USER = "user";
-
-    private static String githubClientID = "censored";
-    private static String githubClientSecret = "censored";
 
     private final CommaSeparatedTagsParser tagParser
             = new CommaSeparatedTagsParser();
@@ -42,10 +37,6 @@ public class App {
         this.bookmarkService = bookmarkService;
         this.config = config;
         this.users = users;
-
-        githubClientID = config.getGithubClientId();
-        githubClientSecret = config.getGithubClientSecret();
-        stage = config.getStage();
     }
 
     /**
@@ -57,8 +48,7 @@ public class App {
         staticFileLocation("/static");
         port(portNumber);
 
-        System.out.println("\nStage: " + stage);
-        if ("production".equals(stage)) {
+        if (config.isProduction()) {
             before("/", this::authenticationFilter);
             before("/bookmarks/*", this::authenticationFilter);
         }
@@ -177,8 +167,8 @@ public class App {
         // 1. fetch access token to Github API with code
         List<NameValuePair> form = Form.form()
                 .add("code", code)
-                .add("client_id", githubClientID)
-                .add("client_secret", githubClientSecret)
+                .add("client_id", config.getGithubClientId())
+                .add("client_secret", config.getGithubClientSecret())
                 .build();
 
         HttpEntity responseEntity
