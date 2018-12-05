@@ -49,15 +49,48 @@ public class UserTest {
 
     @Test
     public void constructorSetsGithubIdCorrectly() {
-        User user = new User(
+        User user = prepareTestUser();
+
+        int result = user.getGithubId();
+
+        assertEquals(123, result);
+    }
+
+    @Test
+    public void setBookmarkReadDateWorksCorrectly() {
+        User user = prepareTestUser();
+        String bookmarkId = "bookmark-123";
+        String dateRead = "12.12.12";
+
+        user.setBookmarkReadStatus(bookmarkId, dateRead);
+        String result = user.getBookmarkReadStatus(bookmarkId);
+
+        assertEquals(dateRead, result);
+    }
+
+    @Test
+    public void removeBookmarkReadDateWorksCorrectly() {
+        User user = prepareTestUser();
+        String bookmarkId = "bookmark-123";
+        String dateRead = "12.12.12";
+
+        user.setBookmarkReadStatus(bookmarkId, dateRead);
+        String result = user.getBookmarkReadStatus(bookmarkId);
+
+        assertEquals(dateRead, result);
+
+        user.removeBookmarkReadStatus(bookmarkId);
+        result = user.getBookmarkReadStatus(bookmarkId);
+
+        assertEquals(null, result);
+    }
+
+    private User prepareTestUser() {
+        return new User(
             "foobar",
             "john.bar@com.com",
             "toasterbox",
             123
         );
-
-        int result = user.getGithubId();
-
-        assertEquals(123, result);
     }
 }
