@@ -9,7 +9,6 @@ import fi.pohina.vinkkilista.domain.Bookmark;
 import fi.pohina.vinkkilista.domain.BookmarkService;
 import fi.pohina.vinkkilista.domain.User;
 import fi.pohina.vinkkilista.domain.UserService;
-import io.github.cdimascio.dotenv.Dotenv;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.fluent.Form;
