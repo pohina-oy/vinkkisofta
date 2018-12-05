@@ -34,7 +34,7 @@ public class App {
     private static String githubClientSecret = "censored";
 
     private final CommaSeparatedTagsParser tagParser
-        = new CommaSeparatedTagsParser();
+            = new CommaSeparatedTagsParser();
 
     private final BookmarkService bookmarks;
     private final AppConfig config;
@@ -63,7 +63,7 @@ public class App {
         if ("production".equals(stage)) {
             before("/", this::authenticationFilter);
             before("/bookmarks/*", this::authenticationFilter);
-       }
+        }
         redirect.any("/", "/bookmarks/");
 
         path("/bookmarks", () -> {
@@ -77,7 +77,8 @@ public class App {
                 if (user != null) {
                     map.put("user", user);
                 } else {
-                    map.put("user", new User("undefined", "undefined", "guest", 0));
+                    user = new User("undefined", "undefined", "guest", 0);
+                    map.put("user", user);
                 }
 
                 return render(map, "index");
@@ -102,12 +103,24 @@ public class App {
             });
 
             post("/new", (req, res) -> {
-                if (validateAndCreateBookmark(req.queryMap())) {
-                    res.redirect("/bookmarks/");
-                    return "New bookmark added";
-                } else {
+                String title = req.queryParams("title");
+                String url = req.queryParams("url");
+                String author = req.queryParams("author");
+                User creator = users.findById(getUserIdFromSession(req.session()));
+                Set<String> tags = tagParser.parse(req.queryParams("tags"));
+                
+                if (Strings.isNullOrEmpty(title) || Strings.isNullOrEmpty(url)) {
                     res.redirect("new");
                     return "Bookmark could not be created";
+                } else {
+                    bookmarks.createBookmark(
+                            title,
+                            url,
+                            author,
+                            creator,
+                            tags);
+                    res.redirect("/bookmarks/");
+                    return "New bookmark added";
                 }
             });
 
@@ -118,7 +131,6 @@ public class App {
                 return render(map, "search");
             });
         });
-
 
         get("/login", (req, res) -> {
             Map<String, Object> map = new HashMap<>();
@@ -174,22 +186,20 @@ public class App {
         String url = "https://github.com/login/oauth/access_token";
 
         // 1. fetch access token to Github API with code
-
         List<NameValuePair> form = Form.form()
                 .add("code", code)
                 .add("client_id", githubClientID)
                 .add("client_secret", githubClientSecret)
                 .build();
 
-        HttpEntity responseEntity =
-                org.apache.http.client.fluent.Request.Post(url)
+        HttpEntity responseEntity
+                = org.apache.http.client.fluent.Request.Post(url)
                         .bodyForm(form)
                         .execute()
                         .returnResponse()
                         .getEntity();
 
         // 1.1 print access token response keys
-
         List<NameValuePair> responseQuery = URLEncodedUtils.parse(responseEntity);
         //responseQuery.forEach(nvp -> System.out.println("    * " + nvp.getName() + " - " + nvp.getValue()));
 
@@ -204,8 +214,8 @@ public class App {
     }
 
     private String getUserInfoJson(String accessToken) throws Exception {
-        String userInfoJson =
-                org.apache.http.client.fluent.Request.Get("https://api.github.com/user")
+        String userInfoJson
+                = org.apache.http.client.fluent.Request.Get("https://api.github.com/user")
                         .addHeader("Authorization", String.format("Bearer %s", accessToken))
                         .addHeader("Accept", "application/json")
                         .execute()
@@ -216,8 +226,8 @@ public class App {
     }
 
     private String getPrimaryUserEmail(String accessToken) throws Exception {
-        String userEmailsJson =
-                org.apache.http.client.fluent.Request.Get("https://api.github.com/user/emails")
+        String userEmailsJson
+                = org.apache.http.client.fluent.Request.Get("https://api.github.com/user/emails")
                         .addHeader("Authorization", String.format("Bearer %s", accessToken))
                         .addHeader("Accept", "application/json")
                         .execute()
@@ -235,36 +245,6 @@ public class App {
                 .orElse(userEmails.get(0));
 
         return primaryEmail.getEmail();
-    }
-
-    /**
-     * Validates parameters and creates a bookmark.
-     * Todo: Make a validator class.
-     *
-     * @param params the query parameters of the request.
-     * @return <c>true</c> if the bookmark is successfully created,
-     * otherwise <c>false</c>.
-     */
-    private boolean validateAndCreateBookmark(QueryParamsMap params) {
-        String title = params.get("title").value();
-        String url = params.get("url").value();
-        String author = params.get("author").value();
-        String commaSeparatedTags = params.get("tags").value();
-
-        if (Strings.isNullOrEmpty(title) || Strings.isNullOrEmpty(url)) {
-            return false;
-        }
-
-        Set<String> tags = tagParser.parse(commaSeparatedTags);
-
-        bookmarks.createBookmark(
-            title,
-            url,
-            author,
-            tags
-        );
-
-        return true;
     }
 
     /**

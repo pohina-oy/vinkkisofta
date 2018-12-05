@@ -90,12 +90,13 @@ public class PostgresBookmarkDao implements BookmarkDao {
     @Override
     public void add(Bookmark bookmark) {
         try {
-            String query = "INSERT INTO bookmarks (id, title, url, author) " + " values (?, ? ,? ,?)";
+            String query = "INSERT INTO bookmarks (id, title, url, author, \"creatorId\") " + " values (?, ? ,? ,?, ?)";
             PreparedStatement st = this.db.prepareStatement(query);
             st.setString(1, bookmark.getId());
             st.setString(2, bookmark.getTitle());
             st.setString(3, bookmark.getUrl());
             st.setString(4, bookmark.getAuthor());
+            st.setString(5, bookmark.getCreator().getId());
             st.executeUpdate();
             for (Tag t : bookmark.getTags()) {
                 addBookmarkTag(bookmark.getId(), t.getId());

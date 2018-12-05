@@ -36,8 +36,9 @@ public class BookmarkServiceTest {
         bookmarkService.createBookmark(
             title,
             url,
-            author
-        );
+            author,
+            null,
+            null);
 
         verify(bookmarkDao, times(1))
             .add(any(Bookmark.class));
@@ -127,13 +128,16 @@ public class BookmarkServiceTest {
         bookmarkService.createBookmark(
             "no tags",
             "www.tagless.com",
-            "unknown"
+            "unknown",
+            null,
+            new HashSet<>()
         );
 
         bookmarkService.createBookmark(
             "third",
             "https://www.nature.com",
             "Editor",
+            null,
             new HashSet<>(Arrays.asList("video", "journal"))
         );
 
@@ -141,6 +145,7 @@ public class BookmarkServiceTest {
             "fourth",
             "https://www.videosite.net",
             "Firstname Lastname",
+            null,
             new HashSet<>(Arrays.asList("video"))
         );
     }
