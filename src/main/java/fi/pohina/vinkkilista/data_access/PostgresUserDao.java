@@ -11,7 +11,7 @@ import fi.pohina.vinkkilista.domain.User;
 public class PostgresUserDao implements UserDao {
     private Connection db;
 
-    PostgresUserDao(String dbHost, String dbUser, String dbPassowrd, String dbName) {
+    public PostgresUserDao(String dbHost, String dbUser, String dbPassowrd, String dbName) {
         String url = "jdbc:postgresql://" + dbHost + "/" + dbName + "?user=" + dbUser + "&password=" + dbPassowrd;
         try {
             this.db = DriverManager.getConnection(url);

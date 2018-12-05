@@ -42,10 +42,10 @@ public class App {
     private final AppConfig config;
     private final UserService users;
 
-    public App(BookmarkService bookmarks, AppConfig config) {
+    public App(BookmarkService bookmarks, UserService users, AppConfig config) {
         this.bookmarks = bookmarks;
         this.config = config;
-        this.users = new UserService(new InMemoryUserDao());
+        this.users = users;
 
         Dotenv dotenv = Dotenv
                 .configure()
