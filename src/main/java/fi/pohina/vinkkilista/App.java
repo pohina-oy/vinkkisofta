@@ -27,13 +27,13 @@ import static spark.Spark.*;
 
 public class App {
 
-    private static String STAGE = "";
+    private static String stage = "";
 
     private static final String SESSION_ATTRIBUTE_USERID = "github-user";
     private static final String REQ_ATTRIBUTE_USER = "user";
 
-    private static String GITHUB_CLIENT_ID = "censored";
-    private static String GITHUB_CLIENT_SECRET = "censored";
+    private static String githubClientID = "censored";
+    private static String githubClientSecret = "censored";
 
     private final CommaSeparatedTagsParser tagParser
         = new CommaSeparatedTagsParser();
@@ -53,9 +53,9 @@ public class App {
                 .load();
 
 
-        GITHUB_CLIENT_ID = dotenv.get("GITHUB_CLIENT_ID");
-        GITHUB_CLIENT_SECRET = dotenv.get("GITHUB_CLIENT_SECRET");
-        STAGE = dotenv.get("STAGE");
+        githubClientID = dotenv.get("githubClientID");
+        githubClientSecret = dotenv.get("githubClientSecret");
+        stage = dotenv.get("stage");
     }
 
     /**
@@ -67,8 +67,8 @@ public class App {
         staticFileLocation("/static");
         port(portNumber);
 
-        System.out.println("\nStage: " + STAGE);
-        if ("production".equals(STAGE)) {
+        System.out.println("\nStage: " + stage);
+        if ("production".equals(stage)) {
             before("/", this::authenticationFilter);
             before("/bookmarks/*", this::authenticationFilter);
        }
@@ -185,8 +185,8 @@ public class App {
 
         List<NameValuePair> form = Form.form()
                 .add("code", code)
-                .add("client_id", GITHUB_CLIENT_ID)
-                .add("client_secret", GITHUB_CLIENT_SECRET)
+                .add("client_id", githubClientID)
+                .add("client_secret", githubClientSecret)
                 .build();
 
         HttpEntity responseEntity =
