@@ -38,8 +38,7 @@ public class BookmarkServiceTest {
             url,
             author,
             null,
-            null
-        );
+            null);
 
         verify(bookmarkDao, times(1))
             .add(any(Bookmark.class));
@@ -131,7 +130,7 @@ public class BookmarkServiceTest {
             "www.tagless.com",
             "unknown",
             null,
-            null
+            new HashSet<>()
         );
 
         bookmarkService.createBookmark(

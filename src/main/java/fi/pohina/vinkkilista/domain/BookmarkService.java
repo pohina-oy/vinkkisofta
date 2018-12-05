@@ -26,8 +26,12 @@ public class BookmarkService {
             Set<String> tags
     ) {
         String id = generateBookmarkId();
-
+        
+        if (tags == null) {
+            tags = new HashSet<>();
+        }
         tags.add(addTagStringByUrl(url));
+        
         Set<Tag> tagSet = findOrCreateTags(tags);
 
         Bookmark bookmark = new Bookmark(
