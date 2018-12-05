@@ -110,6 +110,7 @@ public class InMemoryBookmarkDaoTest {
             "third",
             "https://www.nature.com",
             "Editor",
+            null,
             new HashSet<>(Arrays.asList(tagVideo, tagJournal))
         );
 
@@ -118,6 +119,7 @@ public class InMemoryBookmarkDaoTest {
             "fourth",
             "https://www.videosite.net",
             "Firstname Lastname",
+            null,
             new HashSet<>(Arrays.asList(tagVideo))
         );
 
@@ -157,6 +159,7 @@ public class InMemoryBookmarkDaoTest {
             "fourth",
             "https://www.videosite.net",
             "Firstname Lastname",
+            null,
             new HashSet<>(Arrays.asList(tagVideo))
         );
 

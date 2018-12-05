@@ -45,6 +45,7 @@ public class BookmarkService {
                 title,
                 url,
                 author,
+                null, // Implement after users are completely implemented
                 tagSet
         );
 

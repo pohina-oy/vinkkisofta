@@ -20,7 +20,7 @@ public class BookmarkTest {
         Set<Tag> expectedTags = new HashSet<>();
         expectedTags.add(tag);
 
-        Bookmark bookmark = new Bookmark(id, title, url, author, expectedTags);
+        Bookmark bookmark = new Bookmark(id, title, url, author, null, expectedTags);
 
         assertEquals(id, bookmark.getId());
         assertEquals(title, bookmark.getTitle());
@@ -33,7 +33,7 @@ public class BookmarkTest {
     @Test
     public void constructorOverloadSetsEmptyTagListCorrectly() {
         Bookmark bookmark = new Bookmark(
-            "id", "title", "url", "author"
+            "id", "title", "url", null, "author"
         );
 
         Set<Tag> tags = bookmark.getTags();

@@ -2,6 +2,7 @@ package fi.pohina.vinkkilista.data_access;
 
 import fi.pohina.vinkkilista.domain.Bookmark;
 import fi.pohina.vinkkilista.domain.Tag;
+import fi.pohina.vinkkilista.domain.User;
 
 import java.sql.*;
 import java.util.*;
@@ -29,7 +30,7 @@ public class PostgresBookmarkDao implements BookmarkDao {
     @Override
     public Bookmark findById(String id) {
         try {
-            String query = "SELECT * FROM bookmarks WHERE id = ?";
+            String query = "SELECT bookmarks.*,users.id as userId, users.username FROM bookmarks left join users on (bookmarks.\"creatorId\" = users.id) where bookmarks.id = ?";
             PreparedStatement st = this.db.prepareStatement(query);
             st.setString(1, id);
             ResultSet rs = st.executeQuery();
@@ -38,7 +39,10 @@ public class PostgresBookmarkDao implements BookmarkDao {
                 String url = rs.getString("url");
                 String author = rs.getString("author");
                 Set<Tag> tags = findBookmarkTags(id);
-                return new Bookmark(id, title, url, author, tags);
+                String userId = rs.getString("userId");
+                String username = rs.getString("username");
+                User creator = new User(userId, null, username, 0);
+                return new Bookmark(id, title, url, author, userId != null  ? creator : null, tags);
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -54,18 +58,22 @@ public class PostgresBookmarkDao implements BookmarkDao {
         List<Bookmark> bookmarks = new ArrayList<>();
         try {
             Statement st = this.db.createStatement();
-            ResultSet rs = st.executeQuery("SELECT * FROM bookmarks");
+            ResultSet rs = st.executeQuery("SELECT bookmarks.*,users.id as userId, users.username FROM bookmarks left join users on (bookmarks.\"creatorId\" = users.id)");
             while (rs.next()) {
                 String id = rs.getString("id");
                 String title = rs.getString("title");
                 String url = rs.getString("url");
                 String author = rs.getString("author");
                 Set<Tag> tags = findBookmarkTags(id);
+                String userId = rs.getString("userId");
+                String username = rs.getString("username");
+                User creator = new User(userId, null, username, 0);
                 bookmarks.add(new Bookmark(
                     id, 
                     title, 
                     url, 
                     author,
+                    userId != null ? creator : null,
                     tags
                 ));                
             }
@@ -140,7 +148,7 @@ public class PostgresBookmarkDao implements BookmarkDao {
         for (String tag : tagSet) {
             tagArray.add(tag);
         }
-        String query = "select bookmarks.* from bookmark_tags inner join bookmarks on bookmark_tags.\"bookmarkId\" = bookmarks.id inner join tags on tags.id = bookmark_tags.\"tagId\" where tags.name = ANY(?)";
+        String query = "select bookmarks.*, users.id as userId, users.username from bookmark_tags inner join bookmarks on bookmark_tags.\"bookmarkId\" = bookmarks.id inner join tags on tags.id = bookmark_tags.\"tagId\" left join users on users.id = bookmarks.\"creatorId\" where tags.name = ANY(?)";
         try {
             PreparedStatement st = this.db.prepareStatement(query);
             Array array = this.db.createArrayOf("varchar", tagArray.toArray());
@@ -152,8 +160,11 @@ public class PostgresBookmarkDao implements BookmarkDao {
                 String bookmarkTile = rs.getString("title");
                 String bookmarkUrl = rs.getString("url");
                 String bookmarkAuthor = rs.getString("author");
+                String userId = rs.getString("userId");
+                String username = rs.getString("username");
+                User creator = new User(userId, null, username, 0);
                 Set<Tag> tags = findBookmarkTags(bookmarkId);
-                bookmarks.add(new Bookmark(bookmarkId, bookmarkTile, bookmarkUrl, bookmarkAuthor, tags));
+                bookmarks.add(new Bookmark(bookmarkId, bookmarkTile, bookmarkUrl, bookmarkAuthor, userId != null ? creator : null, tags));
             }
             return new ArrayList<Bookmark>(bookmarks);
         } catch (Exception e) {
