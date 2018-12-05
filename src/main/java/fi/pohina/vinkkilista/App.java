@@ -53,9 +53,9 @@ public class App {
                 .load();
 
 
-        githubClientID = dotenv.get("githubClientID");
-        githubClientSecret = dotenv.get("githubClientSecret");
-        stage = dotenv.get("stage");
+        githubClientID = dotenv.get("GITHUB_CLIENT_ID");
+        githubClientSecret = dotenv.get("GITHUB_CLIENT_SECRET");
+        stage = dotenv.get("STAGE");
     }
 
     /**
