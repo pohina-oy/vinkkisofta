@@ -46,15 +46,9 @@ public class App {
         this.config = config;
         this.users = users;
 
-        Dotenv dotenv = Dotenv
-                .configure()
-                .ignoreIfMissing()
-                .load();
-
-
-        githubClientID = dotenv.get("GITHUB_CLIENT_ID");
-        githubClientSecret = dotenv.get("GITHUB_CLIENT_SECRET");
-        stage = dotenv.get("STAGE");
+        githubClientID = config.getGithubClientId();
+        githubClientSecret = config.getGithubClientSecret();
+        stage = config.getStage();
     }
 
     /**

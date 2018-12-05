@@ -4,10 +4,12 @@ public class AppConfig {
 
     private final String githubClientId;
     private final String githubClientSecret;
+    private final String stage;
 
-    public AppConfig(String githubClientId, String githubClientSecret) {
+    public AppConfig(String githubClientId, String githubClientSecret, String stage) {
         this.githubClientId = githubClientId;
         this.githubClientSecret = githubClientSecret;
+        this.stage = stage;
     }
 
     public String getGithubClientId() {
@@ -16,5 +18,9 @@ public class AppConfig {
 
     public String getGithubClientSecret() {
         return githubClientSecret;
+    }
+
+    public String getStage() {
+        return stage;
     }
 }

@@ -48,7 +48,8 @@ public class Main {
     private static AppConfig getConfig(Dotenv dotenv) {
         return new AppConfig(
             dotenv.get("GITHUB_CLIENT_ID"),
-            dotenv.get("GITHUB_CLIENT_SECRET")
+            dotenv.get("GITHUB_CLIENT_SECRET"),
+            dotenv.get("STAGE")
         );
     }
 
