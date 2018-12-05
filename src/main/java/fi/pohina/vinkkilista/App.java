@@ -1,6 +1,5 @@
 package fi.pohina.vinkkilista;
 
-import com.google.common.base.Strings;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import fi.pohina.vinkkilista.api.GithubEmail;
@@ -15,7 +14,6 @@ import org.apache.http.client.fluent.Form;
 import spark.*;
 import org.apache.http.client.utils.URLEncodedUtils;
 import spark.ModelAndView;
-import spark.QueryParamsMap;
 import spark.template.thymeleaf.ThymeleafTemplateEngine;
 
 import java.lang.reflect.Type;
@@ -36,12 +34,12 @@ public class App {
     private final CommaSeparatedTagsParser tagParser
             = new CommaSeparatedTagsParser();
 
-    private final BookmarkService bookmarks;
+    private final BookmarkService bookmarkService;
     private final AppConfig config;
     private final UserService users;
 
-    public App(BookmarkService bookmarks, UserService users, AppConfig config) {
-        this.bookmarks = bookmarks;
+    public App(BookmarkService bookmarkService, UserService users, AppConfig config) {
+        this.bookmarkService = bookmarkService;
         this.config = config;
         this.users = users;
 
@@ -69,7 +67,7 @@ public class App {
         path("/bookmarks", () -> {
             get("/", (req, res) -> {
                 Map<String, Object> map = new HashMap<>();
-                Collection<Bookmark> bookmarks = this.bookmarks.getAllBookmarks();
+                Collection<Bookmark> bookmarks = this.bookmarkService.getAllBookmarks();
                 map.put("bookmarks", bookmarks);
 
                 User user = req.attribute(REQ_ATTRIBUTE_USER);
@@ -81,14 +79,6 @@ public class App {
                     map.put("user", user);
                 }
 
-                return render(map, "index");
-            });
-
-            //Turha
-            get("/bookmarks", (req, res) -> {
-                Map<String, Object> map = new HashMap<>();
-                Collection<Bookmark> bookmarks = this.bookmarks.getAllBookmarks();
-                map.put("bookmarks", bookmarks);
                 return render(map, "index");
             });
 
@@ -108,25 +98,24 @@ public class App {
                 String author = req.queryParams("author");
                 User creator = users.findById(getUserIdFromSession(req.session()));
                 Set<String> tags = tagParser.parse(req.queryParams("tags"));
-                
-                if (Strings.isNullOrEmpty(title) || Strings.isNullOrEmpty(url)) {
-                    res.redirect("new");
-                    return "Bookmark could not be created";
-                } else {
-                    bookmarks.createBookmark(
-                            title,
-                            url,
-                            author,
-                            creator,
-                            tags);
+
+                boolean success = bookmarkService.createBookmark(title, url, author, creator, tags);
+
+                if (success) {
                     res.redirect("/bookmarks/");
                     return "New bookmark added";
+
+                } else {
+                    res.redirect("new");
+                    return "Bookmark could not be created";
                 }
             });
 
             post("/search", (req, res) -> {
                 Map<String, Object> map = new HashMap<>();
-                Collection<Bookmark> bookmarks = searchBookmarks(req.queryMap());
+                String commaSeparatedTags = req.queryParams("tags");
+                Set<String> tags = tagParser.parse(commaSeparatedTags);
+                Collection<Bookmark> bookmarks = bookmarkService.getBookmarksByTags(tags);
                 map.put("bookmarks", bookmarks);
                 return render(map, "search");
             });
@@ -245,20 +234,6 @@ public class App {
                 .orElse(userEmails.get(0));
 
         return primaryEmail.getEmail();
-    }
-
-    /**
-     * Searches for bookmarks based on filter forms, e.g. tags.
-     *
-     * @param params the query parameters of the request.
-     * @return list of bookmarks that match the query.
-     */
-    private Collection<Bookmark> searchBookmarks(QueryParamsMap params) {
-        String commaSeparatedTags = params.get("tags").value();
-
-        Set<String> tags = tagParser.parse(commaSeparatedTags);
-
-        return bookmarks.getBookmarksByTags(tags);
     }
 
     /**

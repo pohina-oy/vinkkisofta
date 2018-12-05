@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 import static org.hamcrest.CoreMatchers.hasItems;
 import org.junit.Before;
 import org.junit.Test;
-
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
@@ -23,25 +22,27 @@ public class BookmarkServiceTest {
     public void setUp() {
         bookmarkDao = spy(new InMemoryBookmarkDao());
         tagDao = spy(new InMemoryTagDao());
-
         bookmarkService = spy(new BookmarkService(bookmarkDao, tagDao));
     }
 
     @Test
     public void createBookmarkCreatesCorrectBookmark() {
         String title = "foobar",
-            url = "http://foo.com",
-            author = "author";
+                url = "http://foo.com",
+                author = "author";
+
+        User creator = null;
+        Set<String> tags = new HashSet<>(Arrays.asList("TE&/(    STI   !#  ", "journal"));
 
         bookmarkService.createBookmark(
-            title,
-            url,
-            author,
-            null,
-            null);
+                title,
+                url,
+                author,
+                creator,
+                tags);
 
         verify(bookmarkDao, times(1))
-            .add(any(Bookmark.class));
+                .add(any(Bookmark.class));
 
         Bookmark createdBookmark = bookmarkDao.findAll().get(0);
 
@@ -72,27 +73,27 @@ public class BookmarkServiceTest {
         addTaggedBookmarks();
 
         Collection<Bookmark> foundBookmarks = bookmarkService.getBookmarksByTags(
-            new HashSet<>(Arrays.asList("video"))
+                new HashSet<>(Arrays.asList("video"))
         );
 
         assertEquals(2, foundBookmarks.size());
         assertThat(
-            foundBookmarks.stream()
-                .map(Bookmark::getTitle)
-                .collect(Collectors.toList()),
-            hasItems("third", "fourth")
+                foundBookmarks.stream()
+                        .map(Bookmark::getTitle)
+                        .collect(Collectors.toList()),
+                hasItems("third", "fourth")
         );
 
         foundBookmarks = bookmarkService.getBookmarksByTags(
-            new HashSet<>(Arrays.asList("journal"))
+                new HashSet<>(Arrays.asList("journal"))
         );
 
         assertEquals(1, foundBookmarks.size());
         assertThat(
-            foundBookmarks.stream()
-                .map(Bookmark::getTitle)
-                .collect(Collectors.toList()),
-            hasItems("third")
+                foundBookmarks.stream()
+                        .map(Bookmark::getTitle)
+                        .collect(Collectors.toList()),
+                hasItems("third")
         );
     }
 
@@ -105,7 +106,7 @@ public class BookmarkServiceTest {
         addTaggedBookmarks();
 
         Collection<Bookmark> foundBookmarks = bookmarkService
-            .getBookmarksByTags(new HashSet<>(Arrays.asList("blog")));
+                .getBookmarksByTags(new HashSet<>(Arrays.asList("blog")));
 
         assertEquals(0, foundBookmarks.size());
     }
@@ -119,34 +120,34 @@ public class BookmarkServiceTest {
         addTaggedBookmarks();
 
         Collection<Bookmark> foundBookmarks = bookmarkService
-            .getBookmarksByTags(new HashSet<>(Arrays.asList("blog")));
+                .getBookmarksByTags(new HashSet<>(Arrays.asList("blog")));
 
         assertEquals(0, foundBookmarks.size());
     }
 
     private void addTaggedBookmarks() {
         bookmarkService.createBookmark(
-            "no tags",
-            "www.tagless.com",
-            "unknown",
-            null,
-            new HashSet<>()
+                "no tags",
+                "www.tagless.com",
+                "unknown",
+                null,
+                new HashSet<>()
         );
 
         bookmarkService.createBookmark(
-            "third",
-            "https://www.nature.com",
-            "Editor",
-            null,
-            new HashSet<>(Arrays.asList("video", "journal"))
+                "third",
+                "https://www.nature.com",
+                "Editor",
+                null,
+                new HashSet<>(Arrays.asList("video", "journal"))
         );
 
         bookmarkService.createBookmark(
-            "fourth",
-            "https://www.videosite.net",
-            "Firstname Lastname",
-            null,
-            new HashSet<>(Arrays.asList("video"))
+                "fourth",
+                "https://www.videosite.net",
+                "Firstname Lastname",
+                null,
+                new HashSet<>(Arrays.asList("video"))
         );
     }
 
@@ -161,7 +162,7 @@ public class BookmarkServiceTest {
         Tag tag3 = bookmarkService.findOrCreateTag(tagString3);
 
         Set<String> stringSet = new HashSet<>(
-            Arrays.asList(tagString1, tagString2, "journal")
+                Arrays.asList(tagString1, tagString2, "journal")
         );
 
         Set<Tag> tagSet = bookmarkService.findOrCreateTags(stringSet);
@@ -174,70 +175,6 @@ public class BookmarkServiceTest {
         assertTrue(tagSet.contains(tagDao.findByName("journal")));
     }
 
-    public void validateTagReturnsTagsInCorrectForm() {
-        String tag = "testi";
-        assertEquals("testi", bookmarkService.validateTag(tag));
-
-        tag = "Testi";
-        assertEquals("testi", bookmarkService.validateTag(tag));
-
-        tag = "  Testi  ";
-        assertEquals("testi", bookmarkService.validateTag(tag));
-
-        tag = "tes ti";
-        assertEquals("tes ti", bookmarkService.validateTag(tag));
-
-        tag = "tes           ti";
-        assertEquals("tes ti", bookmarkService.validateTag(tag));
-
-        tag = "testi!#¤%&";
-        assertEquals(tag.toLowerCase(), bookmarkService.validateTag(tag));
-
-        tag = "testi < < testi < < < < testi";
-        assertEquals("testi < < testi < < < < testi", bookmarkService.validateTag(tag));
-
-        tag = "TE&/(    STI   !#";
-        assertEquals("te&/( sti !#", bookmarkService.validateTag(tag));
-
-        tag = "T3s71";
-        assertEquals("t3s71", bookmarkService.validateTag(tag));
-    }
-
-    @Test
-    public void validateTagReturnsTagsInCorrectFormLong() {
-        char[] chars = new char[95];
-
-        int index = 0;
-
-        for (int i = 32; i < 127; i++) {
-            chars[index] = (char) i;
-            index++;
-        }
-
-        for (int i = 0; i < 1000; i++) {
-            String random = getRandomString(chars, 100);
-
-            String validated = bookmarkService.validateTag(random);
-
-            for (int j = 0; j < validated.length() - 1; j++) {
-                if (validated.charAt(0) == ' ') {
-                    fail("Validated string has a space in front: " + validated);
-                }
-
-                if (validated.charAt(validated.length() - 1) == ' ') {
-                    fail("Validated string has a space at the end: " + validated);
-                }
-
-                if (validated.charAt(j) == ' ') {
-                    if (validated.charAt(j + 1) == ' ') {
-                        fail("Validated string has 2 or "
-                        + "more spaces in a row: " + validated);
-                    }
-                }
-            }
-        }
-    }
-
     private String getRandomString(char[] chars, int length) {
 
         StringBuilder word = new StringBuilder();
@@ -248,68 +185,5 @@ public class BookmarkServiceTest {
         }
 
         return word.toString();
-    }
-
-    @Test
-    public void validateTagDoesntReturnEmptyTags() {
-        String tag = "";
-        assertEquals(null, bookmarkService.validateTag(tag));
-
-        tag = "        ";
-        assertEquals(null, bookmarkService.validateTag(tag));
-    }
-
-    @Test
-    public void validateTagSetReturnsCorrectSet() {
-        Set<String> tags = new HashSet<>();
-        tags.add("   11   ");
-        tags.add("22");
-        tags.add("33");
-        tags.add("     ");
-        tags.add("44   ");
-        tags.add("55");
-        tags.add("66");
-
-        tags = bookmarkService.validateTagSet(tags);
-
-        int i = 0;
-        for (String tag : tags) {
-            i++;
-            assertEquals(true, tags.contains("" + i + i));
-        }
-
-        assertEquals(6, tags.size());
-    }
-
-    @Test
-    public void tagByUrlGetsCorrectTag() {
-        String tag = bookmarkService.addTagStringByUrl(
-                "https://www.youtube.com/watch?v=ZgjWOo7IqQY");
-        assertEquals("Video", tag);
-
-        tag = bookmarkService.addTagStringByUrl(
-                "https://youtu.be/G60llMJepZI");
-        assertEquals("Video", tag);
-
-        tag = bookmarkService.addTagStringByUrl(
-                "https://tastytreats-blog.blogspot.com/");
-        assertEquals("Blog", tag);
-
-        tag = bookmarkService.addTagStringByUrl(
-                "https://wordpress.org/showcase/the-dish/");
-        assertEquals("Blog", tag);
-
-        tag = bookmarkService.addTagStringByUrl(
-                "https://www.suomalainen.com/webapp/wcs"
-                + "/stores/servlet/fi/skk/lazarus-p9789513196455--77");
-        assertEquals("Book", tag);
-
-        tag = bookmarkService.addTagStringByUrl(
-                "https://ieeexplore.ieee.org/document/8543874");
-        assertEquals("Scientific Publication", tag);
-
-        tag = bookmarkService.addTagStringByUrl(
-                "https://dl.acm.org/citation.cfm?id=3292530&picked=prox");
-        assertEquals("Scientific Publication", tag);
     }
 }
