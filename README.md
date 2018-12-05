@@ -11,6 +11,7 @@
 - [Sprint 1 Backlog](https://github.com/pohina-oy/vinkkisofta/projects/3)
 - [Sprint 2 Backlog](https://github.com/pohina-oy/vinkkisofta/projects/2)
 - [Sprint 3 Backlog](https://github.com/pohina-oy/vinkkisofta/projects/4)
+- [Sprint 4 Backlog](https://github.com/pohina-oy/vinkkisofta/projects/5)
 
 ## Sprint burndown
 
