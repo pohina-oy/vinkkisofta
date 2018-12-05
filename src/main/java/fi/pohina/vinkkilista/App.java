@@ -5,7 +5,6 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import fi.pohina.vinkkilista.api.GithubEmail;
 import fi.pohina.vinkkilista.api.GithubUser;
-import fi.pohina.vinkkilista.data_access.InMemoryUserDao;
 import fi.pohina.vinkkilista.domain.Bookmark;
 import fi.pohina.vinkkilista.domain.BookmarkService;
 import fi.pohina.vinkkilista.domain.User;
