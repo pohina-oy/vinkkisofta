@@ -139,6 +139,24 @@ public class Stepdefs {
     public void no_bookmarks_are_listed() {
         assertEquals(0, getBookmarkWebElements("bookmarkList").size());
     }
+    
+    // Add Tags Based On Url
+    
+    @Then("a bookmark with title {string} is listed")
+    public void a_bookmark_with_title_is_listed(String title) {
+        pageUrlIs(baseUrl + "search");
+        
+        pageHasContent("Search bookmarks by tags");
+        pageHasContent(title);        
+    }
+    
+    @Then("a bookmark with title {string} is not listed")
+    public void a_bookmark_with_title_is_not_listed(String title) {
+        pageUrlIs(baseUrl + "search");
+        
+        pageHasContent("Search bookmarks by tags");
+        pageDoesNotHaveContent(title);        
+    }
 
     @After
     public void tearDown() {
@@ -164,12 +182,16 @@ public class Stepdefs {
     private void pageHasContent(String content) {
         assertTrue(driver.getPageSource().contains(content));
     }
+    
+    private void pageDoesNotHaveContent(String content) {
+        assertTrue(!driver.getPageSource().contains(content));
+    }
 
     private void searchByTags(String tag) {
         typeToElementWithId("tagsInput", tag);
         submitElementWithId("submitForm");
     }
-
+    
     private List<WebElement> getBookmarkWebElements(String containerClassName) {
         return driver.findElement(By.className(containerClassName))
             .findElements(By.className("bookmark"));
@@ -201,5 +223,5 @@ public class Stepdefs {
         }
 
         return false;
-    }
+    }    
 }
