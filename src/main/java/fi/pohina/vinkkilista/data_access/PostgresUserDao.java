@@ -24,7 +24,7 @@ public class PostgresUserDao implements UserDao {
     public User findById(String id) {
         String query = "SELECT * FROM users where id = ?";
         try {
-            PreparedStatement st = this.db.prepareStatement(query);
+            PreparedStatement st = this.db.prepareStatement(query, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
             st.setString(1, id);
             ResultSet rs = st.executeQuery();
             if (rs.first()) {
@@ -44,7 +44,7 @@ public class PostgresUserDao implements UserDao {
     public User findByGithubId(int githubId) {
         String query = "SELECT * FROM users where \"githubId\" = ?";
         try {
-            PreparedStatement st = this.db.prepareStatement(query);
+            PreparedStatement st = this.db.prepareStatement(query, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
             st.setInt(1, githubId);
             ResultSet rs = st.executeQuery();
             if (rs.first()) {
