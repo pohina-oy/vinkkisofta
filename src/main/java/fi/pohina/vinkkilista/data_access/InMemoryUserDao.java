@@ -66,13 +66,23 @@ public class InMemoryUserDao implements UserDao {
         usersDB.add(user);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void addBookmarkReadDate(String userId, String bookmarkId, LocalDateTime dateRead) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        User user = findById(userId);
+
+        user.setBookmarkReadStatus(bookmarkId, dateRead);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void removeBookmarkReadDate(String userId, String bookmarkId) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        User user = findById(userId);
+
+        user.removeBookmarkReadStatus(bookmarkId);
     }
 }
