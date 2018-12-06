@@ -67,7 +67,7 @@ public class UserTest {
         user.setBookmarkReadStatus(bookmarkId, dateRead);
         LocalDateTime result = user.getBookmarkReadStatus(bookmarkId);
 
-        assertEquals(dateRead, result);
+        assertTrue(dateRead.equals(result));
     }
 
     @Test
@@ -79,7 +79,7 @@ public class UserTest {
         user.setBookmarkReadStatus(bookmarkId, dateRead);
         LocalDateTime result = user.getBookmarkReadStatus(bookmarkId);
 
-        assertEquals(dateRead, result);
+        assertTrue(dateRead.equals(result));
 
         user.removeBookmarkReadStatus(bookmarkId);
         result = user.getBookmarkReadStatus(bookmarkId);
