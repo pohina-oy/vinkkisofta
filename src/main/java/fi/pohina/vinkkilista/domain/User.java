@@ -1,5 +1,6 @@
 package fi.pohina.vinkkilista.domain;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 
 public class User {
@@ -8,7 +9,7 @@ public class User {
     private final String email;
     private final String username;
     private final int githubId;
-    private final HashMap<String, String> bookmarkReadDates;
+    private final HashMap<String, LocalDateTime> bookmarkReadDates;
 
     public User(String id, String email, String username, int githubId) {
         this.id = id;
@@ -34,11 +35,11 @@ public class User {
         return githubId;
     }
 
-    public String getBookmarkReadStatus(String bookmarkId) {
+    public LocalDateTime getBookmarkReadStatus(String bookmarkId) {
         return bookmarkReadDates.get(bookmarkId);
     }
 
-    public void setBookmarkReadStatus(String bookmarkId, String dateRead) {
+    public void setBookmarkReadStatus(String bookmarkId, LocalDateTime dateRead) {
         bookmarkReadDates.put(bookmarkId, dateRead);
     }
 

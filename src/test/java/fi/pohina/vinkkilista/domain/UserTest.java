@@ -1,5 +1,7 @@
 package fi.pohina.vinkkilista.domain;
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -60,10 +62,10 @@ public class UserTest {
     public void setBookmarkReadDateWorksCorrectly() {
         User user = prepareTestUser();
         String bookmarkId = "bookmark-123";
-        String dateRead = "12.12.12";
+        LocalDateTime dateRead = LocalDateTime.now(ZoneOffset.UTC);
 
         user.setBookmarkReadStatus(bookmarkId, dateRead);
-        String result = user.getBookmarkReadStatus(bookmarkId);
+        LocalDateTime result = user.getBookmarkReadStatus(bookmarkId);
 
         assertEquals(dateRead, result);
     }
@@ -72,10 +74,10 @@ public class UserTest {
     public void removeBookmarkReadDateWorksCorrectly() {
         User user = prepareTestUser();
         String bookmarkId = "bookmark-123";
-        String dateRead = "12.12.12";
+        LocalDateTime dateRead = LocalDateTime.now(ZoneOffset.UTC);
 
         user.setBookmarkReadStatus(bookmarkId, dateRead);
-        String result = user.getBookmarkReadStatus(bookmarkId);
+        LocalDateTime result = user.getBookmarkReadStatus(bookmarkId);
 
         assertEquals(dateRead, result);
 
