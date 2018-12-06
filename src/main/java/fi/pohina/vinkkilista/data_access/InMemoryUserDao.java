@@ -2,6 +2,7 @@ package fi.pohina.vinkkilista.data_access;
 
 import java.util.ArrayList;
 import fi.pohina.vinkkilista.domain.User;
+import java.time.LocalDateTime;
 import java.util.*;
 
 /**
@@ -63,5 +64,15 @@ public class InMemoryUserDao implements UserDao {
     @Override
     public void add(User user) {
         usersDB.add(user);
+    }
+
+    @Override
+    public void addBookmarkReadDate(String userId, String bookmarkId, LocalDateTime dateRead) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void removeBookmarkReadDate(String userId, String bookmarkId) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.List;
+import java.time.LocalDateTime;
 
 import fi.pohina.vinkkilista.domain.User;
 import javax.sql.DataSource;
@@ -75,4 +76,14 @@ public class PostgresUserDao implements UserDao {
     public List<User> findAll() {
 		return null;
 	}
+
+    @Override
+    public void addBookmarkReadDate(String userId, String bookmarkId, LocalDateTime dateRead) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void removeBookmarkReadDate(String userId, String bookmarkId) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

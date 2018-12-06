@@ -1,6 +1,7 @@
 package fi.pohina.vinkkilista.data_access;
 
 import fi.pohina.vinkkilista.domain.User;
+import java.time.LocalDateTime;
 import java.util.*;
 
 public interface UserDao {
@@ -36,4 +37,23 @@ public interface UserDao {
      * @param user new user to be saved.
      */
     void add(User user);
+
+    /**
+     * Adds date a specified bookmark has been read for a specified user to
+     * the DAO.
+     *
+     * @param userId the id of the user.
+     * @param bookmarkId the id of the bookmark.
+     * @param dateRead the time to annotate bookmark as read.
+     */
+    void addBookmarkReadDate(String userId, String bookmarkId, LocalDateTime dateRead);
+
+    /**
+     * Removes the date read annotations from a specified bookmark for a
+     * specified user from the DAO.
+     *
+     * @param userId the id of the user.
+     * @param bookmarkId the id of the bookmark.
+     */
+    void removeBookmarkReadDate(String userId, String bookmarkId);
 }
