@@ -73,7 +73,9 @@ public class InMemoryUserDao implements UserDao {
     public void addBookmarkReadDate(String userId, String bookmarkId, LocalDateTime dateRead) {
         User user = findById(userId);
 
-        user.setBookmarkReadStatus(bookmarkId, dateRead);
+        if (user != null) {
+            user.setBookmarkReadStatus(bookmarkId, dateRead);
+        }
     }
 
     /**
@@ -83,6 +85,8 @@ public class InMemoryUserDao implements UserDao {
     public void removeBookmarkReadDate(String userId, String bookmarkId) {
         User user = findById(userId);
 
-        user.removeBookmarkReadStatus(bookmarkId);
+        if (user != null) {
+            user.removeBookmarkReadStatus(bookmarkId);
+        }
     }
 }
