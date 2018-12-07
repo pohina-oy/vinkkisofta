@@ -33,6 +33,10 @@ repositories {
 test {
     testLogging.showStandardStreams = true
     systemProperties System.getProperties()
+
+    jacoco {
+        excludes += ['com/steadystate/css/**']
+    }
 }
 
 run {}
