@@ -5,14 +5,19 @@ import spark.Spark;
 
 public class ServerRule extends ExternalResource {
 
+    private App app;
+
     @Override
     protected void before() throws Throwable {
-        Main.main(null);
+        app = Main.start();
     }
 
     @Override
     protected void after() {
         Spark.stop();
     }
-    
+
+    App getApp() {
+        return app;
+    }
 }
