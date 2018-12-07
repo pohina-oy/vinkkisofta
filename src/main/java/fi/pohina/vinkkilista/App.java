@@ -3,16 +3,13 @@ package fi.pohina.vinkkilista;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import fi.pohina.vinkkilista.api.GithubEmail;
+import fi.pohina.vinkkilista.api.GithubOAuthApi;
 import fi.pohina.vinkkilista.api.GithubUser;
 import fi.pohina.vinkkilista.domain.Bookmark;
 import fi.pohina.vinkkilista.domain.BookmarkService;
 import fi.pohina.vinkkilista.domain.User;
 import fi.pohina.vinkkilista.domain.UserService;
-import org.apache.http.HttpEntity;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.fluent.Form;
 import spark.*;
-import org.apache.http.client.utils.URLEncodedUtils;
 import spark.ModelAndView;
 import spark.template.thymeleaf.ThymeleafTemplateEngine;
 
@@ -29,6 +26,7 @@ public class App {
     private final CommaSeparatedTagsParser tagParser
             = new CommaSeparatedTagsParser();
 
+    private final GithubOAuthApi githubOAuthApi;
     private final BookmarkService bookmarkService;
     private final AppConfig config;
     private final UserService users;
@@ -37,6 +35,10 @@ public class App {
         this.bookmarkService = bookmarkService;
         this.config = config;
         this.users = users;
+        this.githubOAuthApi = new GithubOAuthApi(
+            config.getGithubClientId(),
+            config.getGithubClientSecret()
+        );
     }
 
     /**
@@ -119,7 +121,8 @@ public class App {
         get("/auth/gh-callback", (req, res) -> {
             String callbackCode = req.queryParams("code");
 
-            String accessToken = postAuthCallbackCode(callbackCode);
+            String accessToken
+                = githubOAuthApi.exchangeCodeForAccessToken(callbackCode);
 
             // 2. get user info
             String userInfoJson = getUserInfoJson(accessToken);
@@ -156,37 +159,6 @@ public class App {
 
     private String getUserIdFromSession(Session session) {
         return session.attribute(SESSION_ATTRIBUTE_USERID);
-    }
-
-    private String postAuthCallbackCode(String code) throws Exception {
-        String url = "https://github.com/login/oauth/access_token";
-
-        // 1. fetch access token to Github API with code
-        List<NameValuePair> form = Form.form()
-                .add("code", code)
-                .add("client_id", config.getGithubClientId())
-                .add("client_secret", config.getGithubClientSecret())
-                .build();
-
-        HttpEntity responseEntity
-                = org.apache.http.client.fluent.Request.Post(url)
-                        .bodyForm(form)
-                        .execute()
-                        .returnResponse()
-                        .getEntity();
-
-        // 1.1 print access token response keys
-        List<NameValuePair> responseQuery = URLEncodedUtils.parse(responseEntity);
-        //responseQuery.forEach(nvp -> System.out.println("    * " + nvp.getName() + " - " + nvp.getValue()));
-
-        String accessToken = responseQuery
-                .stream()
-                .filter(nvp -> nvp.getName().equals("access_token"))
-                .findFirst()
-                .map(NameValuePair::getValue)
-                .orElse(null);
-
-        return accessToken;
     }
 
     private String getUserInfoJson(String accessToken) throws Exception {
