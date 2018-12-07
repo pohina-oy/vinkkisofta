@@ -119,6 +119,14 @@ public class UserServiceTest {
         assertFalse(Strings.isNullOrEmpty(user.getId()));
     }
 
+    @Test
+    public void markingBookmarkAsReadWorks() {
+    }
+
+    @Test
+    public void unmarkingBookmarkAsReadWorks() {
+    }
+
     private static GithubUser createGithubUser(int id, String username) {
         return createGithubUser(id, username, "");
     }
