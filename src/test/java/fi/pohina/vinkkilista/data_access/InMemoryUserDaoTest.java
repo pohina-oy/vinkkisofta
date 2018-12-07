@@ -120,7 +120,7 @@ public class InMemoryUserDaoTest {
     }
 
     @Test
-    public void newUsersDoesNotHaveBookmarkRead() {
+    public void newUserDoesNotHaveBookmarkRead() {
         String addedId = "user-3";
         String bookmarkId = "bookmark-123";
         User newEntry = new User(
@@ -152,7 +152,16 @@ public class InMemoryUserDaoTest {
     }
 
     @Test
-    public void removesBookmarkReadDateWorksCorrectly() {
+    public void addBookmarkReadDateIgnoresNonexistentUser() {
+        String userId = "new-user";
+        String bookmarkId = "bookmark-123";
+        LocalDateTime dateRead = LocalDateTime.now(ZoneOffset.UTC);
+
+        userDao.addBookmarkReadDate(userId, bookmarkId, dateRead);
+    }
+
+    @Test
+    public void removeBookmarkReadDateWorksCorrectly() {
         String userId = "first-id";
         String bookmarkId = "bookmark-123";
         LocalDateTime dateRead = LocalDateTime.now(ZoneOffset.UTC);
@@ -174,5 +183,13 @@ public class InMemoryUserDaoTest {
             null,
             userDao.findById(userId).getBookmarkReadStatus(bookmarkId)
         );
+    }
+
+    @Test
+    public void removeBookmarkReadDateIgnoresNonexistentUser() {
+        String userId = "new-user";
+        String bookmarkId = "bookmark-123";
+
+        userDao.removeBookmarkReadDate(userId, bookmarkId);
     }
 }
