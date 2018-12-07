@@ -17,9 +17,6 @@ import static spark.Spark.*;
 
 public class App {
 
-    private static final String SESSION_ATTRIBUTE_USERID = "github-user";
-    private static final String REQ_ATTRIBUTE_USER = "user";
-
     private final CommaSeparatedTagsParser tagParser
             = new CommaSeparatedTagsParser();
 
@@ -27,6 +24,7 @@ public class App {
     private final BookmarkService bookmarkService;
     private final AppConfig config;
     private final UserService users;
+    private final RequestUserManager requestUserManager;
 
     public App(BookmarkService bookmarkService, UserService users, AppConfig config) {
         this.bookmarkService = bookmarkService;
@@ -36,6 +34,7 @@ public class App {
             config.getGithubClientId(),
             config.getGithubClientSecret()
         );
+        this.requestUserManager = new RequestUserManager(users);
     }
 
     /**
@@ -59,7 +58,7 @@ public class App {
                 Collection<Bookmark> bookmarks = this.bookmarkService.getAllBookmarks();
                 map.put("bookmarks", bookmarks);
 
-                User user = req.attribute(REQ_ATTRIBUTE_USER);
+                User user = requestUserManager.getSignedInUser(req);
                 if (user != null) {
                     map.put("user", user);
                 } else {
@@ -84,7 +83,7 @@ public class App {
                 String title = req.queryParams("title");
                 String url = req.queryParams("url");
                 String author = req.queryParams("author");
-                User creator = users.findById(getUserIdFromSession(req.session()));
+                User creator = requestUserManager.getSignedInUser(req);
                 Set<String> tags = tagParser.parse(req.queryParams("tags"));
 
                 boolean success = bookmarkService.createBookmark(title, url, author, creator, tags);
@@ -125,29 +124,23 @@ public class App {
 
             User user = users.findOrCreateByGithubUser(githubUser);
 
-            req.session(true)
-                    .attribute(SESSION_ATTRIBUTE_USERID, user.getId());
+            requestUserManager.setSignedInUser(req, user);
 
             res.redirect("/bookmarks/");
             return "";
         });
     }
 
+    /**
+     * Redirects all users who have not signed in to the login page.
+     */
     private void authenticationFilter(Request req, Response res) {
-        String userId = getUserIdFromSession(req.session());
-        User user = users.findById(userId);
+        User user = requestUserManager.getSignedInUser(req);
 
         if (user == null) {
             res.redirect("/login");
             halt();
-            return;
         }
-
-        req.attribute(REQ_ATTRIBUTE_USER, user);
-    }
-
-    private String getUserIdFromSession(Session session) {
-        return session.attribute(SESSION_ATTRIBUTE_USERID);
     }
 
     /**
