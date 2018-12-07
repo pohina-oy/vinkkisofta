@@ -61,7 +61,6 @@ public class App {
                 map.put("bookmarks", bookmarks);
 
                 User user = req.attribute(REQ_ATTRIBUTE_USER);
-                System.out.println("App::bookmarkIndexHandler\n  user:" + user);
                 if (user != null) {
                     map.put("user", user);
                 } else {
@@ -145,8 +144,6 @@ public class App {
     private void authenticationFilter(Request req, Response res) {
         String userId = getUserIdFromSession(req.session());
         User user = users.findById(userId);
-
-        System.out.println("App::authenticationFilter\n  user: " + user);
 
         if (user == null) {
             res.redirect("/login");
