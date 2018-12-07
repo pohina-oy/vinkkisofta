@@ -1,18 +1,10 @@
 package fi.pohina.vinkkilista;
 
-import fi.pohina.vinkkilista.data_access.BookmarkDao;
-import fi.pohina.vinkkilista.data_access.InMemoryBookmarkDao;
-import fi.pohina.vinkkilista.data_access.TagDao;
-import fi.pohina.vinkkilista.data_access.UserDao;
-import fi.pohina.vinkkilista.data_access.InMemoryTagDao;
-import fi.pohina.vinkkilista.data_access.InMemoryUserDao;
+import fi.pohina.vinkkilista.data_access.*;
 import fi.pohina.vinkkilista.domain.BookmarkService;
 import fi.pohina.vinkkilista.domain.UserService;
 
 import java.util.*;
-import fi.pohina.vinkkilista.data_access.PostgresBookmarkDao;
-import fi.pohina.vinkkilista.data_access.PostgresTagDao;
-import fi.pohina.vinkkilista.data_access.PostgresUserDao;
 import io.github.cdimascio.dotenv.Dotenv;
 
 public class Main {
@@ -21,16 +13,23 @@ public class Main {
             .configure()
             .ignoreIfMissing()
             .load();
-        String stage = dotenv.get("STAGE");
 
-        BookmarkDao bookmarkDao = getBookmarkDao(dotenv);
-        TagDao tagDao = getTagDao(dotenv);
-        UserDao userDao = getUserDao(dotenv);
+        DaoFactory daoFactory = new DaoFactory(
+            isProduction(dotenv),
+            getConnectionProvider(dotenv)
+        );
 
-        BookmarkService bookmarkService = new BookmarkService(bookmarkDao, tagDao);
+        BookmarkDao bookmarkDao = daoFactory.createBookmarkDao();
+        TagDao tagDao = daoFactory.createTagDao();
+        UserDao userDao = daoFactory.createUserDao();
+
+        BookmarkService bookmarkService = new BookmarkService(
+            bookmarkDao,
+            tagDao
+        );
         UserService userService = new UserService(userDao);
 
-        if (stage == null || !stage.equals("production")) {
+        if (!isProduction(dotenv)) {
             addMockBookmarks(bookmarkService);
         }
 
@@ -84,39 +83,22 @@ public class Main {
         );
     }
 
-    private static BookmarkDao getBookmarkDao(Dotenv dotenv) {
+    private static boolean isProduction(Dotenv dotenv) {
         String stage = dotenv.get("STAGE");
-        if (stage == null || !stage.equals("production")) {
-            return new InMemoryBookmarkDao();
-        }
-        String dbHost = dotenv.get("DB_HOST");
-        String dbUser = dotenv.get("DB_USER");
-        String dbPassword = dotenv.get("DB_PASSWORD");
-        String db = dotenv.get("DB_DATABASE");
-        return new PostgresBookmarkDao(dbHost, dbUser, dbPassword, db);
+        return stage != null && stage.equals("production");
     }
 
-    private static TagDao getTagDao(Dotenv dotenv) {
-        String stage = dotenv.get("STAGE");
-        if (stage == null || !stage.equals("production")) {
-            return new InMemoryTagDao();
-        }
-        String dbHost = dotenv.get("DB_HOST");
-        String dbUser = dotenv.get("DB_USER");
-        String dbPassword = dotenv.get("DB_PASSWORD");
-        String db = dotenv.get("DB_DATABASE");
-        return new PostgresTagDao(dbHost, dbUser, dbPassword, db);
+    private static ConnectionProvider getConnectionProvider(Dotenv dotenv) {
+        String connString = getConnectionString(dotenv);
+        return new ConnectionProvider(connString);
     }
 
-    private static UserDao getUserDao(Dotenv dotenv) {
-        String stage = dotenv.get("STAGE");
-        if (stage == null || !stage.equals("production")) {
-            return new InMemoryUserDao();
-        }
-        String dbHost = dotenv.get("DB_HOST");
-        String dbUser = dotenv.get("DB_USER");
-        String dbPassword = dotenv.get("DB_PASSWORD");
-        String db = dotenv.get("DB_DATABASE");
-        return new PostgresUserDao(dbHost, dbUser, dbPassword, db);
+    private static String getConnectionString(Dotenv dotenv) {
+        return String.format("jdbc:postgresql://%s/%s?user=%s&password=%s",
+            dotenv.get("DB_HOST"),
+            dotenv.get("DB_DATABASE"),
+            dotenv.get("DB_USER"),
+            dotenv.get("DB_PASSWORD")
+        );
     }
 }

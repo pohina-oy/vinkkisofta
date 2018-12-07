@@ -12,12 +12,11 @@ import java.util.*;
 public class PostgresTagDao implements TagDao {
     private Connection db;
 
-    public PostgresTagDao(String dbHost, String dbUser, String dbPassword, String dbName) {
-        String url = "jdbc:postgresql://" + dbHost + "/" + dbName + "?user=" + dbUser + "&password=" + dbPassword;
-        try { 
-            this.db = DriverManager.getConnection(url);
+    public PostgresTagDao(ConnectionProvider connProvider) {
+        try {
+            this.db = connProvider.getConnection();
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -78,7 +77,7 @@ public class PostgresTagDao implements TagDao {
             while (rs.next()) {
                 String id = rs.getString("id");
                 String name = rs.getString("name");
-                tags.add(new Tag(id, name));                
+                tags.add(new Tag(id, name));
             }
             return tags;
         } catch (Exception e) {

@@ -1,7 +1,6 @@
 package fi.pohina.vinkkilista.data_access;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.List;
@@ -11,12 +10,11 @@ import fi.pohina.vinkkilista.domain.User;
 public class PostgresUserDao implements UserDao {
     private Connection db;
 
-    public PostgresUserDao(String dbHost, String dbUser, String dbPassowrd, String dbName) {
-        String url = "jdbc:postgresql://" + dbHost + "/" + dbName + "?user=" + dbUser + "&password=" + dbPassowrd;
+    public PostgresUserDao(ConnectionProvider connProvider) {
         try {
-            this.db = DriverManager.getConnection(url);
+            this.db = connProvider.getConnection();
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
     }
 

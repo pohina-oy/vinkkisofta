@@ -14,12 +14,11 @@ import java.util.*;
 public class PostgresBookmarkDao implements BookmarkDao {
     private Connection db;
 
-    public PostgresBookmarkDao(String dbHost, String dbUser, String dbPassword, String dbName) {
-        String url = "jdbc:postgresql://" + dbHost + "/" + dbName + "?user=" + dbUser + "&password=" + dbPassword;
-        try { 
-            this.db = DriverManager.getConnection(url);
+    public PostgresBookmarkDao(ConnectionProvider connProvider) {
+        try {
+            this.db = connProvider.getConnection();
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -69,13 +68,13 @@ public class PostgresBookmarkDao implements BookmarkDao {
                 String username = rs.getString("username");
                 User creator = new User(userId, null, username, 0);
                 bookmarks.add(new Bookmark(
-                    id, 
-                    title, 
-                    url, 
+                    id,
+                    title,
+                    url,
                     author,
                     userId != null ? creator : null,
                     tags
-                ));                
+                ));
             }
             return bookmarks;
         } catch (Exception e) {
@@ -107,7 +106,7 @@ public class PostgresBookmarkDao implements BookmarkDao {
     }
 
     /**
-     * Links a bookmark and tags    
+     * Links a bookmark and tags
      * @param tagName
      * @param bookmarkId
      */
