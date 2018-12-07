@@ -6,23 +6,21 @@ import java.sql.ResultSet;
 import java.util.List;
 
 import fi.pohina.vinkkilista.domain.User;
+import javax.sql.DataSource;
 
 public class PostgresUserDao implements UserDao {
-    private Connection db;
 
-    public PostgresUserDao(ConnectionProvider connProvider) {
-        try {
-            this.db = connProvider.getConnection();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    private final DataSource dataSource;
+    
+    public PostgresUserDao(DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
     @Override
     public User findById(String id) {
         String query = "SELECT * FROM users where id = ?";
-        try {
-            PreparedStatement st = this.db.prepareStatement(query, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+        try (Connection conn = dataSource.getConnection()) {
+            PreparedStatement st = conn.prepareStatement(query, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
             st.setString(1, id);
             ResultSet rs = st.executeQuery();
             if (rs.first()) {
@@ -41,8 +39,8 @@ public class PostgresUserDao implements UserDao {
     @Override
     public User findByGithubId(int githubId) {
         String query = "SELECT * FROM users where \"githubId\" = ?";
-        try {
-            PreparedStatement st = this.db.prepareStatement(query, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+        try (Connection conn = dataSource.getConnection()) {
+            PreparedStatement st = conn.prepareStatement(query, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
             st.setInt(1, githubId);
             ResultSet rs = st.executeQuery();
             if (rs.first()) {
@@ -61,8 +59,8 @@ public class PostgresUserDao implements UserDao {
     @Override
     public void add(User user) {
         String query = "INSERT INTO users (id, email, username, \"githubId\") values (?, ?, ?, ?)";
-        try {
-            PreparedStatement st = this.db.prepareStatement(query);
+        try (Connection conn = dataSource.getConnection()) {
+            PreparedStatement st = conn.prepareStatement(query);
             st.setString(1, user.getId());
             st.setString(2, user.getEmail());
             st.setString(3, user.getUsername());

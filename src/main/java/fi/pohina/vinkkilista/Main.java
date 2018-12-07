@@ -6,6 +6,9 @@ import fi.pohina.vinkkilista.domain.UserService;
 
 import java.util.*;
 import io.github.cdimascio.dotenv.Dotenv;
+import javax.sql.DataSource;
+import org.postgresql.ds.PGPoolingDataSource;
+import com.google.common.base.Strings;
 
 public class Main {
     public static void main(String[] args) {
@@ -16,7 +19,7 @@ public class Main {
 
         DaoFactory daoFactory = new DaoFactory(
             isProduction(dotenv),
-            getConnectionProvider(dotenv)
+            createPostgresDataSource(dotenv)
         );
 
         BookmarkDao bookmarkDao = daoFactory.createBookmarkDao();
@@ -88,17 +91,18 @@ public class Main {
         return stage != null && stage.equals("production");
     }
 
-    private static ConnectionProvider getConnectionProvider(Dotenv dotenv) {
-        String connString = getConnectionString(dotenv);
-        return new ConnectionProvider(connString);
-    }
+    private static DataSource createPostgresDataSource(Dotenv dotenv) {
+        PGPoolingDataSource ds = new PGPoolingDataSource();
+        ds.setServerName(dotenv.get("DB_HOST"));
+        ds.setDatabaseName(dotenv.get("DB_DATABASE"));
+        ds.setUser(dotenv.get("DB_USER"));
+        ds.setPassword(dotenv.get("DB_PASSWORD"));
 
-    private static String getConnectionString(Dotenv dotenv) {
-        return String.format("jdbc:postgresql://%s/%s?user=%s&password=%s",
-            dotenv.get("DB_HOST"),
-            dotenv.get("DB_DATABASE"),
-            dotenv.get("DB_USER"),
-            dotenv.get("DB_PASSWORD")
-        );
+        String portStr = dotenv.get("DB_PORT");
+        int port = Strings.isNullOrEmpty(portStr) ? 0 : Integer.parseInt(portStr);
+        ds.setPortNumber(port);
+        // for pooled connections: allow up to three simultaneous connections
+        ds.setMaxConnections(3);
+        return ds;
     }
 }

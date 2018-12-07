@@ -6,20 +6,18 @@ import fi.pohina.vinkkilista.domain.User;
 
 import java.sql.*;
 import java.util.*;
+import javax.sql.DataSource;
 
 /**
  * Provides an PostgreSQL implementation of the {@link BookmarkDao} interface,
  * backed by a {@link List<Bookmark>}.
  */
 public class PostgresBookmarkDao implements BookmarkDao {
-    private Connection db;
 
-    public PostgresBookmarkDao(ConnectionProvider connProvider) {
-        try {
-            this.db = connProvider.getConnection();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    private final DataSource dataSource;
+
+    public PostgresBookmarkDao(DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
     /**
@@ -28,9 +26,9 @@ public class PostgresBookmarkDao implements BookmarkDao {
      */
     @Override
     public Bookmark findById(String id) {
-        try {
+        try (Connection conn = dataSource.getConnection()) {
             String query = "SELECT bookmarks.*,users.id as userId, users.username FROM bookmarks left join users on (bookmarks.\"creatorId\" = users.id) where bookmarks.id = ?";
-            PreparedStatement st = this.db.prepareStatement(query);
+            PreparedStatement st = conn.prepareStatement(query);
             st.setString(1, id);
             ResultSet rs = st.executeQuery();
             if (rs.first()) {
@@ -41,7 +39,7 @@ public class PostgresBookmarkDao implements BookmarkDao {
                 String userId = rs.getString("userId");
                 String username = rs.getString("username");
                 User creator = new User(userId, null, username, 0);
-                return new Bookmark(id, title, url, author, userId != null  ? creator : null, tags);
+                return new Bookmark(id, title, url, author, userId != null ? creator : null, tags);
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -55,8 +53,8 @@ public class PostgresBookmarkDao implements BookmarkDao {
     @Override
     public List<Bookmark> findAll() {
         List<Bookmark> bookmarks = new ArrayList<>();
-        try {
-            Statement st = this.db.createStatement();
+        try (Connection conn = dataSource.getConnection()) {
+            Statement st = conn.createStatement();
             ResultSet rs = st.executeQuery("SELECT bookmarks.*,users.id as userId, users.username FROM bookmarks left join users on (bookmarks.\"creatorId\" = users.id)");
             while (rs.next()) {
                 String id = rs.getString("id");
@@ -88,9 +86,9 @@ public class PostgresBookmarkDao implements BookmarkDao {
      */
     @Override
     public void add(Bookmark bookmark) {
-        try {
+        try (Connection conn = dataSource.getConnection()) {
             String query = "INSERT INTO bookmarks (id, title, url, author, \"creatorId\") " + " values (?, ? ,? ,?, ?)";
-            PreparedStatement st = this.db.prepareStatement(query);
+            PreparedStatement st = conn.prepareStatement(query);
             st.setString(1, bookmark.getId());
             st.setString(2, bookmark.getTitle());
             st.setString(3, bookmark.getUrl());
@@ -107,13 +105,11 @@ public class PostgresBookmarkDao implements BookmarkDao {
 
     /**
      * Links a bookmark and tags
-     * @param tagName
-     * @param bookmarkId
      */
     private void addBookmarkTag(String bookmarkId, String tagId) {
         String query = "INSERT INTO bookmark_tags (\"bookmarkId\", \"tagId\") values (?, ?)";
-        try {
-            PreparedStatement st = this.db.prepareStatement(query);
+        try (Connection conn = dataSource.getConnection()) {
+            PreparedStatement st = conn.prepareStatement(query);
             st.setString(1, bookmarkId);
             st.setString(2, tagId);
             st.executeUpdate();
@@ -123,9 +119,9 @@ public class PostgresBookmarkDao implements BookmarkDao {
     }
 
     private Set<Tag> findBookmarkTags(String bookmarkId) {
-        try {
+        try (Connection conn = dataSource.getConnection()) {
             String query = "SELECT tags.* FROM bookmark_tags inner join tags on tags.id = bookmark_tags.\"tagId\" where bookmark_tags.\"bookmarkId\" = ?";
-            PreparedStatement st = this.db.prepareStatement(query);
+            PreparedStatement st = conn.prepareStatement(query);
             st.setString(1, bookmarkId);
             ResultSet rs = st.executeQuery();
             Set<Tag> tagSet = new HashSet<>();
@@ -149,9 +145,9 @@ public class PostgresBookmarkDao implements BookmarkDao {
             tagArray.add(tag);
         }
         String query = "select bookmarks.*, users.id as userId, users.username from bookmark_tags inner join bookmarks on bookmark_tags.\"bookmarkId\" = bookmarks.id inner join tags on tags.id = bookmark_tags.\"tagId\" left join users on users.id = bookmarks.\"creatorId\" where tags.name = ANY(?)";
-        try {
-            PreparedStatement st = this.db.prepareStatement(query);
-            Array array = this.db.createArrayOf("varchar", tagArray.toArray());
+        try (Connection conn = dataSource.getConnection()) {
+            PreparedStatement st = conn.prepareStatement(query);
+            Array array = conn.createArrayOf("varchar", tagArray.toArray());
             st.setArray(1, array);
             ResultSet rs = st.executeQuery();
             HashSet<Bookmark> bookmarks = new HashSet<>();

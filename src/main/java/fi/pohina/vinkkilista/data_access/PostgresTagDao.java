@@ -4,20 +4,18 @@ import fi.pohina.vinkkilista.domain.Tag;
 
 import java.sql.*;
 import java.util.*;
+import javax.sql.DataSource;
 
 /**
  * Provides an PostgreSQL implementation of the {@link TagDao} interface,
  * backed by a {@link List<Tag>}.
  */
 public class PostgresTagDao implements TagDao {
-    private Connection db;
 
-    public PostgresTagDao(ConnectionProvider connProvider) {
-        try {
-            this.db = connProvider.getConnection();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    private final DataSource dataSource;
+
+    public PostgresTagDao(DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
     /**
@@ -26,9 +24,9 @@ public class PostgresTagDao implements TagDao {
      */
     @Override
     public Tag findById(String id) {
-        try {
+        try (Connection conn = dataSource.getConnection()) {
             String query = "SELECT * FROM tags WHERE id = ?";
-            PreparedStatement st = this.db.prepareStatement(query);
+            PreparedStatement st = conn.prepareStatement(query);
             st.setString(1, id);
             ResultSet rs = st.executeQuery();
             if (rs.first()) {
@@ -46,9 +44,9 @@ public class PostgresTagDao implements TagDao {
      */
     @Override
     public Tag findByName(String name) {
-        try {
+        try (Connection conn = dataSource.getConnection()) {
             String query = "SELECT * FROM tags WHERE name = ?";
-            PreparedStatement st = this.db.prepareStatement(
+            PreparedStatement st = conn.prepareStatement(
                 query,
                 ResultSet.TYPE_SCROLL_SENSITIVE,
                 ResultSet.CONCUR_UPDATABLE
@@ -71,8 +69,8 @@ public class PostgresTagDao implements TagDao {
     @Override
     public List<Tag> findAll() {
         List<Tag> tags = new ArrayList<>();
-        try {
-            Statement st = this.db.createStatement();
+        try (Connection conn = dataSource.getConnection()) {
+            Statement st = conn.createStatement();
             ResultSet rs = st.executeQuery("SELECT * FROM tags");
             while (rs.next()) {
                 String id = rs.getString("id");
@@ -91,9 +89,9 @@ public class PostgresTagDao implements TagDao {
      */
     @Override
     public void add(Tag tag) {
-        try {
+        try (Connection conn = dataSource.getConnection()) {
             String query = "INSERT INTO tags (id, name) " + " values (?, ?)";
-            PreparedStatement st = this.db.prepareStatement(query);
+            PreparedStatement st = conn.prepareStatement(query);
             st.setString(1, tag.getId());
             st.setString(2, tag.getName());
             st.executeUpdate();
