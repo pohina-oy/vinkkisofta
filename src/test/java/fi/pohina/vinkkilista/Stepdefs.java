@@ -1,5 +1,6 @@
 package fi.pohina.vinkkilista;
 
+import fi.pohina.vinkkilista.utils.TagParser;
 import cucumber.api.java.After;
 import cucumber.api.java.en.*;
 import java.util.*;
@@ -11,8 +12,8 @@ public class Stepdefs {
     private WebDriver driver;
     //private String baseUrl = "http://localhost:4567/";
     private String baseUrl = "http://localhost:4567/bookmarks/";
-    private final CommaSeparatedTagsParser tagParser
-        = new CommaSeparatedTagsParser();
+    private final TagParser tagParser
+        = new TagParser();
     
     public Stepdefs() {
         driver = new HtmlUnitDriver();
@@ -204,7 +205,7 @@ public class Stepdefs {
     ) {
         for (WebElement bookmark : bookmarks) {
             assertTrue(
-                bookmarkHasAnyOfTags(bookmark, tagParser.parse(tags))
+                bookmarkHasAnyOfTags(bookmark, tagParser.csvToSet(tags))
             );
         }
     }

@@ -1,36 +1,37 @@
-package fi.pohina.vinkkilista;
+package fi.pohina.vinkkilista.utils;
 
+import fi.pohina.vinkkilista.utils.TagParser;
 import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.*;
 
-public class CommaSeparatedTagsParserTest {
-    private CommaSeparatedTagsParser parser;
+public class TagParserTest {
+    private TagParser parser;
 
     @Before
     public void setUp() {
-        parser = new CommaSeparatedTagsParser();
+        parser = new TagParser();
     }
 
     @Test
     public void parseReturnsEmptySetWhenInputIsNull() {
-        Set<String> output = parser.parse(null);
+        Set<String> output = parser.csvToSet(null);
 
         assertEquals(0, output.size());
     }
 
     @Test
     public void parseReturnsEmptySetWhenInputIsEmpty() {
-        Set<String> output = parser.parse("");
+        Set<String> output = parser.csvToSet("");
 
         assertEquals(0, output.size());
     }
 
     @Test
     public void parseReturnsEmptySetWhenInputIsNothingButCommas() {
-        Set<String> output = parser.parse(",,,,");
+        Set<String> output = parser.csvToSet(",,,,");
 
         assertEquals(0, output.size());
     }
@@ -105,7 +106,7 @@ public class CommaSeparatedTagsParserTest {
         String input,
         String... expectedTags
     ) {
-        Set<String> output = parser.parse(input);
+        Set<String> output = parser.csvToSet(input);
 
         assertEquals(expectedTags.length, output.size());
         assertThat(output, hasItems(expectedTags));

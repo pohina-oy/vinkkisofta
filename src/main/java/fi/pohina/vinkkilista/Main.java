@@ -9,6 +9,8 @@ import io.github.cdimascio.dotenv.Dotenv;
 import javax.sql.DataSource;
 import org.postgresql.ds.PGPoolingDataSource;
 import com.google.common.base.Strings;
+import fi.pohina.vinkkilista.domain.Tag;
+import fi.pohina.vinkkilista.domain.TagService;
 
 public class Main {
     public static void main(String[] args) {
@@ -26,20 +28,18 @@ public class Main {
         TagDao tagDao = daoFactory.createTagDao();
         UserDao userDao = daoFactory.createUserDao();
 
-        BookmarkService bookmarkService = new BookmarkService(
-            bookmarkDao,
-            tagDao
-        );
+        BookmarkService bookmarkService = new BookmarkService(bookmarkDao);
+        TagService tagService = new TagService(tagDao);
         UserService userService = new UserService(userDao);
 
         if (!isProduction(dotenv)) {
-            addMockBookmarks(bookmarkService);
+            addMocks(bookmarkService, tagService);
         }
 
         int port = getPort(dotenv);
         AppConfig config = getConfig(dotenv);
 
-        new App(bookmarkService, userService, config).startServer(port);
+        new App(bookmarkService, tagService, userService, config).startServer(port);
     }
 
     private static int getPort(Dotenv dotenv) {
@@ -55,34 +55,38 @@ public class Main {
         );
     }
 
-    private static void addMockBookmarks(BookmarkService bookmarks) {
-        bookmarks.createBookmark(
+    private static void addMocks(BookmarkService bookmarkService, TagService tagService) {
+        
+        Tag blog = tagService.findOrCreateTag("blog");
+        Tag scientificPublication = tagService.findOrCreateTag("scientific publication");
+        
+        bookmarkService.createBookmark(
             "GitHub Blog",
             "https://blog.github.com",
             "GitHub",
             null,
-            new HashSet<>(Arrays.asList("blog"))
+            new HashSet<>(Arrays.asList(blog))
         );
-        bookmarks.createBookmark(
+        bookmarkService.createBookmark(
             "Domain Driven Design Weekly",
             "http://dddweekly.com",
             null,
             null,
             null
         );
-        bookmarks.createBookmark(
+        bookmarkService.createBookmark(
             "the morning paper",
             "https://blog.acolyer.org",
             "Adrian Colyer",
             null,
-            new HashSet<>(Arrays.asList("blog"))
+            new HashSet<>(Arrays.asList(blog))
         );
-        bookmarks.createBookmark(
+        bookmarkService.createBookmark(
             "An Industrial-Strength Audio Search Algorithm",
             "https://www.ee.columbia.edu/~dpwe/papers/Wang03-shazam.pdf",
             "Avery Li-Chun Wang",
             null,
-            new HashSet<>(Arrays.asList("scientific publication"))
+            new HashSet<>(Arrays.asList(scientificPublication))
         );
     }
 

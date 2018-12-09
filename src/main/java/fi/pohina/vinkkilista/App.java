@@ -1,10 +1,13 @@
 package fi.pohina.vinkkilista;
 
+import fi.pohina.vinkkilista.utils.TagParser;
 import fi.pohina.vinkkilista.api.GithubJsonApi;
 import fi.pohina.vinkkilista.api.GithubOAuthApi;
 import fi.pohina.vinkkilista.api.GithubUser;
 import fi.pohina.vinkkilista.domain.Bookmark;
 import fi.pohina.vinkkilista.domain.BookmarkService;
+import fi.pohina.vinkkilista.domain.Tag;
+import fi.pohina.vinkkilista.domain.TagService;
 import fi.pohina.vinkkilista.domain.User;
 import fi.pohina.vinkkilista.domain.UserService;
 import spark.*;
@@ -17,24 +20,26 @@ import static spark.Spark.*;
 
 public class App {
 
-    private final CommaSeparatedTagsParser tagParser
-            = new CommaSeparatedTagsParser();
+    private final TagParser tagParser
+            = new TagParser();
 
     private final GithubOAuthApi githubOAuthApi;
     private final BookmarkService bookmarkService;
+    private final TagService tagService;
     private final AppConfig config;
     private final UserService users;
     private final RequestUserManager requestUserManager;
 
-    public App(BookmarkService bookmarkService, UserService users, AppConfig config) {
+    public App(BookmarkService bookmarkService, TagService tagService, UserService userService, AppConfig config) {
         this.bookmarkService = bookmarkService;
+        this.tagService = tagService;
         this.config = config;
-        this.users = users;
+        this.users = userService;
         this.githubOAuthApi = new GithubOAuthApi(
             config.getGithubClientId(),
             config.getGithubClientSecret()
         );
-        this.requestUserManager = new RequestUserManager(users);
+        this.requestUserManager = new RequestUserManager(userService);
     }
 
     /**
@@ -84,8 +89,10 @@ public class App {
                 String url = req.queryParams("url");
                 String author = req.queryParams("author");
                 User creator = requestUserManager.getSignedInUser(req);
-                Set<String> tags = tagParser.parse(req.queryParams("tags"));
-
+                Set<String> tagNames = tagParser.csvToSet(req.queryParams("tags"));
+                tagNames.add(tagParser.tagFromUrl(url));
+                
+                Set<Tag> tags = tagService.findOrCreateTags(tagNames);
                 Bookmark created = bookmarkService.createBookmark(title, url, author, creator, tags);
 
                 if (created != null) {
@@ -101,7 +108,7 @@ public class App {
             post("/search", (req, res) -> {
                 Map<String, Object> map = new HashMap<>();
                 String commaSeparatedTags = req.queryParams("tags");
-                Set<String> tags = tagParser.parse(commaSeparatedTags);
+                Set<String> tags = tagParser.csvToSet(commaSeparatedTags);
                 Collection<Bookmark> bookmarks = bookmarkService.getBookmarksByTags(tags);
                 map.put("bookmarks", bookmarks);
                 return render(map, "search");
