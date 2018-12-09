@@ -3,9 +3,12 @@ package fi.pohina.vinkkilista.domain;
 import com.google.common.base.Strings;
 import fi.pohina.vinkkilista.api.GithubUser;
 import fi.pohina.vinkkilista.data_access.UserDao;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.mockito.ArgumentCaptor;
 import static org.mockito.Mockito.*;
 
 public class UserServiceTest {
@@ -120,11 +123,70 @@ public class UserServiceTest {
     }
 
     @Test
-    public void markingBookmarkAsReadWorks() {
+    public void markingBookmarkAsReadWorksCorrectly() {
+        String userId = "user-id";
+        String bookmarkId = "bookmark-id";
+        ArgumentCaptor<String> userIdCaptor = ArgumentCaptor.forClass(
+            String.class
+        );
+        ArgumentCaptor<String> bookmarkIdCaptor = ArgumentCaptor.forClass(
+            String.class
+        );
+
+        service.markBookmarkAsRead(userId, bookmarkId);
+
+        verify(mockUserDao, times(1)).addBookmarkReadDate(
+            userIdCaptor.capture(),
+            bookmarkIdCaptor.capture(),
+            any(LocalDateTime.class)
+        );
+
+        assertEquals(userId, userIdCaptor.getValue());
+        assertEquals(bookmarkId, bookmarkIdCaptor.getValue());
     }
 
     @Test
-    public void unmarkingBookmarkAsReadWorks() {
+    public void markingBookmarkAsReadUsesCurrentTime() {
+        String userId = "user-id";
+        String bookmarkId = "bookmark-id";
+        ArgumentCaptor<LocalDateTime> readDateCaptor = ArgumentCaptor.forClass(
+            LocalDateTime.class
+        );
+
+        LocalDateTime timeBefore = LocalDateTime.now(ZoneOffset.UTC);
+        service.markBookmarkAsRead(userId, bookmarkId);
+        LocalDateTime timeAfter = LocalDateTime.now(ZoneOffset.UTC);
+
+        verify(mockUserDao).addBookmarkReadDate(
+            any(),
+            any(),
+            readDateCaptor.capture()
+        );
+
+        assertTrue(timeBefore.compareTo(readDateCaptor.getValue()) <= 0);
+        assertTrue(timeAfter.compareTo(readDateCaptor.getValue()) >= 0);
+    }
+
+    @Test
+    public void unmarkingBookmarkAsReadWorksCorrectly() {
+        String userId = "user-id";
+        String bookmarkId = "bookmark-id";
+        ArgumentCaptor<String> userIdCaptor = ArgumentCaptor.forClass(
+            String.class
+        );
+        ArgumentCaptor<String> bookmarkIdCaptor = ArgumentCaptor.forClass(
+            String.class
+        );
+
+        service.unmarkBookmarkAsRead(userId, bookmarkId);
+
+        verify(mockUserDao, times(1)).removeBookmarkReadDate(
+            userIdCaptor.capture(),
+            bookmarkIdCaptor.capture()
+        );
+
+        assertEquals(userId, userIdCaptor.getValue());
+        assertEquals(bookmarkId, bookmarkIdCaptor.getValue());
     }
 
     private static GithubUser createGithubUser(int id, String username) {
