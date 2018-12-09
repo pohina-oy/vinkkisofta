@@ -86,9 +86,9 @@ public class App {
                 User creator = requestUserManager.getSignedInUser(req);
                 Set<String> tags = tagParser.parse(req.queryParams("tags"));
 
-                boolean success = bookmarkService.createBookmark(title, url, author, creator, tags);
+                Bookmark created = bookmarkService.createBookmark(title, url, author, creator, tags);
 
-                if (success) {
+                if (created != null) {
                     res.redirect("/bookmarks/");
                     return "New bookmark added";
 

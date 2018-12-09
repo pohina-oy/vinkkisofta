@@ -26,10 +26,10 @@ public class BookmarkService {
      * @param tags Set of tag names.
      * @return Returns true if bookmark is successfully added.
      */
-    public boolean createBookmark(String title, String url, String author, User creator, Set<String> tags) {
+    public Bookmark createBookmark(String title, String url, String author, User creator, Set<String> tags) {
 
         if (Strings.isNullOrEmpty(title) || Strings.isNullOrEmpty(url)) {
-            return false;
+            return null;
         }
 
         if (tags == null) {
@@ -45,7 +45,7 @@ public class BookmarkService {
 
         bookmarkDao.add(bookmark);
 
-        return true;
+        return bookmark;
     }
 
     public Collection<Bookmark> getAllBookmarks() {

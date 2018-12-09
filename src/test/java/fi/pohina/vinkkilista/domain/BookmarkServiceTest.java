@@ -26,42 +26,102 @@ public class BookmarkServiceTest {
     }
 
     @Test
-    public void createBookmarkCreatesCorrectBookmark() {
-        String title = "foobar",
-                url = "http://foo.com",
-                author = "author";
-
+    public void bookmarkIsCreatedWithValidTitleAndUrl() {
+        String title = "foobar";
+        String url = "http://foo.com";
+        String author = null;
         User creator = null;
-        Set<String> tags = new HashSet<>(Arrays.asList("TE&/(    STI   !#  ", "journal"));
+        Set<String> tags = null;
 
-        bookmarkService.createBookmark(
+        Bookmark created = bookmarkService.createBookmark(
                 title,
                 url,
                 author,
                 creator,
                 tags);
 
-        verify(bookmarkDao, times(1))
-                .add(any(Bookmark.class));
+        Set<String> expectedTags = new HashSet<>();
 
-        Bookmark createdBookmark = bookmarkDao.findAll().get(0);
+        verifyBookmark(title, url, author, creator, expectedTags, created);
+    }
 
-        assertEquals(title, createdBookmark.getTitle());
-        assertEquals(url, createdBookmark.getUrl());
-        assertEquals(author, createdBookmark.getAuthor());
+    @Test
+    public void bookmarkIsCreatedWithValidAuthor() {
+        String title = "barfoo";
+        String url = "http://example.com";
+        String author = "Gabe Newell";
+        User creator = null;
+        Set<String> tags = null;
+
+        Bookmark created = bookmarkService.createBookmark(
+                title,
+                url,
+                author,
+                creator,
+                tags);
+
+        Set<String> expectedTags = new HashSet<>();
+
+        verifyBookmark(title, url, author, creator, expectedTags, created);
+    }
+
+    @Test
+    public void bookmarkIsCreatedWithValidCreator() {
+        String title = "Example title for tests";
+        String url = "http://testing.com";
+        String author = "Test Guru";
+        User creator = new User("-1", "example@test.com", "testguru", -1);
+        Set<String> tags = null;
+
+        Bookmark created = bookmarkService.createBookmark(
+                title,
+                url,
+                author,
+                creator,
+                tags);
+
+        Set<String> expectedTags = new HashSet<>();
+
+        verifyBookmark(title, url, author, creator, expectedTags, created);
+    }
+
+    @Test
+    public void bookmarkIsCreatedWithValidTags() {
+        String title = "Valid tags";
+        String url = "http://tags.com";
+        String author = "Tagging King";
+        User creator = new User("-1", "example.tagging@tagging.com", "tagging_king", -1);
+        Set<String> tags = new HashSet<>(
+                Arrays.asList("test   tag", "journal", "TäMä", "  trimmaus    ", "", "   ", "journal"));
+
+        Bookmark created = bookmarkService.createBookmark(
+                title,
+                url,
+                author,
+                creator,
+                tags);
+
+        Set<String> expectedTags = new HashSet<>(
+                Arrays.asList("test tag", "journal", "tämä", "trimmaus"));
+
+        verifyBookmark(title, url, author, creator, expectedTags, created);
+    }
+    
+    @Test
+    public void bookmarkGetsTagsFromUrl() {
+        
     }
 
     @Test
     public void createTagCreatesCorrectTag() {
         String tagName = "video";
 
-        Tag tag = bookmarkService.findOrCreateTag(tagName);
+        Tag created = bookmarkService.findOrCreateTag(tagName);
 
-        verify(tagDao, times(1)).add(tag);
+        verify(tagDao, times(1)).add(created);
 
-        Tag createdTag = tagDao.findAll().get(0);
-
-        assertEquals(tagName, createdTag.getName());
+        assertEquals(tagName, created.getName());
+        assertEquals(created, tagDao.findById(created.getId()));
     }
 
     /**
@@ -125,32 +185,6 @@ public class BookmarkServiceTest {
         assertEquals(0, foundBookmarks.size());
     }
 
-    private void addTaggedBookmarks() {
-        bookmarkService.createBookmark(
-                "no tags",
-                "www.tagless.com",
-                "unknown",
-                null,
-                new HashSet<>()
-        );
-
-        bookmarkService.createBookmark(
-                "third",
-                "https://www.nature.com",
-                "Editor",
-                null,
-                new HashSet<>(Arrays.asList("video", "journal"))
-        );
-
-        bookmarkService.createBookmark(
-                "fourth",
-                "https://www.videosite.net",
-                "Firstname Lastname",
-                null,
-                new HashSet<>(Arrays.asList("video"))
-        );
-    }
-
     @Test
     public void tagSetStringToObjectCreatesMissingTags() {
         String tagString1 = "video";
@@ -175,15 +209,43 @@ public class BookmarkServiceTest {
         assertTrue(tagSet.contains(tagDao.findByName("journal")));
     }
 
-    private String getRandomString(char[] chars, int length) {
-
-        StringBuilder word = new StringBuilder();
-
-        for (int i = 0; i < length; i++) {
-            char c = chars[(int) (Math.random() * chars.length)];
-            word.append(c);
+    private void verifyBookmark(String title, String url, String author, User creator, Set<String> tags, Bookmark created) {
+        verify(bookmarkDao, times(1))
+                .add(any(Bookmark.class));
+        assertEquals(title, created.getTitle());
+        assertEquals(url, created.getUrl());
+        assertEquals(author, created.getAuthor());
+        assertEquals(creator, created.getCreator());
+        assertEquals(tags.size(), created.getTags().size());
+        for (Tag tag : created.getTags()) {
+            assertTrue(tags.contains(tag.getName()));
         }
+        assertEquals(created, bookmarkDao.findById(created.getId()));
+    }
 
-        return word.toString();
+    private void addTaggedBookmarks() {
+        bookmarkService.createBookmark(
+                "no tags",
+                "www.tagless.com",
+                "unknown",
+                null,
+                new HashSet<>()
+        );
+
+        bookmarkService.createBookmark(
+                "third",
+                "https://www.nature.com",
+                "Editor",
+                null,
+                new HashSet<>(Arrays.asList("video", "journal"))
+        );
+
+        bookmarkService.createBookmark(
+                "fourth",
+                "https://www.videosite.net",
+                "Firstname Lastname",
+                null,
+                new HashSet<>(Arrays.asList("video"))
+        );
     }
 }
