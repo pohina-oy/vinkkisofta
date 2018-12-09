@@ -22,7 +22,7 @@ public class TagService {
      */
     public Tag findOrCreateTag(String name) {
         name = validateTag(name);
-        if (name == null || name.length() == 0) {
+        if (name.isEmpty()) {
             return null;
         }
 
@@ -45,14 +45,14 @@ public class TagService {
      * for new tags to be created if no matching ones are found. Validates the
      * given set of tags.
      *
-     * @param tags set of tag strings
+     * @param tagNames set of tag strings
      * @return set of tag objects
      */
-    public Set<Tag> findOrCreateTags(Set<String> tags) {
+    public Set<Tag> findOrCreateTags(Set<String> tagNames) {
         Set<Tag> tagsSet = new HashSet<>();
 
-        for (String tagString : tags) {
-            Tag tag = findOrCreateTag(tagString);
+        for (String name : tagNames) {
+            Tag tag = findOrCreateTag(name);
             if (tag != null) {
                 tagsSet.add(tag);
             }
@@ -70,12 +70,15 @@ public class TagService {
      * alpha-numeric characters.
      */
     private String validateTag(String tag) {
+        if (tag == null) {
+            return "";
+        }
         String cleanedTag = tag
                 .toLowerCase()
                 .replaceAll(" +", " ")
                 .trim();
 
-        return cleanedTag.length() == 0 ? null : cleanedTag;
+        return cleanedTag.length() == 0 ? "" : cleanedTag;
     }
 
     private String generateTagId() {

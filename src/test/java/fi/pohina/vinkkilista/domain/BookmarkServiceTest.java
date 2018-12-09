@@ -2,8 +2,6 @@ package fi.pohina.vinkkilista.domain;
 
 import fi.pohina.vinkkilista.data_access.BookmarkDao;
 import fi.pohina.vinkkilista.data_access.InMemoryBookmarkDao;
-import fi.pohina.vinkkilista.data_access.TagDao;
-import fi.pohina.vinkkilista.data_access.InMemoryTagDao;
 import java.util.*;
 import java.util.stream.Collectors;
 import static org.hamcrest.CoreMatchers.hasItems;
@@ -16,13 +14,11 @@ public class BookmarkServiceTest {
 
     private BookmarkService bookmarkService;
     private BookmarkDao bookmarkDao;
-    private TagDao tagDao;
 
     @Before
     public void setUp() {
         bookmarkDao = spy(new InMemoryBookmarkDao());
-        tagDao = spy(new InMemoryTagDao());
-        bookmarkService = spy(new BookmarkService(bookmarkDao, tagDao));
+        bookmarkService = spy(new BookmarkService(bookmarkDao));
     }
 
     @Test
@@ -31,7 +27,7 @@ public class BookmarkServiceTest {
         String url = "http://foo.com";
         String author = null;
         User creator = null;
-        Set<String> tags = null;
+        Set<Tag> tags = null;
 
         Bookmark created = bookmarkService.createBookmark(
                 title,
@@ -51,7 +47,7 @@ public class BookmarkServiceTest {
         String url = "http://example.com";
         String author = "Gabe Newell";
         User creator = null;
-        Set<String> tags = null;
+        Set<Tag> tags = null;
 
         Bookmark created = bookmarkService.createBookmark(
                 title,
@@ -71,7 +67,7 @@ public class BookmarkServiceTest {
         String url = "http://testing.com";
         String author = "Test Guru";
         User creator = new User("-1", "example@test.com", "testguru", -1);
-        Set<String> tags = null;
+        Set<Tag> tags = null;
 
         Bookmark created = bookmarkService.createBookmark(
                 title,
@@ -91,8 +87,12 @@ public class BookmarkServiceTest {
         String url = "http://tags.com";
         String author = "Tagging King";
         User creator = new User("-1", "example.tagging@tagging.com", "tagging_king", -1);
-        Set<String> tags = new HashSet<>(
-                Arrays.asList("test   tag", "journal", "TäMä", "  trimmaus    ", "", "   ", "journal"));
+
+        Set<Tag> tags = new HashSet<>(
+                Arrays.asList(
+                        new Tag("1", "scientific publication"),
+                        new Tag("2", "journal"),
+                        new Tag("3", "blog")));
 
         Bookmark created = bookmarkService.createBookmark(
                 title,
@@ -102,26 +102,9 @@ public class BookmarkServiceTest {
                 tags);
 
         Set<String> expectedTags = new HashSet<>(
-                Arrays.asList("test tag", "journal", "tämä", "trimmaus"));
+                Arrays.asList("scientific publication", "journal", "blog"));
 
         verifyBookmark(title, url, author, creator, expectedTags, created);
-    }
-    
-    @Test
-    public void bookmarkGetsTagsFromUrl() {
-        
-    }
-
-    @Test
-    public void createTagCreatesCorrectTag() {
-        String tagName = "video";
-
-        Tag created = bookmarkService.findOrCreateTag(tagName);
-
-        verify(tagDao, times(1)).add(created);
-
-        assertEquals(tagName, created.getName());
-        assertEquals(created, tagDao.findById(created.getId()));
     }
 
     /**
@@ -158,20 +141,6 @@ public class BookmarkServiceTest {
     }
 
     /**
-     * Tests that searching for bookmarks by tags not in dao does not result in
-     * creating new tags.
-     */
-    @Test
-    public void searchBookmarksByTagsDoesNotCreateNewTags() {
-        addTaggedBookmarks();
-
-        Collection<Bookmark> foundBookmarks = bookmarkService
-                .getBookmarksByTags(new HashSet<>(Arrays.asList("blog")));
-
-        assertEquals(0, foundBookmarks.size());
-    }
-
-    /**
      * Tests that searching for bookmarks by tags returns an empty list if no
      * matching bookmarks are found
      */
@@ -183,30 +152,6 @@ public class BookmarkServiceTest {
                 .getBookmarksByTags(new HashSet<>(Arrays.asList("blog")));
 
         assertEquals(0, foundBookmarks.size());
-    }
-
-    @Test
-    public void tagSetStringToObjectCreatesMissingTags() {
-        String tagString1 = "video";
-        String tagString2 = "blog";
-        String tagString3 = "news";
-
-        Tag tag1 = bookmarkService.findOrCreateTag(tagString1);
-        Tag tag2 = bookmarkService.findOrCreateTag(tagString2);
-        Tag tag3 = bookmarkService.findOrCreateTag(tagString3);
-
-        Set<String> stringSet = new HashSet<>(
-                Arrays.asList(tagString1, tagString2, "journal")
-        );
-
-        Set<Tag> tagSet = bookmarkService.findOrCreateTags(stringSet);
-
-        verify(bookmarkService, times(1)).findOrCreateTag("journal");
-
-        assertEquals(3, tagSet.size());
-        assertTrue(tagSet.contains(tag1));
-        assertTrue(tagSet.contains(tag2));
-        assertTrue(tagSet.contains(tagDao.findByName("journal")));
     }
 
     private void verifyBookmark(String title, String url, String author, User creator, Set<String> tags, Bookmark created) {
@@ -224,12 +169,13 @@ public class BookmarkServiceTest {
     }
 
     private void addTaggedBookmarks() {
+        
         bookmarkService.createBookmark(
                 "no tags",
                 "www.tagless.com",
                 "unknown",
                 null,
-                new HashSet<>()
+                null
         );
 
         bookmarkService.createBookmark(
@@ -237,7 +183,7 @@ public class BookmarkServiceTest {
                 "https://www.nature.com",
                 "Editor",
                 null,
-                new HashSet<>(Arrays.asList("video", "journal"))
+                new HashSet<>(Arrays.asList(new Tag("1", "video"), new Tag("2", "journal")))
         );
 
         bookmarkService.createBookmark(
@@ -245,7 +191,7 @@ public class BookmarkServiceTest {
                 "https://www.videosite.net",
                 "Firstname Lastname",
                 null,
-                new HashSet<>(Arrays.asList("video"))
+                new HashSet<>(Arrays.asList(new Tag("3", "video")))
         );
     }
 }
