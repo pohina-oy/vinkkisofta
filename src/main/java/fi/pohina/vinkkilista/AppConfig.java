@@ -6,7 +6,11 @@ public class AppConfig {
     private final String githubClientSecret;
     private final String stage;
 
-    public AppConfig(String githubClientId, String githubClientSecret, String stage) {
+    public AppConfig(
+        String githubClientId,
+        String githubClientSecret,
+        String stage
+    ) {
         this.githubClientId = githubClientId;
         this.githubClientSecret = githubClientSecret;
         this.stage = stage;
@@ -20,7 +24,11 @@ public class AppConfig {
         return githubClientSecret;
     }
 
-    public String getStage() {
-        return stage;
+    public boolean isProduction() {
+        return "production".equals(stage);
     }
+
+    // public String getStage() {
+    //    return stage;
+    //}
 }

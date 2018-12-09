@@ -2,6 +2,8 @@ package fi.pohina.vinkkilista;
 
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class AppConfigTest {
     private AppConfig config;
@@ -25,11 +27,24 @@ public class AppConfigTest {
     }
 
     @Test
-    public void getStageReturnsCorrectStage() {
+    public void isProductionReturnsTrueWhenStageIsProd() {
+        config = new AppConfig("githubClientId", "githubClientSecret", "production");
+        assertTrue(config.isProduction());
+    }
+
+    @Test
+    public void isProductionReturnsTrueWhenStageIsNullOrEmpty() {
+        config = new AppConfig("githubClientId", "githubClientSecret", null);
+        assertFalse(config.isProduction());
+        config = new AppConfig("githubClientId", "githubClientSecret", "");
+        assertFalse(config.isProduction());
+    }
+
+    @Test
+    public void isProductionReturnsTrueWhenStageIsDevelopmentOrTest() {
         config = new AppConfig("githubClientId", "githubClientSecret", "test");
-
-        String result = config.getStage();
-
-        assertEquals("test", result);
+        assertFalse(config.isProduction());
+        config = new AppConfig("githubClientId", "githubClientSecret", "development");
+        assertFalse(config.isProduction());
     }
 }

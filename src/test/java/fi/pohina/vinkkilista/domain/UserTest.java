@@ -1,5 +1,7 @@
 package fi.pohina.vinkkilista.domain;
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -49,15 +51,48 @@ public class UserTest {
 
     @Test
     public void constructorSetsGithubIdCorrectly() {
-        User user = new User(
+        User user = prepareTestUser();
+
+        int result = user.getGithubId();
+
+        assertEquals(123, result);
+    }
+
+    @Test
+    public void setBookmarkReadDateWorksCorrectly() {
+        User user = prepareTestUser();
+        String bookmarkId = "bookmark-123";
+        LocalDateTime dateRead = LocalDateTime.now(ZoneOffset.UTC);
+
+        user.setBookmarkReadStatus(bookmarkId, dateRead);
+        LocalDateTime result = user.getBookmarkReadStatus(bookmarkId);
+
+        assertTrue(dateRead.equals(result));
+    }
+
+    @Test
+    public void removeBookmarkReadDateWorksCorrectly() {
+        User user = prepareTestUser();
+        String bookmarkId = "bookmark-123";
+        LocalDateTime dateRead = LocalDateTime.now(ZoneOffset.UTC);
+
+        user.setBookmarkReadStatus(bookmarkId, dateRead);
+        LocalDateTime result = user.getBookmarkReadStatus(bookmarkId);
+
+        assertTrue(dateRead.equals(result));
+
+        user.removeBookmarkReadStatus(bookmarkId);
+        result = user.getBookmarkReadStatus(bookmarkId);
+
+        assertEquals(null, result);
+    }
+
+    private User prepareTestUser() {
+        return new User(
             "foobar",
             "john.bar@com.com",
             "toasterbox",
             123
         );
-
-        int result = user.getGithubId();
-
-        assertEquals(123, result);
     }
 }
