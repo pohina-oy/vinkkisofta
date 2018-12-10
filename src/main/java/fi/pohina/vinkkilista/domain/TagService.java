@@ -60,6 +60,47 @@ public class TagService {
 
         return tagsSet;
     }
+    
+    /**
+     * Function for getting a tag name by url.
+     *
+     * @param url the url to be analyzed
+     * @return name of tag or null if none was found
+     */
+    public String tagFromUrl(String url) {
+        String[] videoUrls = {"youtube.com", "vimeo.com", "youtu.be"};
+        String[] blogUrls = {
+            "blogger.com", "blogs.helsinki.fi",
+            "wordpress.org", "blogspot.com"};
+        String[] bookUrls = {".suomalainen.com"};
+        String[] scienceUrls = {"dl.acm.org", "ieeexplore.ieee.org"};
+        
+        for (String videoUrl : videoUrls) {
+            if (url.contains(videoUrl)) {
+                return "video";
+            }
+        }
+        
+        for (String blogUrl : blogUrls) {
+            if (url.contains(blogUrl)) {
+                return "blog";
+            }
+        }
+        
+        for (String bookUrl : bookUrls) {
+            if (url.contains(bookUrl)) {
+                return "book";
+            }
+        }
+        
+        for (String scienceUrl : scienceUrls) {
+            if (url.contains(scienceUrl)) {
+                return "scientific publication";
+            }
+        }
+        
+        return "";
+    }
 
     /**
      * Function for validating and cleaning a tag.

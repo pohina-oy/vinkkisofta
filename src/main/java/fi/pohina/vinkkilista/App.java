@@ -90,7 +90,7 @@ public class App {
                 String author = req.queryParams("author");
                 User creator = requestUserManager.getSignedInUser(req);
                 Set<String> tagNames = tagParser.csvToSet(req.queryParams("tags"));
-                tagNames.add(tagParser.tagFromUrl(url));
+                tagNames.add(tagService.tagFromUrl(url));
                 
                 Set<Tag> tags = tagService.findOrCreateTags(tagNames);
                 Bookmark created = bookmarkService.createBookmark(title, url, author, creator, tags);

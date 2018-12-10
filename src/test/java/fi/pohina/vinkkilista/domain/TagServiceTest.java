@@ -78,4 +78,36 @@ public class TagServiceTest {
         assertEquals("blog", tagDao.findByName("blog").getName());
     }
 
+    @Test
+    public void tagFromUrlReturnsCorrectTag() {
+        String tag = tagService.tagFromUrl(
+                "https://www.youtube.com/watch?v=ZgjWOo7IqQY");
+        assertEquals("video", tag);
+
+        tag = tagService.tagFromUrl(
+                "https://youtu.be/G60llMJepZI");
+        assertEquals("video", tag);
+
+        tag = tagService.tagFromUrl(
+                "https://tastytreats-blog.blogspot.com/");
+        assertEquals("blog", tag);
+
+        tag = tagService.tagFromUrl(
+                "https://wordpress.org/showcase/the-dish/");
+        assertEquals("blog", tag);
+
+        tag = tagService.tagFromUrl(
+                "https://www.suomalainen.com/webapp/wcs"
+                + "/stores/servlet/fi/skk/lazarus-p9789513196455--77");
+        assertEquals("book", tag);
+
+        tag = tagService.tagFromUrl(
+                "https://ieeexplore.ieee.org/document/8543874");
+        assertEquals("scientific publication", tag);
+
+        tag = tagService.tagFromUrl(
+                "https://dl.acm.org/citation.cfm?id=3292530&picked=prox");
+        assertEquals("scientific publication", tag);
+    }
+
 }

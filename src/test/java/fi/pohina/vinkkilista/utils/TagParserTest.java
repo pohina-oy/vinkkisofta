@@ -100,38 +100,6 @@ public class TagParserTest {
             "developers", "steve-ballmer"
         );
     }
-    
-    @Test
-    public void tagFromUrlReturnsCorrectTag() {
-        String tag = parser.tagFromUrl(
-                "https://www.youtube.com/watch?v=ZgjWOo7IqQY");
-        assertEquals("video", tag);
-
-        tag = parser.tagFromUrl(
-                "https://youtu.be/G60llMJepZI");
-        assertEquals("video", tag);
-
-        tag = parser.tagFromUrl(
-                "https://tastytreats-blog.blogspot.com/");
-        assertEquals("blog", tag);
-
-        tag = parser.tagFromUrl(
-                "https://wordpress.org/showcase/the-dish/");
-        assertEquals("blog", tag);
-
-        tag = parser.tagFromUrl(
-                "https://www.suomalainen.com/webapp/wcs"
-                + "/stores/servlet/fi/skk/lazarus-p9789513196455--77");
-        assertEquals("book", tag);
-
-        tag = parser.tagFromUrl(
-                "https://ieeexplore.ieee.org/document/8543874");
-        assertEquals("scientific publication", tag);
-
-        tag = parser.tagFromUrl(
-                "https://dl.acm.org/citation.cfm?id=3292530&picked=prox");
-        assertEquals("scientific publication", tag);
-    }
 
     private void testThatInputMatchesOutput(
         String input,
