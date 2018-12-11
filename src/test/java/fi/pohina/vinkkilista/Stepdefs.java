@@ -244,8 +244,19 @@ public class Stepdefs {
     
     // Bookmark Listing
     
+    @Then("bookmark with title {string} is listed")
+    public void bookmark_with_title_is_listed(String title) {
+        pageUrlIs(baseUrl);
+        
+        pageHasContent(title);
+    }
     
-
+    @Then("bookmark with title {string} is not listed")
+    public void bookmark_with_title_is_not_listed(String title) {
+        pageUrlIs(baseUrl);
+        
+        pageDoesNotHaveContent(title);
+    }
 
     @After
     public void tearDown() {
