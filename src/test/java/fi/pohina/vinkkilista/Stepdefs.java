@@ -257,6 +257,15 @@ public class Stepdefs {
         
         pageDoesNotHaveContent(title);
     }
+    
+    // No Bookmark Type
+    
+    @Then("there is no type field")
+    public void there_is_no_type_field() {
+        pageUrlIs(baseUrl + "new");
+        
+        pageDoesNotHaveContent("Type");
+    }
 
     @After
     public void tearDown() {
