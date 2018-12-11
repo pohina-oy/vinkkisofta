@@ -212,6 +212,23 @@ public class Stepdefs {
         pageUrlIs(loginUrl);
         assertTrue(driver.getTitle().contains("Sign in"));
     }
+    
+    // Bookmark Tags
+    
+    @When("valid title {string} and valid url {string} and valid tags {string} are given")
+    public void valid_title_and_valid_url_and_valid_tags_are_given(String title, String url, String tags) {
+        typeToElementWithId("titleInput", title);
+        typeToElementWithId("urlInput", url);
+        typeToElementWithId("tagsInput", tags);
+        submitElementWithId("submitForm");
+    }
+    
+    @Then("tag {string} is shown in bookmark listing")
+    public void tag_is_shown_in_bookmark_listing(String tag) {
+        pageUrlIs(baseUrl);
+        
+        pageHasContent(tag);
+    }
 
     @After
     public void tearDown() {
