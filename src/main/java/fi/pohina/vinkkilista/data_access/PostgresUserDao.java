@@ -45,7 +45,7 @@ public class PostgresUserDao implements UserDao {
                 return null;
             }
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
         return null;
     }
@@ -77,7 +77,7 @@ public class PostgresUserDao implements UserDao {
                 return null;
             }
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
         return null;
     }
@@ -93,7 +93,7 @@ public class PostgresUserDao implements UserDao {
             st.setInt(4, user.getGithubId());
             st.executeUpdate();
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -112,7 +112,7 @@ public class PostgresUserDao implements UserDao {
             st.setTimestamp(3, Timestamp.valueOf(dateRead));
             st.executeUpdate();
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -125,7 +125,7 @@ public class PostgresUserDao implements UserDao {
             st.setString(2, bookmarkId);
             st.executeUpdate();
         } catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace();;
         }
     }
 }
