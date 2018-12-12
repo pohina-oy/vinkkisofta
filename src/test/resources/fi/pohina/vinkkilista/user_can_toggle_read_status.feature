@@ -20,6 +20,5 @@ Feature: User can toggle read status on available bookmarks
   
   Scenario: The read status of a new bookmark is "not read"
     Given the user is logged in on create page
-    When  valid title {string} and valid url {string} are given
-    And   the marking button is clicked
+    When  valid title "testBookmark" and valid url "http://www.somesite.org" are given
     Then  the new bookmark read status is "not read"
