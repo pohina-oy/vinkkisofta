@@ -8,6 +8,8 @@ import static org.junit.Assert.*;
 import org.openqa.selenium.*;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
+import javax.xml.crypto.dsig.keyinfo.KeyValue;
+
 public class Stepdefs {
     private WebDriver driver;
     private String baseUrl = "http://localhost:4567/bookmarks/";
@@ -71,8 +73,10 @@ public class Stepdefs {
 
     // Toggle read
 
+    @When("^the marking button is clicked$")
+    public void theMarkingButtonIsClicked() {
 
-
+    }
 
 
     // End toggle read
@@ -312,6 +316,22 @@ public class Stepdefs {
     private void assertCurrentUrlContains(String substring) {
         String currentUrl = driver.getCurrentUrl();
         assertTrue(currentUrl.contains(substring));
+    }
+
+    private WebElement readToggleButtonByBookmarkId(String id) {
+
+        List<WebElement> bookmarks = getBookmarkWebElements("bookmarkList");
+
+        for (WebElement element : bookmarks) {
+            String currentId = getBookmarkElementId(element);
+
+            
+        }
+
+    }
+    private String getBookmarkElementId(WebElement bookmark) {
+
+
     }
 
     private void assertLoggedInUserIs(String expectedUsername) {
