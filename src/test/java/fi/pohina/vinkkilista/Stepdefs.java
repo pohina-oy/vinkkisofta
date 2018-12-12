@@ -72,6 +72,14 @@ public class Stepdefs {
     // Toggle read
 
     @Given("^the first bookmark read status contains {string}$")
+    public void the_First_Bookmark_Read_Status_Contains(String status) {
+
+    }
+
+    @When("^the first bookmark read status contains{string}$")
+
+
+    @Then("^the first bookmark read status contains{string}$")
 
     @When("^the first bookmark marking button is clicked$")
     public void theMarkingButtonIsClicked() {
