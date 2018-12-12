@@ -3,8 +3,9 @@ package fi.pohina.vinkkilista.data_access;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.List;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import fi.pohina.vinkkilista.domain.User;
 import javax.sql.DataSource;
@@ -19,7 +20,7 @@ public class PostgresUserDao implements UserDao {
 
     @Override
     public User findById(String id) {
-        String query = "SELECT * FROM users where id = ?";
+        String query = "SELECT * FROM users left join user_read_bookmarks on users.id = user_read_bookmarks.\"userId\" where users.id = ?";
         try (Connection conn = dataSource.getConnection()) {
             PreparedStatement st = conn.prepareStatement(query, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
             st.setString(1, id);
@@ -29,17 +30,29 @@ public class PostgresUserDao implements UserDao {
                 String userEmail = rs.getString("email");
                 String username = rs.getString("username");
                 Integer userGithubId = rs.getInt("githubId");
-                return new User(userId, userEmail, username, userGithubId);
+
+                String readBookmarkId = rs.getString("bookmarkId");
+                Timestamp readDate = rs.getTimestamp("readDate");
+                User user = new User(userId, userEmail, username, userGithubId);
+                user.setBookmarkReadStatus(readBookmarkId, readDate != null ? readDate.toLocalDateTime() : null);
+                while (rs.next()) {
+                    readBookmarkId = rs.getString("bookmarkId");
+                    readDate = rs.getTimestamp("readDate");
+                    user.setBookmarkReadStatus(readBookmarkId, readDate != null ? readDate.toLocalDateTime() : null);
+                }
+                return user;
+            } else {
+                return null;
             }
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
         return null;
     }
 
     @Override
     public User findByGithubId(int githubId) {
-        String query = "SELECT * FROM users where \"githubId\" = ?";
+        String query = "SELECT * FROM users left join user_read_bookmarks on users.id = user_read_bookmarks.\"userId\" where \"githubId\" = ?";
         try (Connection conn = dataSource.getConnection()) {
             PreparedStatement st = conn.prepareStatement(query, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
             st.setInt(1, githubId);
@@ -49,10 +62,22 @@ public class PostgresUserDao implements UserDao {
                 String userEmail = rs.getString("email");
                 String username = rs.getString("username");
                 Integer userGithubId = rs.getInt("githubId");
-                return new User(userId, userEmail, username, userGithubId);
+
+                String readBookmarkId = rs.getString("bookmarkId");
+                Timestamp readDate = rs.getTimestamp("readDate");
+                User user = new User(userId, userEmail, username, userGithubId);
+                user.setBookmarkReadStatus(readBookmarkId, readDate != null ? readDate.toLocalDateTime() : null);
+                while (rs.next()) {
+                    readBookmarkId = rs.getString("bookmarkId");
+                    readDate = rs.getTimestamp("readDate");
+                    user.setBookmarkReadStatus(readBookmarkId, readDate != null ? readDate.toLocalDateTime() : null);
+                }
+                return user;
+            } else {
+                return null;
             }
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
         return null;
     }
@@ -68,7 +93,7 @@ public class PostgresUserDao implements UserDao {
             st.setInt(4, user.getGithubId());
             st.executeUpdate();
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -79,11 +104,28 @@ public class PostgresUserDao implements UserDao {
 
     @Override
     public void addBookmarkReadDate(String userId, String bookmarkId, LocalDateTime dateRead) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        String query = "INSERT INTO user_read_bookmarks (\"userId\",\"bookmarkId\",\"readDate\") values(?,?,?)";
+        try (Connection conn = dataSource.getConnection()) {
+            PreparedStatement st = conn.prepareStatement(query);
+            st.setString(1, userId);
+            st.setString(2, bookmarkId);
+            st.setTimestamp(3, Timestamp.valueOf(dateRead));
+            st.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void removeBookmarkReadDate(String userId, String bookmarkId) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        String query = "DELETE FROM user_read_bookmarks WHERE \"userId\" = ? AND \"bookmarkId\" = ?";
+        try (Connection conn = dataSource.getConnection()) {
+            PreparedStatement st = conn.prepareStatement(query);
+            st.setString(1, userId);
+            st.setString(2, bookmarkId);
+            st.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
