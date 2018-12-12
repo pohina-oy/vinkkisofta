@@ -79,21 +79,8 @@ public class App {
                 return render(map, "search");
             });
 
-            post("/:id/toggleRead", (req, res) -> {
-                String bookmarkId = req.params("id");
-
-                if (requestUserManager.getSignedInUser(req).getBookmarkReadStatus(bookmarkId) == null) {
-                    users.markBookmarkAsRead(
-                        requestUserManager.getSignedInUser(req).getId(),
-                        bookmarkId
-                    );
-                } else {
-                    users.unmarkBookmarkAsRead(
-                        requestUserManager.getSignedInUser(req).getId(),
-                        bookmarkId
-                    );
-                }
-
+            post("/", (req, res) -> {
+                toggleBookmarkReadStatus(req);
                 res.redirect("/bookmarks/");
                 return null;
             });
@@ -121,32 +108,17 @@ public class App {
 
             post("/search", (req, res) -> {
                 Map<String, Object> map = new HashMap<>();
+                String tagInput = req.queryParams("tags");
 
-                Set<String> tags = tagService.toValidatedSet(req.queryParams("tags"));
+                toggleBookmarkReadStatus(req);
+
+                Set<String> tags = tagService.toValidatedSet(tagInput);
                 Collection<Bookmark> bookmarks = bookmarkService.getBookmarksByTags(tags);
                 map.put("bookmarks", bookmarks);
                 map.put("user", replaceNullUserWithGuest(requestUserManager.getSignedInUser(req)));
+                map.put("tags", tagInput);
 
                 return render(map, "search");
-            });
-
-            post("/search/:id/toggleRead", (req, res) -> {
-                String bookmarkId = req.params("id");
-
-                if (requestUserManager.getSignedInUser(req).getBookmarkReadStatus(bookmarkId) == null) {
-                    users.markBookmarkAsRead(
-                        requestUserManager.getSignedInUser(req).getId(),
-                        bookmarkId
-                    );
-                } else {
-                    users.unmarkBookmarkAsRead(
-                        requestUserManager.getSignedInUser(req).getId(),
-                        bookmarkId
-                    );
-                }
-
-                res.redirect("/bookmarks/search");
-                return null;
             });
         });
 
@@ -192,6 +164,24 @@ public class App {
         }
 
         return user;
+    }
+
+    /**
+     * Toggles a bookmark's read status for a user specified in request.
+     *
+     * @param req
+     */
+    private void toggleBookmarkReadStatus(Request req) {
+        String bookmarkId = req.queryParams("bookmarkId");
+        User user = requestUserManager.getSignedInUser(req);
+
+        if (bookmarkId != null) {
+            if (user.getBookmarkReadStatus(bookmarkId) == null) {
+                users.markBookmarkAsRead(user.getId(), bookmarkId);
+            } else {
+                users.unmarkBookmarkAsRead(user.getId(), bookmarkId);
+            }
+        }
     }
 
     /**

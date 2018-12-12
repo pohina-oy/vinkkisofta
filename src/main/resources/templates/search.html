@@ -48,7 +48,9 @@
                     </a>
                     <div class="bookmarkReadStatus" th:if="${user.getBookmarkReadStatus(bookmark.id) == null}">
                         <a class="bookmarkReadText" th:href="${bookmark.url}">not read </a>
-                        <form class="markBookmarkForm" method="post" th:action="'/bookmarks/search/' + ${bookmark.id} + '/toggleRead'">
+                        <form class="markBookmarkForm" method="post" action="/bookmarks/search">
+                            <input type="hidden" name="tags" th:value="${tags}"/>
+                            <input type="hidden" name="bookmarkId" th:value="${bookmark.id}"/>
                             <button class="markBookmarkButton" type="submit"><font color="green">&#9679</font></button>
                         </form>
                     </div>
@@ -56,7 +58,9 @@
                         <a class="bookmarkReadText" th:href="${bookmark.url}">
                             read on <td th:text="${#temporals.format(user.getBookmarkReadStatus(bookmark.id), 'dd.MM.yyyy', locale)}"/>
                         </a>
-                        <form class="markBookmarkForm" method="post" th:action="'/bookmarks/search/' + ${bookmark.id} + '/toggleRead'">
+                        <form class="markBookmarkForm" method="post" action="/bookmarks/search">
+                            <input type="hidden" name="tags" th:value="${tags}"/>
+                            <input type="hidden" name="bookmarkId" th:value="${bookmark.id}"/>
                             <button class="markBookmarkButton" type="submit"><font color="gray">&#9675</font></button>
                         </form>
                     </div>
