@@ -321,7 +321,10 @@ public class Stepdefs {
     private String getFirstBlogsId() {
         return getBookmarkElementId(getBookmarkWebElements("bookmarkList").get(0));
     }
-    private WebElement readToggleButtonByBookmarkId(String id) {
+    private WebElement getBookmarkElementReadToggleButtonElement(WebElement element) {
+        return element.findElement(By.className("bookmarkReadText"));
+    }
+    private WebElement getBookmarkElementById(String id) {
 
         List<WebElement> bookmarks = getBookmarkWebElements("bookmarkList");
 
