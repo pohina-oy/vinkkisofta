@@ -13,7 +13,12 @@ import fi.pohina.vinkkilista.domain.Tag;
 import fi.pohina.vinkkilista.domain.TagService;
 
 public class Main {
+
     public static void main(String[] args) {
+        start();
+    }
+
+    public static App start() {
         Dotenv dotenv = Dotenv
             .configure()
             .ignoreIfMissing()
@@ -39,7 +44,9 @@ public class Main {
         int port = getPort(dotenv);
         AppConfig config = getConfig(dotenv);
 
-        new App(bookmarkService, tagService, userService, config).startServer(port);
+        App app = new App(bookmarkService, tagService, userService, config);
+        app.startServer(port);
+        return app;
     }
 
     private static int getPort(Dotenv dotenv) {

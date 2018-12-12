@@ -11,7 +11,9 @@
     <body>
         <div class="container">
             <h1>Vinkkilista</h1>
-            <a class="loginButton" th:href="${'https://github.com/login/oauth/authorize?scope=user:email%20read:user&client_id=' + clientId}">
+            <p>Kirjaudu sisään sovellukseen</p>
+
+            <a class="loginButton" th:href="${authUrl}" id="login">
                 Sign in with Github
             </a>
         </div>
