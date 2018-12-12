@@ -10,7 +10,6 @@ import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
 public class Stepdefs {
     private WebDriver driver;
-    private String homeUrl = "http://localhost:4567/";
     private String baseUrl = "http://localhost:4567/bookmarks/";
     private String loginUrl = "http://localhost:4567/login";
 
@@ -321,9 +320,9 @@ public class Stepdefs {
         driver.get(baseUrl);
     }
     private void navigateToCreatePage() {
-        driver.get(homeUrl + "new");
+        driver.get(baseUrl + "new");
     }
     private void navigateToSearchPage() {
-        driver.get(homeUrl + "search");
+        driver.get(baseUrl + "search");
     }
 }
