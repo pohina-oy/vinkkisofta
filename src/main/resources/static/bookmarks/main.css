@@ -9,16 +9,16 @@
     margin: 10px 0;
 }
 
+.bookmark:hover {
+    background-color: #eee;
+}
+
 .bookmarkLink {
     display: block;
     height: 100%;
     padding: 10px;
     text-decoration: none;
     color: inherit;
-}
-
-.bookmark:hover {
-    background-color: #eee;
 }
 
 .bookmarkTitle {
@@ -64,6 +64,10 @@
     border: 1px solid #eee;
     text-decoration: none;
     text-align: center;
+}
+
+.button:hover {
+    background-color: #eee;
 }
 
 .logoutButton {
