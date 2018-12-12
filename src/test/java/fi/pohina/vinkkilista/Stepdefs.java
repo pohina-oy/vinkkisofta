@@ -10,6 +10,7 @@ import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
 public class Stepdefs {
     private WebDriver driver;
+    private String homeUrl = "http://localhost:4567/";
     private String baseUrl = "http://localhost:4567/bookmarks/";
     private String loginUrl = "http://localhost:4567/login";
 
@@ -36,6 +37,38 @@ public class Stepdefs {
         driver.manage().deleteAllCookies();
         navigateToLogin();
     }
+
+    // Logout
+
+    @Given("^the user is logged in on homepage$")
+    public void theUserIsLoggedInOnHomepage() {
+        navigateToBookmarkListing();
+        loginWithTestUser();
+    }
+    @Given("^the user is logged in on search page")
+    public void theUserIsLoggedInOnSearchPage() {
+        navigateToSearchPage();
+        loginWithTestUser();
+    }
+    @Given("^the user is logged in on create page")
+    public void theUserIsLoggedInOnCreatePage() {
+        navigateToCreatePage();
+        loginWithTestUser();
+    }
+
+    @When("^the \"logout\" link is clicked$")
+    public void theLogoutLinkIsClicked() {
+        WebElement element = driver
+                .findElement(By.linkText("Log out"));
+        element.click();
+    }
+
+    @Then("^the user is logged out and redirected to the login page$")
+    public void theUserIsLoggedOutAndRedirectedToTheLoginPage() {
+        assertCurrentUrlContains("/login");
+    }
+
+    // End logout
 
     @When("^the user navigates to /bookmarks/$")
     public void theUserNavigatesToBookmarks() {
@@ -286,5 +319,11 @@ public class Stepdefs {
 
     private void navigateToBookmarkListing() {
         driver.get(baseUrl);
+    }
+    private void navigateToCreatePage() {
+        driver.get(homeUrl + "new");
+    }
+    private void navigateToSearchPage() {
+        driver.get(homeUrl + "search");
     }
 }
