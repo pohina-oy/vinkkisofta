@@ -59,29 +59,20 @@ public class App {
                 Collection<Bookmark> bookmarks = this.bookmarkService.getAllBookmarks();
                 map.put("bookmarks", bookmarks);
 
-                User user = requestUserManager.getSignedInUser(req);
-                if (user != null) {
-
-                    map.put("userStatusText", "You are logged in as: " + user.getUsername());
-                    map.put("userLogInText", "log out");
-                    map.put("userLogInLink", "/logout");
-                } else {
-
-                    map.put("userLogInText", "log in");
-                    map.put("userLogInLink", "/login");
-                    map.put("userStatusText", "You are logged in as a guest.");
-                }
+                setUserStatusToMap(req, map);
 
                 return render(map, "index");
             });
 
             get("/new", (req, res) -> {
                 Map<String, Object> map = new HashMap<>();
+                setUserStatusToMap(req, map);
                 return render(map, "new");
             });
 
             get("/search", (req, res) -> {
                 Map<String, Object> map = new HashMap<>();
+                setUserStatusToMap(req, map);
                 return render(map, "search");
             });
 
@@ -154,6 +145,21 @@ public class App {
         if (user == null) {
             res.redirect("/login");
             halt();
+        }
+    }
+
+    private void setUserStatusToMap(Request req ,Map map) {
+        User user = requestUserManager.getSignedInUser(req);
+        if (user != null) {
+
+            map.put("userStatusText", "You are logged in as: " + user.getUsername());
+            map.put("userLogInText", "log out");
+            map.put("userLogInLink", "/logout");
+        } else {
+
+            map.put("userLogInText", "log in");
+            map.put("userLogInLink", "/login");
+            map.put("userStatusText", "You are logged in as a guest.");
         }
     }
 
