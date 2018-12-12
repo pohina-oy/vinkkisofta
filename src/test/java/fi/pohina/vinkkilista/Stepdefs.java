@@ -318,6 +318,9 @@ public class Stepdefs {
         assertTrue(currentUrl.contains(substring));
     }
 
+    private String getFirstBlogsId() {
+        return getBookmarkElementId(getBookmarkWebElements("bookmarkList").get(0));
+    }
     private WebElement readToggleButtonByBookmarkId(String id) {
 
         List<WebElement> bookmarks = getBookmarkWebElements("bookmarkList");
@@ -325,13 +328,14 @@ public class Stepdefs {
         for (WebElement element : bookmarks) {
             String currentId = getBookmarkElementId(element);
 
-            
+            if (id.equals(currentId)) {
+                return element;
+            }
         }
-
+        return null;
     }
     private String getBookmarkElementId(WebElement bookmark) {
-
-
+        return bookmark.findElement(By.name("bookmarkId")).getAttribute("value");
     }
 
     private void assertLoggedInUserIs(String expectedUsername) {
