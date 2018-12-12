@@ -14,6 +14,7 @@ dependencies {
     compile 'com.google.guava:guava:20.0'
     compile 'com.sparkjava:spark-core:2.8.0'
     compile 'com.sparkjava:spark-template-thymeleaf:2.7.1'
+    compile 'org.thymeleaf.extras:thymeleaf-extras-java8time'
     compile 'org.slf4j:slf4j-simple:1.7.25'
     testCompile 'io.cucumber:cucumber-java:4.2.0'
     testCompile 'io.cucumber:cucumber-junit:4.2.0'

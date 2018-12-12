@@ -25,9 +25,21 @@
                         <span class="bookmarkAuthor" th:if="${bookmark.author != null}"
                               th:text="${'by ' + bookmark.author}">
                         </span>
-                        <span class="bookmarkCreator" th:if="${bookmark.creator != null}"
-                              th:text="${bookmark.creator.username}">
-                        </span>
+                        <div class="bookmarkCreatorReadStatus">
+                            <div class="bookmarkCreator" th:if="${bookmark.creator != null}" th:text="${bookmark.creator.username}"/>
+                            <div class="bookmarkCreator" th:unless="${bookmark.creator != null}">no creator</div>
+                            <div class="bookmarkReadStatus" th:if="${user.getBookmarkReadStatus(bookmark.id) == null}">
+                                <object>not read <a th:href="${'/bookmarks/luettu?mark=read' + '&id=' + bookmark.id}">
+                                    <button class="markBookmarkButton"><font color="green">&#9679</font></button>
+                                </a></object>
+                            </div>
+                            <div class="bookmarkReadStatus" th:unless="${user.getBookmarkReadStatus(bookmark.id) == null}">
+                                <td th:text="${#temporals.format(user.getBookmarkReadStatus(bookmark.id), 'dd.MM.yyyy', locale)}"/>
+                                <object><a th:href="${'/bookmarks/luettu?mark=unread' + '&id=' + bookmark.id}">
+                                    <button class="markBookmarkButton"><font color="gray">&#9675</font></button>
+                                </a></object>
+                            </div>
+                        </div>
                     </a>
                 </div>
             </div>

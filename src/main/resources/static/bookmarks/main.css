@@ -48,11 +48,27 @@
     color: #bbb;
 }
 
-.bookmarkCreator {
-    display: block;
+.bookmarkCreatorReadStatus {
+    display: flex;
+    justify-content: space-between;
     font-size: 10px;
     color: #bbb;
     margin-top: 5px;
+}
+
+.bookmarkCreator {
+    display: inline-block;
+}
+
+.bookmarkReadStatus {
+    display: inline-block;
+}
+
+.markBookmarkButton {
+    display: inline-block;
+    text-align: center;
+    padding: 0px;
+    font-size: 9px;
 }
 
 .button {
