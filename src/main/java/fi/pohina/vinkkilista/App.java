@@ -56,10 +56,11 @@ public class App {
         path("/bookmarks", () -> {
             get("/", (req, res) -> {
                 Map<String, Object> map = new HashMap<>();
-                Collection<Bookmark> bookmarks = this.bookmarkService.getAllBookmarks();
-                map.put("bookmarks", bookmarks);
+                Collection<Bookmark> bookmarks = bookmarkService.getAllBookmarks();
 
                 setUserStatusToMap(req, map);
+                map.put("bookmarks", bookmarks);
+                map.put("user", requestUserManager.getSignedInUser(req));
 
                 return render(map, "index");
             });
@@ -73,6 +74,7 @@ public class App {
             get("/search", (req, res) -> {
                 Map<String, Object> map = new HashMap<>();
                 setUserStatusToMap(req, map);
+                map.put("user", requestUserManager.getSignedInUser(req));
                 return render(map, "search");
             });
 
@@ -99,10 +101,33 @@ public class App {
 
             post("/search", (req, res) -> {
                 Map<String, Object> map = new HashMap<>();
+
                 Set<String> tags = tagService.toValidatedSet(req.queryParams("tags"));
                 Collection<Bookmark> bookmarks = bookmarkService.getBookmarksByTags(tags);
                 map.put("bookmarks", bookmarks);
+                map.put("user", requestUserManager.getSignedInUser(req));
+
                 return render(map, "search");
+            });
+
+            get("/luettu", (req,res) -> {
+                String action = req.queryParams("mark");
+                String bookmarkId = req.queryParams("id");
+
+                if (action.equals("read")) {
+                    users.markBookmarkAsRead(
+                        requestUserManager.getSignedInUser(req).getId(),
+                        bookmarkId
+                    );
+                } else if (action.equals("unread")) {
+                    users.unmarkBookmarkAsRead(
+                        requestUserManager.getSignedInUser(req).getId(),
+                        bookmarkId
+                    );
+                }
+
+                res.redirect("/bookmarks/");
+                return null;
             });
         });
 
