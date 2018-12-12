@@ -60,7 +60,7 @@ public class App {
 
                 setUserStatusToMap(req, map);
                 map.put("bookmarks", bookmarks);
-                map.put("user", requestUserManager.getSignedInUser(req));
+                map.put("user", replaceNullUserWithGuest(requestUserManager.getSignedInUser(req)));
 
                 return render(map, "index");
             });
@@ -75,6 +75,7 @@ public class App {
                 Map<String, Object> map = new HashMap<>();
                 setUserStatusToMap(req, map);
                 map.put("user", requestUserManager.getSignedInUser(req));
+                map.put("user", replaceNullUserWithGuest(requestUserManager.getSignedInUser(req)));
                 return render(map, "search");
             });
 
@@ -105,7 +106,7 @@ public class App {
                 Set<String> tags = tagService.toValidatedSet(req.queryParams("tags"));
                 Collection<Bookmark> bookmarks = bookmarkService.getBookmarksByTags(tags);
                 map.put("bookmarks", bookmarks);
-                map.put("user", requestUserManager.getSignedInUser(req));
+                map.put("user", replaceNullUserWithGuest(requestUserManager.getSignedInUser(req)));
 
                 return render(map, "search");
             });
@@ -159,6 +160,20 @@ public class App {
             res.redirect("/bookmarks/");
             return "";
         });
+    }
+
+    /**
+     * Replaces null user with a generated guest user for display.
+     *
+     * @param user
+     * @return existing user or generated guest user
+     */
+    private User replaceNullUserWithGuest(User user) {
+        if (user == null) {
+            return new User("undefined", "undefined", "guest", 0);
+        }
+
+        return user;
     }
 
     /**
