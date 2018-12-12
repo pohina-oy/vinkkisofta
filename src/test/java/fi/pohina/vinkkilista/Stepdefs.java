@@ -178,7 +178,7 @@ public class Stepdefs {
     @Then("^the user is redirected to the login page$")
     public void theUserIsRedirectedToTheLoginPage() {
         pageUrlIs(loginUrl);
-        pageHasContent("Kirjaudu sisään sovellukseen");
+        assertTrue(driver.getTitle().contains("Sign in"));
     }
 
     @After
