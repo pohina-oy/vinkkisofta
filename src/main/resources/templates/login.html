@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 
     <head>
-        <title>Kirjaudu sisään | Vinkkisofta</title>
+        <title>Sign in | Vinkkisofta</title>
         <meta charset="utf-8"/>
         <link rel="stylesheet" href="/css/login.css" type="text/css"/>
         <link rel="stylesheet" href="/css/main.css" type="text/css"/>
@@ -11,7 +11,8 @@
     <body>
         <div class="container">
             <h1>Vinkkilista</h1>
-            <a class="loginButton" th:href="${'https://github.com/login/oauth/authorize?scope=user:email%20read:user&client_id=' + clientId}">
+
+            <a class="loginButton" th:href="${authUrl}" id="login">
                 Sign in with Github
             </a>
         </div>

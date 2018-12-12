@@ -25,6 +25,8 @@ public class App {
     private final AppConfig config;
     private final UserService users;
     private final RequestUserManager requestUserManager;
+    private String githubAuthLoginUrl;
+    private boolean testLoginEnabled;
 
     public App(BookmarkService bookmarkService, TagService tagService, UserService userService, AppConfig config) {
         this.bookmarkService = bookmarkService;
@@ -36,6 +38,42 @@ public class App {
             config.getGithubClientSecret()
         );
         this.requestUserManager = new RequestUserManager(userService);
+        this.testLoginEnabled = false;
+
+        // Construct the auth URL here instead of just directly in the template
+        // so that we can change the URL to our test login endpoint
+        // while running cucumber tests. Because we don't have time to mock
+        // the Github API.
+        this.githubAuthLoginUrl = "https://github.com/login/oauth/authorize"
+            + "?scope=user:email%20read:user&client_id="
+            + config.getGithubClientId();
+    }
+
+    // package-private utility functions solely for cucumber tests
+    void enableTestLogin() {
+        // Disables the Github login by changing the "Sign up with Github"
+        // link to redirect to the test login endpoint below. This allows
+        // us to go through the "click login to login" scenario, while freeing
+        // us of having to write a mock server for the Github oauth & user API.
+
+        this.githubAuthLoginUrl = "/test/login";
+
+        if (!this.testLoginEnabled) {
+            this.testLoginEnabled = true;
+            // Test endpoint for logging in in the tests.
+            get("/test/login", (req, res) -> {
+                GithubUser testUser = new GithubUser();
+                testUser.setLogin("testUser");
+                testUser.setEmail("test@test.com");
+                testUser.setId(123);
+
+                User user = users.findOrCreateByGithubUser(testUser);
+                requestUserManager.setSignedInUser(req, user);
+
+                res.redirect("/bookmarks/");
+                return "";
+            });
+        }
     }
 
     /**
@@ -47,10 +85,8 @@ public class App {
         staticFileLocation("/static");
         port(portNumber);
 
-        if (config.isProduction()) {
-            before("/", this::authenticationFilter);
-            before("/bookmarks/*", this::authenticationFilter);
-        }
+        before("/", this::authenticationFilter);
+        before("/bookmarks/*", this::authenticationFilter);
         redirect.any("/", "/bookmarks/");
 
         path("/bookmarks", () -> {
@@ -125,7 +161,7 @@ public class App {
 
         get("/login", (req, res) -> {
             Map<String, Object> map = new HashMap<>();
-            map.put("clientId", config.getGithubClientId());
+            map.put("authUrl", githubAuthLoginUrl);
             return render(map, "login");
         });
 
