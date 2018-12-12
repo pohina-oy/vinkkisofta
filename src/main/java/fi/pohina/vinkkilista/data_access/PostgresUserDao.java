@@ -125,7 +125,7 @@ public class PostgresUserDao implements UserDao {
             st.setString(2, bookmarkId);
             st.executeUpdate();
         } catch (Exception e) {
-            e.printStackTrace();;
+            e.printStackTrace();
         }
     }
 }
