@@ -58,7 +58,7 @@ public class Stepdefs {
     @When("^the \"logout\" link is clicked$")
     public void theLogoutLinkIsClicked() {
         WebElement element = driver
-                .findElement(By.linkText("Log out"));
+                .findElement(By.id("userLogInLink"));
         element.click();
     }
 
