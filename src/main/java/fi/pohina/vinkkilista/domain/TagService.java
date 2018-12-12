@@ -1,16 +1,20 @@
 package fi.pohina.vinkkilista.domain;
 
 import fi.pohina.vinkkilista.data_access.TagDao;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
 public class TagService {
 
     private final TagDao tagDao;
+    private final Map<String, String> urlToTagMap = new HashMap<>();
 
     public TagService(TagDao tagDao) {
         this.tagDao = tagDao;
+        initUrlToTagMap();
     }
 
     /**
@@ -60,71 +64,46 @@ public class TagService {
 
         return tagsSet;
     }
-    
+
     /**
-     * Function for converting comma separated tag names to validated set of
-     * tag names.
+     * Function for converting comma separated tag names to validated set of tag
+     * names.
      *
      * @param tagCsv comma separated tag names
      * @return set of validated tag names
      */
     public static Set<String> toValidatedSet(String tagCsv) {
         Set<String> tagNames = new HashSet<>();
-        
+
         if (tagCsv == null || tagCsv.isEmpty()) {
             return tagNames;
         }
-        
+
         String[] tagArray = tagCsv.split(",");
-        
+
         for (String tagName : tagArray) {
             String validated = validateTag(tagName);
             if (!validated.isEmpty()) {
                 tagNames.add(validated);
             }
         }
-        
+
         return tagNames;
     }
-    
+
     /**
      * Function for getting a tag name by url.
      *
      * @param url the url to be analyzed
-     * @return name of tag or null if none was found
+     * @return name of tag or empty string if none was found
      */
     public String tagFromUrl(String url) {
-        String[] videoUrls = {"youtube.com", "vimeo.com", "youtu.be"};
-        String[] blogUrls = {
-            "blogger.com", "blogs.helsinki.fi",
-            "wordpress.org", "blogspot.com"};
-        String[] bookUrls = {".suomalainen.com"};
-        String[] scienceUrls = {"dl.acm.org", "ieeexplore.ieee.org"};
-        
-        for (String videoUrl : videoUrls) {
-            if (url.contains(videoUrl)) {
-                return "video";
+        for (String key : urlToTagMap.keySet()) {
+            if (url.contains(key)) {
+                return urlToTagMap.get(key);
             }
         }
-        
-        for (String blogUrl : blogUrls) {
-            if (url.contains(blogUrl)) {
-                return "blog";
-            }
-        }
-        
-        for (String bookUrl : bookUrls) {
-            if (url.contains(bookUrl)) {
-                return "book";
-            }
-        }
-        
-        for (String scienceUrl : scienceUrls) {
-            if (url.contains(scienceUrl)) {
-                return "scientific publication";
-            }
-        }
-        
+
         return "";
     }
 
@@ -150,5 +129,18 @@ public class TagService {
 
     private String generateTagId() {
         return UUID.randomUUID().toString();
+    }
+
+    private void initUrlToTagMap() {
+        urlToTagMap.put("youtube.com", "video");
+        urlToTagMap.put("youtu.be", "video");
+        urlToTagMap.put("vimeo.com", "video");
+        urlToTagMap.put("blogger.com", "blog");
+        urlToTagMap.put("blogs.helsinki.fi", "blog");
+        urlToTagMap.put("wordpress.org", "blog");
+        urlToTagMap.put("blogspot.com", "blog");
+        urlToTagMap.put(".suomalainen.com", "book");
+        urlToTagMap.put("dl.acm.org", "scientific publication");
+        urlToTagMap.put("ieeexplore.ieee.org", "scientific publication");
     }
 }
