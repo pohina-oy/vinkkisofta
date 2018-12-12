@@ -5,6 +5,7 @@
 }
 
 .bookmark {
+    position: relative;
     border: 1px solid #eee;
     margin: 10px 0;
 }
@@ -48,19 +49,28 @@
     color: #bbb;
 }
 
-.bookmarkCreatorReadStatus {
-    display: flex;
-    justify-content: space-between;
+.bookmarkCreator {
+    display: block;
     font-size: 10px;
     color: #bbb;
     margin-top: 5px;
 }
 
-.bookmarkCreator {
-    display: inline-block;
+.bookmarkReadStatus {
+    font-size: 10px;
+    color: #bbb;
+    position: absolute;
+    padding: 0px;
+    right: 10px;
+    bottom: 10px;
 }
 
-.bookmarkReadStatus {
+.bookmarkReadText {
+    text-decoration: none;
+    color: #bbb;
+}
+
+.markBookmarkForm{
     display: inline-block;
 }
 

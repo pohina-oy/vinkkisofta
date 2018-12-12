@@ -79,6 +79,25 @@ public class App {
                 return render(map, "search");
             });
 
+            post("/:id/toggleRead", (req, res) -> {
+                String bookmarkId = req.params("id");
+
+                if (requestUserManager.getSignedInUser(req).getBookmarkReadStatus(bookmarkId) == null) {
+                    users.markBookmarkAsRead(
+                        requestUserManager.getSignedInUser(req).getId(),
+                        bookmarkId
+                    );
+                } else {
+                    users.unmarkBookmarkAsRead(
+                        requestUserManager.getSignedInUser(req).getId(),
+                        bookmarkId
+                    );
+                }
+
+                res.redirect("/bookmarks/");
+                return null;
+            });
+
             post("/new", (req, res) -> {
                 String title = req.queryParams("title");
                 String url = req.queryParams("url");
@@ -111,23 +130,22 @@ public class App {
                 return render(map, "search");
             });
 
-            get("/luettu", (req, res) -> {
-                String action = req.queryParams("mark");
-                String bookmarkId = req.queryParams("id");
+            post("/search/:id/toggleRead", (req, res) -> {
+                String bookmarkId = req.params("id");
 
-                if (action.equals("read")) {
+                if (requestUserManager.getSignedInUser(req).getBookmarkReadStatus(bookmarkId) == null) {
                     users.markBookmarkAsRead(
                         requestUserManager.getSignedInUser(req).getId(),
                         bookmarkId
                     );
-                } else if (action.equals("unread")) {
+                } else {
                     users.unmarkBookmarkAsRead(
                         requestUserManager.getSignedInUser(req).getId(),
                         bookmarkId
                     );
                 }
 
-                res.redirect("/bookmarks/");
+                res.redirect("/bookmarks/search");
                 return null;
             });
         });
