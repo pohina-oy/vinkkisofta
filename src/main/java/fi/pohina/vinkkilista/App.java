@@ -114,6 +114,7 @@ public class App {
 
                 Set<String> tags = tagService.toValidatedSet(tagInput);
                 Collection<Bookmark> bookmarks = bookmarkService.getBookmarksByTags(tags);
+                setUserStatusToMap(req, map);
                 map.put("bookmarks", bookmarks);
                 map.put("user", replaceNullUserWithGuest(requestUserManager.getSignedInUser(req)));
                 map.put("tags", tagInput);
