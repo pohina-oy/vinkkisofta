@@ -65,3 +65,19 @@
     text-decoration: none;
     text-align: center;
 }
+
+.logoutButton {
+    float: right;
+    display: block;
+    margin: 10px 0;
+    height: 100%;
+    padding: 10px;
+    color: inherit;
+    border: 1px solid #eee;
+    text-decoration: none;
+    text-align: center;
+}
+
+.logoutButton:hover {
+    background-color: #eee;
+}
