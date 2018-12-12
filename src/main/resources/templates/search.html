@@ -10,6 +10,15 @@
     <body>
         <div class="container">
             <h1>Vinkkilista</h1>
+
+            <div>
+                <a class="logoutButton" id="userLogInLink" th:href="${userLogInLink}" th:text="${userLogInText}"></a>
+                <br><br>
+            </div>
+            <div>
+                <span th:text="${userStatusText}"></span>
+            </div>
+
             <h2>Search bookmarks by tags</h2>
 
             <form class="bookmarkForm" method="post" action="/bookmarks/search">

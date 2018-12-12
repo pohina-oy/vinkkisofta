@@ -59,24 +59,20 @@ public class App {
                 Collection<Bookmark> bookmarks = this.bookmarkService.getAllBookmarks();
                 map.put("bookmarks", bookmarks);
 
-                User user = requestUserManager.getSignedInUser(req);
-                if (user != null) {
-                    map.put("user", user);
-                } else {
-                    user = new User("undefined", "undefined", "guest", 0);
-                    map.put("user", user);
-                }
+                setUserStatusToMap(req, map);
 
                 return render(map, "index");
             });
 
             get("/new", (req, res) -> {
                 Map<String, Object> map = new HashMap<>();
+                setUserStatusToMap(req, map);
                 return render(map, "new");
             });
 
             get("/search", (req, res) -> {
                 Map<String, Object> map = new HashMap<>();
+                setUserStatusToMap(req, map);
                 return render(map, "search");
             });
 
@@ -116,6 +112,13 @@ public class App {
             return render(map, "login");
         });
 
+        get("/logout", (req, res) -> {
+            Map<String, Object> map = new HashMap<>();
+            requestUserManager.clearSignedInUser(req);
+            res.redirect("/");
+            return null;
+        });
+
         get("/auth/gh-callback", (req, res) -> {
             String callbackCode = req.queryParams("code");
 
@@ -142,6 +145,24 @@ public class App {
         if (user == null) {
             res.redirect("/login");
             halt();
+        }
+    }
+
+    /**
+     * Sets the login status based on whether or not the user has signed in.
+     */
+    private void setUserStatusToMap(Request req, Map map) {
+        User user = requestUserManager.getSignedInUser(req);
+        if (user != null) {
+
+            map.put("userStatusText", "You are logged in as: " + user.getUsername());
+            map.put("userLogInText", "log out");
+            map.put("userLogInLink", "/logout");
+        } else {
+
+            map.put("userLogInText", "log in");
+            map.put("userLogInLink", "/login");
+            map.put("userStatusText", "You are logged in as a guest.");
         }
     }
 

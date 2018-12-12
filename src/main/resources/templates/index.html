@@ -10,9 +10,13 @@
     <body>
         <div class="container">
             <h1>Vinkkilista</h1>
-
+            
             <div>
-                User: <span th:text="${user.username}"></span>
+            	<a class="logoutButton" id="userLogInLink" th:href="${userLogInLink}" th:text="${userLogInText}"></a>
+            	<br><br>
+            </div>
+            <div>
+                <span th:text="${userStatusText}"></span>
             </div>
 			
             <div class="bookmarkList">
