@@ -37,6 +37,38 @@ public class Stepdefs {
         navigateToLogin();
     }
 
+    // Logout
+
+    @Given("^the user is logged in on homepage$")
+    public void theUserIsLoggedInOnHomepage() {
+        navigateToBookmarkListing();
+        loginWithTestUser();
+    }
+    @Given("^the user is logged in on search page")
+    public void theUserIsLoggedInOnSearchPage() {
+        navigateToSearchPage();
+        loginWithTestUser();
+    }
+    @Given("^the user is logged in on create page")
+    public void theUserIsLoggedInOnCreatePage() {
+        navigateToCreatePage();
+        loginWithTestUser();
+    }
+
+    @When("^the \"logout\" link is clicked$")
+    public void theLogoutLinkIsClicked() {
+        WebElement element = driver
+                .findElement(By.id("userLogInLink"));
+        element.click();
+    }
+
+    //@Then("^the user is logged out and redirected to the login page$")
+   //public void theUserIsLoggedOutAndRedirectedToTheLoginPage() {
+        //assertCurrentUrlContains("/login");
+    //}
+
+    // End logout
+
     @When("^the user navigates to /bookmarks/$")
     public void theUserNavigatesToBookmarks() {
         navigateToBookmarkListing();
@@ -286,5 +318,11 @@ public class Stepdefs {
 
     private void navigateToBookmarkListing() {
         driver.get(baseUrl);
+    }
+    private void navigateToCreatePage() {
+        driver.get(baseUrl + "new");
+    }
+    private void navigateToSearchPage() {
+        driver.get(baseUrl + "search");
     }
 }
