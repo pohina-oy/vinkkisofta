@@ -3,6 +3,8 @@ package fi.pohina.vinkkilista;
 import cucumber.api.java.After;
 import cucumber.api.java.en.*;
 import fi.pohina.vinkkilista.domain.TagService;
+
+import java.text.SimpleDateFormat;
 import java.util.*;
 import static org.junit.Assert.*;
 import org.openqa.selenium.*;
@@ -72,14 +74,7 @@ public class Stepdefs {
     // Toggle read
 
 
-    @Given("^the first bookmark read status is \"not read\"$")
-    public void theFirstBookmarkReadStatusIsNotRead() {
-        WebElement firstBookmark = getBookmarkElementById(getFirstBookmarkId());
-        assertBookmarkReadStatusIs(firstBookmark, false);
-    }
-
-
-    @Given("the first bookmark read status contains {string}")
+    @Given("given first bookmark read status contains {string}")
     public void the_First_Bookmark_Read_Status_Contains(String status) {
         WebElement firstBookmark = getBookmarkElementById(getFirstBookmarkId());
         assertBookmarkReadStatusContains(firstBookmark, status);
@@ -93,13 +88,22 @@ public class Stepdefs {
         WebElement firstBookmark = getBookmarkElementById(getFirstBookmarkId());
         WebElement readToggleButton = getBookmarkElementReadToggleButtonElement(firstBookmark);
 
-        //readToggleButton.click();
+        readToggleButton.click();
     }
-    @Then("^the first bookmark read status contains \"read on\"$")
-    public void theFirstBookmarkReadStatusContainsReadOn() {
+    @Then("the first bookmark read status contains {string}")
+    public void theFirstBookmarkReadStatusContainsReadOn(String status) {
 
         WebElement firstBookmark = getBookmarkElementById(getFirstBookmarkId());
-        assertBookmarkReadStatusIs(firstBookmark, true);
+        assertBookmarkReadStatusContains(firstBookmark, status);
+    }
+
+    @Then("the first bookmark read status contains the current date")
+    public void the_first_bookmark_read_status_contains_the_current_date() {
+
+        String dateInString =new SimpleDateFormat("dd-MM-yyyy").format(new Date());
+
+        WebElement firstBookmark = getBookmarkElementById(getFirstBookmarkId());
+        assertBookmarkReadStatusContains(firstBookmark, dateInString);
     }
 
     // End toggle read
@@ -337,14 +341,14 @@ public class Stepdefs {
     }
 
     private void assertBookmarkReadStatusIs(WebElement bookmark, boolean status) {
-        WebElement readToggle = getBookmarkElementReadToggleButtonElement(bookmark);
+        WebElement readToggle = getBookmarkElemenReadToggleReadStatus(bookmark);
 
         if (!readToggle.getText().toLowerCase().contains("read on")) {
             fail("Bookmark element read toggle does not contain 'read on'");
         }
     }
     private void assertBookmarkReadStatusContains(WebElement bookmark, String status) {
-        WebElement readToggle = getBookmarkElementReadToggleButtonElement(bookmark);
+        WebElement readToggle = getBookmarkElemenReadToggleReadStatus(bookmark);
 
         if (!readToggle.getText().toLowerCase().contains(status)) {
             fail("Bookmark element read toggle '" + readToggle.getText() + "' did not contain '" + status + "'");
@@ -359,8 +363,11 @@ public class Stepdefs {
     private String getFirstBookmarkId() {
         return getBookmarkElementId(getBookmarkWebElements("bookmarkList").get(0));
     }
+    private WebElement getBookmarkElemenReadToggleReadStatus(WebElement element) {
+        return element.findElement(By.className("bookmarkReadStatus"));
+    }
     private WebElement getBookmarkElementReadToggleButtonElement(WebElement element) {
-        return element.findElement(By.className("bookmarkReadText"));
+        return element.findElement(By.className("markBookmarkButton"));
     }
     private WebElement getBookmarkElementById(String id) {
 
