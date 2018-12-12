@@ -2,6 +2,7 @@ package fi.pohina.vinkkilista;
 
 import cucumber.api.java.After;
 import cucumber.api.java.en.*;
+import fi.pohina.vinkkilista.domain.TagService;
 import java.util.*;
 import static org.junit.Assert.*;
 import org.openqa.selenium.*;
@@ -9,11 +10,8 @@ import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
 public class Stepdefs {
     private WebDriver driver;
-    //private String baseUrl = "http://localhost:4567/";
     private String baseUrl = "http://localhost:4567/bookmarks/";
-    private final CommaSeparatedTagsParser tagParser
-        = new CommaSeparatedTagsParser();
-    
+
     public Stepdefs() {
         driver = new HtmlUnitDriver();
     }
@@ -29,40 +27,27 @@ public class Stepdefs {
 
     @When("valid title {string} and valid url {string} are given")
     public void valid_title_and_valid_url_are_given(String title, String url) {
-        typeToElementWithId("titleInput", title);
-        typeToElementWithId("urlInput", url);
-        submitElementWithId("submitForm");
+        attemptBookmarkCreation(title, url, "", "");
     }
 
     @When("valid title {string} and valid url {string} and valid author {string} are given")
     public void valid_title_and_valid_url_and_valid_author_are_given(String title, String url, String author) {
-        typeToElementWithId("titleInput", title);
-        typeToElementWithId("urlInput", url);
-        typeToElementWithId("authorInput", author);
-        submitElementWithId("submitForm");
+        attemptBookmarkCreation(title, url, author, "");
     }
     
     @When("valid title {string} and valid url {string} and valid author {string} and valid tags {string} are given")
     public void valid_title_and_valid_url_and_valid_author_and_valid_tags_are_given(String title, String url, String author, String tags) {
-        typeToElementWithId("titleInput", title);
-        typeToElementWithId("urlInput", url);
-        typeToElementWithId("authorInput", author);
-        typeToElementWithId("tagsInput", tags);
-        submitElementWithId("submitForm");
+        attemptBookmarkCreation(title, url, author, tags);
     }
 
     @When("missing title {string} and valid url {string} are given")
     public void missing_title_and_valid_url_are_given(String title, String url) {
-        typeToElementWithId("titleInput", title);
-        typeToElementWithId("urlInput", url);
-        submitElementWithId("submitForm");
+        attemptBookmarkCreation(title, url, "", "");
     }
 
     @When("valid title {string} and missing url {string} are given")
     public void valid_title_and_missing_url_are_given(String title, String url) {
-        typeToElementWithId("titleInput", title);
-        typeToElementWithId("urlInput", url);
-        submitElementWithId("submitForm");
+        attemptBookmarkCreation(title, url, "", "");
     }
 
     @Then("a new bookmark is created")
@@ -165,6 +150,14 @@ public class Stepdefs {
     }
 
     // Helper functions
+    
+    private void attemptBookmarkCreation(String title, String url, String author, String tags) {
+        typeToElementWithId("titleInput", title);
+        typeToElementWithId("urlInput", url);
+        typeToElementWithId("authorInput", author);
+        typeToElementWithId("tagsInput", tags);
+        submitElementWithId("submitForm");
+    }
 
     private void submitElementWithId(String id) {
         WebElement element = driver.findElement(By.id(id));
@@ -198,21 +191,15 @@ public class Stepdefs {
             .findElements(By.className("bookmark"));
     }
 
-    private void allBookmarksHaveAnyOfTags(
-        List<WebElement> bookmarks,
-        String tags
-    ) {
+    private void allBookmarksHaveAnyOfTags(List<WebElement> bookmarks, String tags) {
         for (WebElement bookmark : bookmarks) {
             assertTrue(
-                bookmarkHasAnyOfTags(bookmark, tagParser.parse(tags))
+                bookmarkHasAnyOfTags(bookmark, TagService.toValidatedSet(tags))
             );
         }
     }
 
-    private Boolean bookmarkHasAnyOfTags(
-        WebElement bookmark,
-        Set<String> tagSet
-    ) {
+    private Boolean bookmarkHasAnyOfTags(WebElement bookmark, Set<String> tagSet) {
         WebElement tagsOfBookmark = bookmark.findElement(
             By.className("bookmarkTags")
         );

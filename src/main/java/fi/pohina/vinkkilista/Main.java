@@ -1,19 +1,16 @@
 package fi.pohina.vinkkilista;
 
-import fi.pohina.vinkkilista.data_access.BookmarkDao;
-import fi.pohina.vinkkilista.data_access.InMemoryBookmarkDao;
-import fi.pohina.vinkkilista.data_access.TagDao;
-import fi.pohina.vinkkilista.data_access.UserDao;
-import fi.pohina.vinkkilista.data_access.InMemoryTagDao;
-import fi.pohina.vinkkilista.data_access.InMemoryUserDao;
+import fi.pohina.vinkkilista.data_access.*;
 import fi.pohina.vinkkilista.domain.BookmarkService;
 import fi.pohina.vinkkilista.domain.UserService;
 
 import java.util.*;
-import fi.pohina.vinkkilista.data_access.PostgresBookmarkDao;
-import fi.pohina.vinkkilista.data_access.PostgresTagDao;
-import fi.pohina.vinkkilista.data_access.PostgresUserDao;
 import io.github.cdimascio.dotenv.Dotenv;
+import javax.sql.DataSource;
+import org.postgresql.ds.PGPoolingDataSource;
+import com.google.common.base.Strings;
+import fi.pohina.vinkkilista.domain.Tag;
+import fi.pohina.vinkkilista.domain.TagService;
 
 public class Main {
     public static void main(String[] args) {
@@ -21,23 +18,28 @@ public class Main {
             .configure()
             .ignoreIfMissing()
             .load();
-        String stage = dotenv.get("STAGE");
 
-        BookmarkDao bookmarkDao = getBookmarkDao(dotenv);
-        TagDao tagDao = getTagDao(dotenv);
-        UserDao userDao = getUserDao(dotenv);
+        DaoFactory daoFactory = new DaoFactory(
+            isProduction(dotenv),
+            createPostgresDataSource(dotenv)
+        );
 
-        BookmarkService bookmarkService = new BookmarkService(bookmarkDao, tagDao);
+        BookmarkDao bookmarkDao = daoFactory.createBookmarkDao();
+        TagDao tagDao = daoFactory.createTagDao();
+        UserDao userDao = daoFactory.createUserDao();
+
+        BookmarkService bookmarkService = new BookmarkService(bookmarkDao);
+        TagService tagService = new TagService(tagDao);
         UserService userService = new UserService(userDao);
 
-        if (stage == null || !stage.equals("production")) {
-            addMockBookmarks(bookmarkService);
+        if (!isProduction(dotenv)) {
+            addMocks(bookmarkService, tagService);
         }
 
         int port = getPort(dotenv);
         AppConfig config = getConfig(dotenv);
 
-        new App(bookmarkService, userService, config).startServer(port);
+        new App(bookmarkService, tagService, userService, config).startServer(port);
     }
 
     private static int getPort(Dotenv dotenv) {
@@ -53,70 +55,58 @@ public class Main {
         );
     }
 
-    private static void addMockBookmarks(BookmarkService bookmarks) {
-        bookmarks.createBookmark(
+    private static void addMocks(BookmarkService bookmarkService, TagService tagService) {
+        
+        Tag blog = tagService.findOrCreateTag("blog");
+        Tag scientificPublication = tagService.findOrCreateTag("scientific publication");
+        
+        bookmarkService.createBookmark(
             "GitHub Blog",
             "https://blog.github.com",
             "GitHub",
             null,
-            new HashSet<>(Arrays.asList("blog"))
+            new HashSet<>(Arrays.asList(blog))
         );
-        bookmarks.createBookmark(
+        bookmarkService.createBookmark(
             "Domain Driven Design Weekly",
             "http://dddweekly.com",
             null,
             null,
             null
         );
-        bookmarks.createBookmark(
+        bookmarkService.createBookmark(
             "the morning paper",
             "https://blog.acolyer.org",
             "Adrian Colyer",
             null,
-            new HashSet<>(Arrays.asList("blog"))
+            new HashSet<>(Arrays.asList(blog))
         );
-        bookmarks.createBookmark(
+        bookmarkService.createBookmark(
             "An Industrial-Strength Audio Search Algorithm",
             "https://www.ee.columbia.edu/~dpwe/papers/Wang03-shazam.pdf",
             "Avery Li-Chun Wang",
             null,
-            new HashSet<>(Arrays.asList("scientific publication"))
+            new HashSet<>(Arrays.asList(scientificPublication))
         );
     }
 
-    private static BookmarkDao getBookmarkDao(Dotenv dotenv) {
+    private static boolean isProduction(Dotenv dotenv) {
         String stage = dotenv.get("STAGE");
-        if (stage == null || !stage.equals("production")) {
-            return new InMemoryBookmarkDao();
-        }
-        String dbHost = dotenv.get("DB_HOST");
-        String dbUser = dotenv.get("DB_USER");
-        String dbPassword = dotenv.get("DB_PASSWORD");
-        String db = dotenv.get("DB_DATABASE");
-        return new PostgresBookmarkDao(dbHost, dbUser, dbPassword, db);
+        return stage != null && stage.equals("production");
     }
 
-    private static TagDao getTagDao(Dotenv dotenv) {
-        String stage = dotenv.get("STAGE");
-        if (stage == null || !stage.equals("production")) {
-            return new InMemoryTagDao();
-        }
-        String dbHost = dotenv.get("DB_HOST");
-        String dbUser = dotenv.get("DB_USER");
-        String dbPassword = dotenv.get("DB_PASSWORD");
-        String db = dotenv.get("DB_DATABASE");
-        return new PostgresTagDao(dbHost, dbUser, dbPassword, db);
-    }
+    private static DataSource createPostgresDataSource(Dotenv dotenv) {
+        PGPoolingDataSource ds = new PGPoolingDataSource();
+        ds.setServerName(dotenv.get("DB_HOST"));
+        ds.setDatabaseName(dotenv.get("DB_DATABASE"));
+        ds.setUser(dotenv.get("DB_USER"));
+        ds.setPassword(dotenv.get("DB_PASSWORD"));
 
-    private static UserDao getUserDao(Dotenv dotenv) {
-        String stage = dotenv.get("STAGE");
-        if (stage == null || !stage.equals("production")) {
-            return new InMemoryUserDao();
-        }
-        String dbHost = dotenv.get("DB_HOST");
-        String dbUser = dotenv.get("DB_USER");
-        String dbPassword = dotenv.get("DB_PASSWORD");
-        String db = dotenv.get("DB_DATABASE");
-        return new PostgresUserDao(dbHost, dbUser, dbPassword, db);
+        String portStr = dotenv.get("DB_PORT");
+        int port = Strings.isNullOrEmpty(portStr) ? 0 : Integer.parseInt(portStr);
+        ds.setPortNumber(port);
+        // for pooled connections: allow up to three simultaneous connections
+        ds.setMaxConnections(3);
+        return ds;
     }
 }

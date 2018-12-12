@@ -1,53 +1,41 @@
 package fi.pohina.vinkkilista;
 
-import com.google.common.base.Strings;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import fi.pohina.vinkkilista.api.GithubEmail;
+import fi.pohina.vinkkilista.api.GithubJsonApi;
+import fi.pohina.vinkkilista.api.GithubOAuthApi;
 import fi.pohina.vinkkilista.api.GithubUser;
 import fi.pohina.vinkkilista.domain.Bookmark;
 import fi.pohina.vinkkilista.domain.BookmarkService;
+import fi.pohina.vinkkilista.domain.Tag;
+import fi.pohina.vinkkilista.domain.TagService;
 import fi.pohina.vinkkilista.domain.User;
 import fi.pohina.vinkkilista.domain.UserService;
-import org.apache.http.HttpEntity;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.fluent.Form;
 import spark.*;
-import org.apache.http.client.utils.URLEncodedUtils;
 import spark.ModelAndView;
-import spark.QueryParamsMap;
 import spark.template.thymeleaf.ThymeleafTemplateEngine;
 
-import java.lang.reflect.Type;
 import java.util.*;
 
 import static spark.Spark.*;
 
 public class App {
 
-    private static String stage = "";
-
-    private static final String SESSION_ATTRIBUTE_USERID = "github-user";
-    private static final String REQ_ATTRIBUTE_USER = "user";
-
-    private static String githubClientID = "censored";
-    private static String githubClientSecret = "censored";
-
-    private final CommaSeparatedTagsParser tagParser
-            = new CommaSeparatedTagsParser();
-
-    private final BookmarkService bookmarks;
+    private final GithubOAuthApi githubOAuthApi;
+    private final BookmarkService bookmarkService;
+    private final TagService tagService;
     private final AppConfig config;
     private final UserService users;
+    private final RequestUserManager requestUserManager;
 
-    public App(BookmarkService bookmarks, UserService users, AppConfig config) {
-        this.bookmarks = bookmarks;
+    public App(BookmarkService bookmarkService, TagService tagService, UserService userService, AppConfig config) {
+        this.bookmarkService = bookmarkService;
+        this.tagService = tagService;
         this.config = config;
-        this.users = users;
-
-        githubClientID = config.getGithubClientId();
-        githubClientSecret = config.getGithubClientSecret();
-        stage = config.getStage();
+        this.users = userService;
+        this.githubOAuthApi = new GithubOAuthApi(
+            config.getGithubClientId(),
+            config.getGithubClientSecret()
+        );
+        this.requestUserManager = new RequestUserManager(userService);
     }
 
     /**
@@ -59,8 +47,7 @@ public class App {
         staticFileLocation("/static");
         port(portNumber);
 
-        System.out.println("\nStage: " + stage);
-        if ("production".equals(stage)) {
+        if (config.isProduction()) {
             before("/", this::authenticationFilter);
             before("/bookmarks/*", this::authenticationFilter);
         }
@@ -69,11 +56,10 @@ public class App {
         path("/bookmarks", () -> {
             get("/", (req, res) -> {
                 Map<String, Object> map = new HashMap<>();
-                Collection<Bookmark> bookmarks = this.bookmarks.getAllBookmarks();
+                Collection<Bookmark> bookmarks = this.bookmarkService.getAllBookmarks();
                 map.put("bookmarks", bookmarks);
 
-                User user = req.attribute(REQ_ATTRIBUTE_USER);
-                System.out.println("App::bookmarkIndexHandler\n  user:" + user);
+                User user = requestUserManager.getSignedInUser(req);
                 if (user != null) {
                     map.put("user", user);
                 } else {
@@ -81,14 +67,6 @@ public class App {
                     map.put("user", user);
                 }
 
-                return render(map, "index");
-            });
-
-            //Turha
-            get("/bookmarks", (req, res) -> {
-                Map<String, Object> map = new HashMap<>();
-                Collection<Bookmark> bookmarks = this.bookmarks.getAllBookmarks();
-                map.put("bookmarks", bookmarks);
                 return render(map, "index");
             });
 
@@ -106,27 +84,27 @@ public class App {
                 String title = req.queryParams("title");
                 String url = req.queryParams("url");
                 String author = req.queryParams("author");
-                User creator = users.findById(getUserIdFromSession(req.session()));
-                Set<String> tags = tagParser.parse(req.queryParams("tags"));
+                User creator = requestUserManager.getSignedInUser(req);
+                Set<String> tagNames = tagService.toValidatedSet(req.queryParams("tags"));
+                tagNames.add(tagService.tagFromUrl(url));
                 
-                if (Strings.isNullOrEmpty(title) || Strings.isNullOrEmpty(url)) {
-                    res.redirect("new");
-                    return "Bookmark could not be created";
-                } else {
-                    bookmarks.createBookmark(
-                            title,
-                            url,
-                            author,
-                            creator,
-                            tags);
+                Set<Tag> tags = tagService.findOrCreateTags(tagNames);
+                Bookmark created = bookmarkService.createBookmark(title, url, author, creator, tags);
+
+                if (created != null) {
                     res.redirect("/bookmarks/");
                     return "New bookmark added";
+
+                } else {
+                    res.redirect("new");
+                    return "Bookmark could not be created";
                 }
             });
 
             post("/search", (req, res) -> {
                 Map<String, Object> map = new HashMap<>();
-                Collection<Bookmark> bookmarks = searchBookmarks(req.queryMap());
+                Set<String> tags = tagService.toValidatedSet(req.queryParams("tags"));
+                Collection<Bookmark> bookmarks = bookmarkService.getBookmarksByTags(tags);
                 map.put("bookmarks", bookmarks);
                 return render(map, "search");
             });
@@ -141,124 +119,30 @@ public class App {
         get("/auth/gh-callback", (req, res) -> {
             String callbackCode = req.queryParams("code");
 
-            String accessToken = postAuthCallbackCode(callbackCode);
-
-            // 2. get user info
-            String userInfoJson = getUserInfoJson(accessToken);
-
-            GithubUser githubUser = new Gson().fromJson(userInfoJson, GithubUser.class);
-
-            // 3. get user emails because if user has multiple emails, we need to find the primary one
-            if (githubUser.getEmail() == null) {
-                githubUser.setEmail(getPrimaryUserEmail(accessToken));
-            }
+            String accessToken
+                = githubOAuthApi.exchangeCodeForAccessToken(callbackCode);
+            GithubUser githubUser
+                = new GithubJsonApi(accessToken).getGithubUser();
 
             User user = users.findOrCreateByGithubUser(githubUser);
 
-            req.session(true)
-                    .attribute(SESSION_ATTRIBUTE_USERID, user.getId());
+            requestUserManager.setSignedInUser(req, user);
 
             res.redirect("/bookmarks/");
             return "";
         });
     }
 
+    /**
+     * Redirects all users who have not signed in to the login page.
+     */
     private void authenticationFilter(Request req, Response res) {
-        String userId = getUserIdFromSession(req.session());
-        User user = users.findById(userId);
-
-        System.out.println("App::authenticationFilter\n  user: " + user);
+        User user = requestUserManager.getSignedInUser(req);
 
         if (user == null) {
             res.redirect("/login");
             halt();
-            return;
         }
-
-        req.attribute(REQ_ATTRIBUTE_USER, user);
-    }
-
-    private String getUserIdFromSession(Session session) {
-        return session.attribute(SESSION_ATTRIBUTE_USERID);
-    }
-
-    private String postAuthCallbackCode(String code) throws Exception {
-        String url = "https://github.com/login/oauth/access_token";
-
-        // 1. fetch access token to Github API with code
-        List<NameValuePair> form = Form.form()
-                .add("code", code)
-                .add("client_id", githubClientID)
-                .add("client_secret", githubClientSecret)
-                .build();
-
-        HttpEntity responseEntity
-                = org.apache.http.client.fluent.Request.Post(url)
-                        .bodyForm(form)
-                        .execute()
-                        .returnResponse()
-                        .getEntity();
-
-        // 1.1 print access token response keys
-        List<NameValuePair> responseQuery = URLEncodedUtils.parse(responseEntity);
-        //responseQuery.forEach(nvp -> System.out.println("    * " + nvp.getName() + " - " + nvp.getValue()));
-
-        String accessToken = responseQuery
-                .stream()
-                .filter(nvp -> nvp.getName().equals("access_token"))
-                .findFirst()
-                .map(NameValuePair::getValue)
-                .orElse(null);
-
-        return accessToken;
-    }
-
-    private String getUserInfoJson(String accessToken) throws Exception {
-        String userInfoJson
-                = org.apache.http.client.fluent.Request.Get("https://api.github.com/user")
-                        .addHeader("Authorization", String.format("Bearer %s", accessToken))
-                        .addHeader("Accept", "application/json")
-                        .execute()
-                        .returnContent()
-                        .asString();
-
-        return userInfoJson;
-    }
-
-    private String getPrimaryUserEmail(String accessToken) throws Exception {
-        String userEmailsJson
-                = org.apache.http.client.fluent.Request.Get("https://api.github.com/user/emails")
-                        .addHeader("Authorization", String.format("Bearer %s", accessToken))
-                        .addHeader("Accept", "application/json")
-                        .execute()
-                        .returnContent()
-                        .asString();
-
-        Type emailListType = new TypeToken<List<GithubEmail>>() {
-        }.getType();
-
-        List<GithubEmail> userEmails = new Gson().fromJson(userEmailsJson, emailListType);
-
-        GithubEmail primaryEmail = userEmails.stream()
-                .filter(email -> email.isPrimary())
-                .findFirst()
-                .orElse(userEmails.get(0));
-
-        return primaryEmail.getEmail();
-    }
-
-    /**
-     * Searches for bookmarks based on filter forms, e.g. tags.
-     *
-     * @param params the query parameters of the request.
-     * @return list of bookmarks that match the query.
-     */
-    private Collection<Bookmark> searchBookmarks(QueryParamsMap params) {
-        String commaSeparatedTags = params.get("tags").value();
-
-        Set<String> tags = tagParser.parse(commaSeparatedTags);
-
-        return bookmarks.getBookmarksByTags(tags);
     }
 
     /**

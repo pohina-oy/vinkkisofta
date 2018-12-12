@@ -1,30 +1,26 @@
 package fi.pohina.vinkkilista.data_access;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.List;
 
 import fi.pohina.vinkkilista.domain.User;
+import javax.sql.DataSource;
 
 public class PostgresUserDao implements UserDao {
-    private Connection db;
 
-    public PostgresUserDao(String dbHost, String dbUser, String dbPassowrd, String dbName) {
-        String url = "jdbc:postgresql://" + dbHost + "/" + dbName + "?user=" + dbUser + "&password=" + dbPassowrd;
-        try {
-            this.db = DriverManager.getConnection(url);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
+    private final DataSource dataSource;
+    
+    public PostgresUserDao(DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
     @Override
     public User findById(String id) {
         String query = "SELECT * FROM users where id = ?";
-        try {
-            PreparedStatement st = this.db.prepareStatement(query, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+        try (Connection conn = dataSource.getConnection()) {
+            PreparedStatement st = conn.prepareStatement(query, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
             st.setString(1, id);
             ResultSet rs = st.executeQuery();
             if (rs.first()) {
@@ -43,8 +39,8 @@ public class PostgresUserDao implements UserDao {
     @Override
     public User findByGithubId(int githubId) {
         String query = "SELECT * FROM users where \"githubId\" = ?";
-        try {
-            PreparedStatement st = this.db.prepareStatement(query, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+        try (Connection conn = dataSource.getConnection()) {
+            PreparedStatement st = conn.prepareStatement(query, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
             st.setInt(1, githubId);
             ResultSet rs = st.executeQuery();
             if (rs.first()) {
@@ -63,8 +59,8 @@ public class PostgresUserDao implements UserDao {
     @Override
     public void add(User user) {
         String query = "INSERT INTO users (id, email, username, \"githubId\") values (?, ?, ?, ?)";
-        try {
-            PreparedStatement st = this.db.prepareStatement(query);
+        try (Connection conn = dataSource.getConnection()) {
+            PreparedStatement st = conn.prepareStatement(query);
             st.setString(1, user.getId());
             st.setString(2, user.getEmail());
             st.setString(3, user.getUsername());
