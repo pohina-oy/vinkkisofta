@@ -184,29 +184,17 @@ public class Stepdefs {
     }
 
     // Add Tags Based On Url
-<<<<<<< HEAD
-
-    @Then("a bookmark with title {string} is listed")
-    public void a_bookmark_with_title_is_listed(String title) {
-=======
     
     @Then("a bookmark with title {string} is listed in search results")
     public void a_bookmark_with_title_is_listed_in_search_results(String title) {
->>>>>>> changed step naming
         pageUrlIs(baseUrl + "search");
 
         pageHasContent("Search bookmarks by tags");
         pageHasContent(title);
     }
-<<<<<<< HEAD
-
-    @Then("a bookmark with title {string} is not listed")
-    public void a_bookmark_with_title_is_not_listed(String title) {
-=======
     
     @Then("a bookmark with title {string} is not listed in search results")
     public void a_bookmark_with_title_is_not_listed_in_search_results(String title) {
->>>>>>> changed step naming
         pageUrlIs(baseUrl + "search");
 
         pageHasContent("Search bookmarks by tags");
