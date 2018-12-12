@@ -172,7 +172,7 @@ public class Stepdefs {
     @Then("^the user is logged in and redirected to the bookmarks$")
     public void theUserIsLoggedInAndRedirectedToTheBookmarks() throws Throwable {
         assertCurrentUrlContains("/bookmarks/");
-        assertLoggedInUserIs("tester");
+        assertLoggedInUserIs("testUser");
     }
 
     @Then("^the user is redirected to the login page$")
