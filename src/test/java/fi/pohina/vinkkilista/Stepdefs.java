@@ -65,8 +65,8 @@ public class Stepdefs {
     }
 
     //@Then("^the user is logged out and redirected to the login page$")
-   //public void theUserIsLoggedOutAndRedirectedToTheLoginPage() {
-        //assertCurrentUrlContains("/login");
+    //public void theUserIsLoggedOutAndRedirectedToTheLoginPage() {
+    //assertCurrentUrlContains("/login");
     //}
 
     // End logout
@@ -116,7 +116,7 @@ public class Stepdefs {
     @When("^the \"Sign in with Github\" link is clicked$")
     public void theSignInWithGithubLinkIsClicked() {
         WebElement element = driver
-            .findElement(By.linkText("Sign in with Github"));
+                .findElement(By.linkText("Sign in with Github"));
         element.click();
     }
 
@@ -258,7 +258,7 @@ public class Stepdefs {
     }
 
     // Helper functions
-    
+
     private void attemptBookmarkCreation(String title, String url, String author, String tags) {
         typeToElementWithId("titleInput", title);
         typeToElementWithId("urlInput", url);
@@ -296,20 +296,20 @@ public class Stepdefs {
 
     private List<WebElement> getBookmarkWebElements(String containerClassName) {
         return driver.findElement(By.className(containerClassName))
-            .findElements(By.className("bookmark"));
+                .findElements(By.className("bookmark"));
     }
 
     private void allBookmarksHaveAnyOfTags(List<WebElement> bookmarks, String tags) {
         for (WebElement bookmark : bookmarks) {
             assertTrue(
-                bookmarkHasAnyOfTags(bookmark, TagService.toValidatedSet(tags))
+                    bookmarkHasAnyOfTags(bookmark, TagService.toValidatedSet(tags))
             );
         }
     }
 
     private Boolean bookmarkHasAnyOfTags(WebElement bookmark, Set<String> tagSet) {
         WebElement tagsOfBookmark = bookmark.findElement(
-            By.className("bookmarkTags")
+                By.className("bookmarkTags")
         );
 
         for (String tag : tagSet) {
@@ -388,11 +388,11 @@ public class Stepdefs {
 
     private void assertLoggedInUserIs(String expectedUsername) {
         String currentUser = driver
-            .findElement(By.id("userStatusText"))
-            .getText();
+                .findElement(By.id("userStatusText"))
+                .getText();
         assertEquals(
-            "You are logged in as: " + expectedUsername,
-            currentUser
+                "You are logged in as: " + expectedUsername,
+                currentUser
         );
     }
 
