@@ -241,11 +241,11 @@ public class App {
         if (user != null) {
 
             map.put("userStatusText", "You are logged in as: " + user.getUsername());
-            map.put("userLogInText", "log out");
+            map.put("userLogInText", "Log out");
             map.put("userLogInLink", "/logout");
         } else {
 
-            map.put("userLogInText", "log in");
+            map.put("userLogInText", "Log in");
             map.put("userLogInLink", "/login");
             map.put("userStatusText", "You are logged in as a guest.");
         }
