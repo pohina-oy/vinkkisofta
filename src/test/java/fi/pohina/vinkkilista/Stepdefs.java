@@ -100,7 +100,7 @@ public class Stepdefs {
     @Then("the first bookmark read status contains the current date")
     public void the_first_bookmark_read_status_contains_the_current_date() {
 
-        String dateInString =new SimpleDateFormat("dd-MM-yyyy").format(new Date());
+        String dateInString =new SimpleDateFormat("dd.MM.yyyy").format(new Date());
 
         WebElement firstBookmark = getBookmarkElementById(getFirstBookmarkId());
         assertBookmarkReadStatusContains(firstBookmark, dateInString);
