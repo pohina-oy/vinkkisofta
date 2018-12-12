@@ -69,6 +69,14 @@ public class Stepdefs {
 
     // End logout
 
+    // Toggle read
+
+
+
+
+
+    // End toggle read
+
     @When("^the user navigates to /bookmarks/$")
     public void theUserNavigatesToBookmarks() {
         navigateToBookmarkListing();
