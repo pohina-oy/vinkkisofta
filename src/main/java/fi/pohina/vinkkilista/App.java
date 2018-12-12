@@ -110,7 +110,7 @@ public class App {
                 return render(map, "search");
             });
 
-            get("/luettu", (req,res) -> {
+            get("/luettu", (req, res) -> {
                 String action = req.queryParams("mark");
                 String bookmarkId = req.queryParams("id");
 
