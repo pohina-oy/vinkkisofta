@@ -1,6 +1,8 @@
 package fi.pohina.vinkkilista.data_access;
 
 import fi.pohina.vinkkilista.domain.User;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.*;
 import java.util.stream.Collectors;
 import org.junit.Before;
@@ -115,5 +117,79 @@ public class InMemoryUserDaoTest {
 
         assertEquals(addedId, userDao.findById(addedId).getId());
         assertThat(userDao.findAll(), hasItem(newEntry));
+    }
+
+    @Test
+    public void newUserDoesNotHaveBookmarkRead() {
+        String addedId = "user-3";
+        String bookmarkId = "bookmark-123";
+        User newEntry = new User(
+            addedId,
+            "ab5@soft.com",
+            "ab",
+            45654
+        );
+
+        userDao.add(newEntry);
+
+        LocalDateTime result = userDao.findById(addedId)
+            .getBookmarkReadStatus(bookmarkId);
+
+        assertEquals(null, result);
+    }
+
+    @Test
+    public void addBookmarkReadDateCorrectlyAddsReadTime() {
+        String userId = "first-id";
+        String bookmarkId = "bookmark-123";
+        LocalDateTime dateRead = LocalDateTime.now(ZoneOffset.UTC);
+
+        userDao.addBookmarkReadDate(userId, bookmarkId, dateRead);
+
+        assertTrue(dateRead.equals(
+            userDao.findById(userId).getBookmarkReadStatus(bookmarkId)
+        ));
+    }
+
+    @Test
+    public void addBookmarkReadDateIgnoresNonexistentUser() {
+        String userId = "new-user";
+        String bookmarkId = "bookmark-123";
+        LocalDateTime dateRead = LocalDateTime.now(ZoneOffset.UTC);
+
+        userDao.addBookmarkReadDate(userId, bookmarkId, dateRead);
+    }
+
+    @Test
+    public void removeBookmarkReadDateWorksCorrectly() {
+        String userId = "first-id";
+        String bookmarkId = "bookmark-123";
+        LocalDateTime dateRead = LocalDateTime.now(ZoneOffset.UTC);
+
+        assertEquals(
+            null,
+            userDao.findById(userId).getBookmarkReadStatus(bookmarkId)
+        );
+
+        userDao.addBookmarkReadDate(userId, bookmarkId, dateRead);
+
+        assertTrue(dateRead.equals(
+            userDao.findById(userId).getBookmarkReadStatus(bookmarkId)
+        ));
+
+        userDao.removeBookmarkReadDate(userId, bookmarkId);
+
+        assertEquals(
+            null,
+            userDao.findById(userId).getBookmarkReadStatus(bookmarkId)
+        );
+    }
+
+    @Test
+    public void removeBookmarkReadDateIgnoresNonexistentUser() {
+        String userId = "new-user";
+        String bookmarkId = "bookmark-123";
+
+        userDao.removeBookmarkReadDate(userId, bookmarkId);
     }
 }
