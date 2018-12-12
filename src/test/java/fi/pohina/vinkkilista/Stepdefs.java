@@ -254,6 +254,17 @@ public class Stepdefs {
         
         pageDoesNotHaveContent("Type");
     }
+    
+    // Bookmark creator
+    
+    @Then("the user {string} is shown as creator of the bookmark with title {string}")
+    public void the_user_is_shown_as_creator_of_the_bookmark_with_title(String user, String title) {
+        pageUrlIs(baseUrl);
+        WebElement bookmark;
+        bookmark = findSpecificBookmarkElementByTitle(getBookmarkWebElements("bookmarkList"), title);
+        
+        assertTrue(bookmark.findElement(By.className("bookmarkCreator")).getText().contains(user));
+    }
 
     @After
     public void tearDown() {
@@ -308,6 +319,15 @@ public class Stepdefs {
                 bookmarkHasAnyOfTags(bookmark, TagService.toValidatedSet(tags))
             );
         }
+    }
+    
+    private WebElement findSpecificBookmarkElementByTitle(List<WebElement> bookmarks, String title) {
+        for (WebElement bookmark : bookmarks) {
+            if (bookmark.findElement(By.className("bookmarkTitle")).getText().contains(title)) {
+                return bookmark;
+            }
+        }
+        return null;
     }
 
     private Boolean bookmarkHasAnyOfTags(WebElement bookmark, Set<String> tagSet) {
