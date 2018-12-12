@@ -13,12 +13,12 @@
             
             <div>
             	<a class="logoutButton" id="userLogInLink" th:href="${userLogInLink}" th:text="${userLogInText}"></a>
-            	<br><br>
+            	<br></br>
             </div>
             <div>
                 <span th:text="${userStatusText}"></span>
             </div>
-			
+
             <div class="bookmarkList">
                 <div class="bookmark" th:each="bookmark : ${bookmarks}">
                     <a class="bookmarkLink" th:href="${bookmark.url}">
@@ -29,10 +29,25 @@
                         <span class="bookmarkAuthor" th:if="${bookmark.author != null}"
                               th:text="${'by ' + bookmark.author}">
                         </span>
-                        <span class="bookmarkCreator" th:if="${bookmark.creator != null}"
-                              th:text="${bookmark.creator.username}">
-                        </span>
+                        <div class="bookmarkCreator" th:if="${bookmark.creator != null}" th:text="${bookmark.creator.username}"/>
+                        <div class="bookmarkCreator" th:unless="${bookmark.creator != null}">no creator</div>
                     </a>
+                    <div class="bookmarkReadStatus" th:if="${user.getBookmarkReadStatus(bookmark.id) == null}">
+                        <a class="bookmarkReadText" th:href="${bookmark.url}">not read </a>
+                        <form class="markBookmarkForm" method="post" action="/bookmarks/">
+                            <input type="hidden" name="bookmarkId" th:value="${bookmark.id}"/>
+                            <button class="markBookmarkButton" type="submit"><font color="green">&#9679</font></button>
+                        </form>
+                    </div>
+                    <div class="bookmarkReadStatus" th:unless="${user.getBookmarkReadStatus(bookmark.id) == null}">
+                        <a class="bookmarkReadText" th:href="${bookmark.url}">
+                            read on <td th:text="${#temporals.format(user.getBookmarkReadStatus(bookmark.id), 'dd.MM.yyyy', locale)}"/>
+                        </a>
+                        <form class="markBookmarkForm" method="post" action="/bookmarks/">
+                            <input type="hidden" name="bookmarkId" th:value="${bookmark.id}"/>
+                            <button class="markBookmarkButton" type="submit"><font color="gray">&#9675</font></button>
+                        </form>
+                    </div>
                 </div>
             </div>
             <a class="button" id="newBookmarkLink" href="/bookmarks/new">Add new bookmark</a>
