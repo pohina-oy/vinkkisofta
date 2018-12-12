@@ -71,13 +71,26 @@ public class Stepdefs {
 
     // Toggle read
 
-    @When("^the marking button is clicked$")
-    public void theMarkingButtonIsClicked() {
+    @Given("^the first bookmark read status is \"not read\"$")
+    public void theFirstBookmarkReadStatusIsNotRead() {
+        WebElement firstBookmark = getBookmarkElementById(getFirstBookmarkId());
+        assertBookmarkReadStatusIs(firstBookmark, false);
+    }
+    
+    @When("^the first bookmark marking button is clicked$")
+    public void theFirstBookmarkMarkingButtonIsClicked() {
 
         WebElement firstBookmark = getBookmarkElementById(getFirstBookmarkId());
+        WebElement readToggleButton = getBookmarkElementReadToggleButtonElement(firstBookmark);
 
+        readToggleButton.click();
     }
+    @Then("^the first bookmark read status contains \"read on\"$")
+    public void theFirstBookmarkReadStatusContainsReadOn() {
 
+        WebElement firstBookmark = getBookmarkElementById(getFirstBookmarkId());
+        assertBookmarkReadStatusIs(firstBookmark, true);
+    }
 
     // End toggle read
 
@@ -311,6 +324,14 @@ public class Stepdefs {
     private void clickLogin() {
         WebElement element = driver.findElement(By.id("login"));
         element.click();
+    }
+
+    private void assertBookmarkReadStatusIs(WebElement bookmark, boolean status) {
+        WebElement readToggle = getBookmarkElementReadToggleButtonElement(bookmark);
+
+        if (!readToggle.getText().toLowerCase().contains("read on")) {
+            fail("Bookmark element read toggle does not contain 'read on'");
+        }
     }
 
     private void assertCurrentUrlContains(String substring) {
