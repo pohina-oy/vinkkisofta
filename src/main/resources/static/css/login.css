@@ -1,0 +1,21 @@
+.container {
+    max-width: 650px;
+    margin: 0 auto;
+    font-family: arial;
+}
+
+.loginButton {
+    float: left;
+    display: block;
+    margin: 10px 0;
+    height: 100%;
+    padding: 10px;
+    color: inherit;
+    border: 1px solid #eee;
+    text-decoration: none;
+    text-align: center;
+}
+
+.loginButton:hover {
+    background-color: #eee;
+}
