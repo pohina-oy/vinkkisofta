@@ -65,14 +65,11 @@ public class App {
                     map.put("userStatusText", "You are logged in as: " + user.getUsername());
                     map.put("userLogInText", "log out");
                     map.put("userLogInLink", "/logout");
-                    //map.put("user", user);
                 } else {
-                    user = new User("undefined", "undefined", "guest", 0);
 
                     map.put("userLogInText", "log in");
                     map.put("userLogInLink", "/login");
                     map.put("userStatusText", "You are logged in as a guest:");
-                    //map.put("user", user);
                 }
 
                 return render(map, "index");
@@ -122,6 +119,13 @@ public class App {
             Map<String, Object> map = new HashMap<>();
             map.put("clientId", config.getGithubClientId());
             return render(map, "login");
+        });
+
+        get("/logout", (req, res) -> {
+            Map<String, Object> map = new HashMap<>();
+            requestUserManager.clearSignedInUser(req);
+            res.redirect("/");
+            return null;
         });
 
         get("/auth/gh-callback", (req, res) -> {

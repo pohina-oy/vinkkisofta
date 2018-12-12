@@ -47,11 +47,20 @@ class RequestUserManager {
         setUserIdToCookie(createdSession, user.getId());
     }
 
+    void clearSignedInUser(Request req) {
+        Session createdSession = req.session(true);
+        clearUserIdCookie(createdSession);
+    }
+
     private String getUserIdFromCookie(Session session) {
         return session.attribute(SESSION_ATTRIBUTE_NAME_USERID);
     }
 
     private void setUserIdToCookie(Session session, String userId) {
         session.attribute(SESSION_ATTRIBUTE_NAME_USERID, userId);
+    }
+
+    private void clearUserIdCookie(Session session) {
+        session.removeAttribute(SESSION_ATTRIBUTE_NAME_USERID);
     }
 }
