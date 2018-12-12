@@ -1,18 +1,18 @@
 <!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 
-<head>
-    <title>Kirjaudu sisään | Vinkkisofta</title>
-    <meta charset="utf-8"/>
-    <link rel="stylesheet" th:href="@{login.css}" type="text/css"/>
-</head>
+	<head>
+	    <title>Kirjaudu sisään | Vinkkisofta</title>
+	    <meta charset="utf-8"/>
+	    <link rel="stylesheet" th:href="@{login.css}" type="text/css"/>
+	</head>
 
-<body>
-	<div class="container">
-	    <h1>Vinkkilista</h1>
-	    <a class="loginButton" th:href="${'https://github.com/login/oauth/authorize?scope=user:email%20read:user&client_id=' + clientId}">
-	    	Sign in with Github
-		</a>
-	</div>
-</body>
+	<body>
+		<div class="container">
+		    <h1>Vinkkilista</h1>
+		    <a class="loginButton" th:href="${'https://github.com/login/oauth/authorize?scope=user:email%20read:user&client_id=' + clientId}">
+		    	Sign in with Github
+			</a>
+		</div>
+	</body>
 </html>
