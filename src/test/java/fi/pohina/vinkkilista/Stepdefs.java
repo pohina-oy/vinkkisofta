@@ -62,10 +62,10 @@ public class Stepdefs {
         element.click();
     }
 
-    @Then("^the user is logged out and redirected to the login page$")
-    public void theUserIsLoggedOutAndRedirectedToTheLoginPage() {
-        assertCurrentUrlContains("/login");
-    }
+    //@Then("^the user is logged out and redirected to the login page$")
+   //public void theUserIsLoggedOutAndRedirectedToTheLoginPage() {
+        //assertCurrentUrlContains("/login");
+    //}
 
     // End logout
 

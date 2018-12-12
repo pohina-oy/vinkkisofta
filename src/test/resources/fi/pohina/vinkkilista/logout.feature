@@ -3,14 +3,14 @@ Feature: User can logout
   Scenario: A logged in user can logout from homepage
     Given the user is logged in on homepage
     When  the "logout" link is clicked
-    Then  the user is logged out and redirected to the login page
+    Then  the user is redirected to the login page
 
   Scenario: A logged in user can logout from create page
     Given the user is logged in on search page
     When  the "logout" link is clicked
-    Then  the user is logged out and redirected to the login page
+    Then  the user is redirected to the login page
 
   Scenario: A logged in user can logout search page
     Given the user is logged in on create page
     When  the "logout" link is clicked
-    Then  the user is logged out and redirected to the login page
+    Then  the user is redirected to the login page
