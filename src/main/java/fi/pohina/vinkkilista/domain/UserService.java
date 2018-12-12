@@ -27,12 +27,25 @@ public class UserService {
         return userDao.findById(id);
     }
 
+    /**
+     * Marks a specified bookmark for a specified user as read with current
+     * date time.
+     *
+     * @param userId id of user for whom a bookmark is to be marked
+     * @param bookmarkId id of bookmark to be marked
+     */
     public void markBookmarkAsRead(String userId, String bookmarkId) {
         LocalDateTime dateRead = LocalDateTime.now(ZoneOffset.UTC);
 
         userDao.addBookmarkReadDate(userId, bookmarkId, dateRead);
     }
 
+    /**
+     * Clears a specified bookmark's read status for a specified user.
+     *
+     * @param userId id of user for whom a bookmark is to be unmarked
+     * @param bookmarkId id of bookmark to be unmarked
+     */
     public void unmarkBookmarkAsRead(String userId, String bookmarkId) {
         userDao.removeBookmarkReadDate(userId, bookmarkId);
     }
