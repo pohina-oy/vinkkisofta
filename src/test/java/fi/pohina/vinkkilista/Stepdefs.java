@@ -71,20 +71,11 @@ public class Stepdefs {
 
     // Toggle read
 
-
-    @Given("^the first bookmark read status is \"not read\"$")
-    public void theFirstBookmarkReadStatusIsNotRead() {
-        WebElement firstBookmark = getBookmarkElementById(getFirstBookmarkId());
-        assertBookmarkReadStatusIs(firstBookmark, false);
-    }
-
-
     @Given("the first bookmark read status contains {string}")
     public void the_First_Bookmark_Read_Status_Contains(String status) {
         WebElement firstBookmark = getBookmarkElementById(getFirstBookmarkId());
         assertBookmarkReadStatusContains(firstBookmark, status);
     }
-
 
     @When("^the first bookmark marking button is clicked$")
     public void theMarkingButtonIsClicked() {
@@ -95,11 +86,10 @@ public class Stepdefs {
 
         //readToggleButton.click();
     }
-    @Then("^the first bookmark read status contains \"read on\"$")
-    public void theFirstBookmarkReadStatusContainsReadOn() {
 
-        WebElement firstBookmark = getBookmarkElementById(getFirstBookmarkId());
-        assertBookmarkReadStatusIs(firstBookmark, true);
+    @Then("check first bookmark read status contains {string}")
+    public void check_First_Bookmark_Read_Status_Contains(String string) {
+
     }
 
     // End toggle read
