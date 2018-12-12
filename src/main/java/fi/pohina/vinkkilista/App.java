@@ -148,7 +148,10 @@ public class App {
         }
     }
 
-    private void setUserStatusToMap(Request req ,Map map) {
+    /**
+     * Sets the login status based on whether or not the user has signed in.
+     */
+    private void setUserStatusToMap(Request req, Map map) {
         User user = requestUserManager.getSignedInUser(req);
         if (user != null) {
 
