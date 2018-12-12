@@ -1,6 +1,5 @@
 package fi.pohina.vinkkilista;
 
-import fi.pohina.vinkkilista.utils.TagParser;
 import fi.pohina.vinkkilista.api.GithubJsonApi;
 import fi.pohina.vinkkilista.api.GithubOAuthApi;
 import fi.pohina.vinkkilista.api.GithubUser;
@@ -19,9 +18,6 @@ import java.util.*;
 import static spark.Spark.*;
 
 public class App {
-
-    private final TagParser tagParser
-            = new TagParser();
 
     private final GithubOAuthApi githubOAuthApi;
     private final BookmarkService bookmarkService;
@@ -89,7 +85,7 @@ public class App {
                 String url = req.queryParams("url");
                 String author = req.queryParams("author");
                 User creator = requestUserManager.getSignedInUser(req);
-                Set<String> tagNames = tagParser.csvToSet(req.queryParams("tags"));
+                Set<String> tagNames = tagService.toValidatedSet(req.queryParams("tags"));
                 tagNames.add(tagService.tagFromUrl(url));
                 
                 Set<Tag> tags = tagService.findOrCreateTags(tagNames);
@@ -107,8 +103,7 @@ public class App {
 
             post("/search", (req, res) -> {
                 Map<String, Object> map = new HashMap<>();
-                String commaSeparatedTags = req.queryParams("tags");
-                Set<String> tags = tagParser.csvToSet(commaSeparatedTags);
+                Set<String> tags = tagService.toValidatedSet(req.queryParams("tags"));
                 Collection<Bookmark> bookmarks = bookmarkService.getBookmarksByTags(tags);
                 map.put("bookmarks", bookmarks);
                 return render(map, "search");

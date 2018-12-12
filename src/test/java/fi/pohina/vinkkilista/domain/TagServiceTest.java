@@ -5,6 +5,7 @@ import fi.pohina.vinkkilista.data_access.TagDao;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import static org.hamcrest.CoreMatchers.hasItems;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -108,6 +109,100 @@ public class TagServiceTest {
         tag = tagService.tagFromUrl(
                 "https://dl.acm.org/citation.cfm?id=3292530&picked=prox");
         assertEquals("scientific publication", tag);
+    }
+    
+    @Test
+    public void toValidatedSetReturnsEmptySetWhenInputIsNull() {
+        Set<String> output = tagService.toValidatedSet(null);
+
+        assertEquals(0, output.size());
+    }
+
+    @Test
+    public void toValidatedSetReturnsEmptySetWhenInputIsEmpty() {
+        Set<String> output = tagService.toValidatedSet("");
+
+        assertEquals(0, output.size());
+    }
+
+    @Test
+    public void toValidatedSetReturnsEmptySetWhenInputIsNothingButCommas() {
+        Set<String> output = tagService.toValidatedSet(",,,,");
+
+        assertEquals(0, output.size());
+    }
+
+    @Test
+    public void toValidatedSetReturnsSingleTagCorrectly() {
+        testThatInputMatchesOutput(
+            "foo",
+            "foo"
+        );
+    }
+
+    @Test
+    public void toValidatedSetReturnsTwoTagsCorrectly() {
+        testThatInputMatchesOutput(
+            "toaster,box",
+            "toaster", "box"
+        );
+    }
+
+    @Test
+    public void toValidatedSetTrimsSpacesFromMultipleTags() {
+        testThatInputMatchesOutput(
+            " toaster , box, foo",
+            "toaster", "box", "foo"
+        );
+    }
+
+    @Test
+    public void toValidatedSetReturnsMultipleTagsCorrectly() {
+        testThatInputMatchesOutput(
+            "comma,separated,video",
+            "comma", "separated", "video"
+        );
+    }
+
+    @Test
+    public void toValidatedSetSkipsEmptyTagAtMiddleCorrectly() {
+        testThatInputMatchesOutput(
+            "video,,blog",
+            "video", "blog"
+        );
+    }
+
+    @Test
+    public void toValidatedSetParsesTagsWithDashes() {
+        testThatInputMatchesOutput(
+            "scientific-journal,twitch-stream",
+            "scientific-journal", "twitch-stream"
+        );
+    }
+
+    @Test
+    public void toValidatedSetParsesTagsWithUnderscores() {
+        testThatInputMatchesOutput(
+            "science_today,foo_bar",
+            "science_today", "foo_bar"
+        );
+    }
+
+    @Test
+    public void toValidatedSetHandlesDuplicates() {
+        testThatInputMatchesOutput(
+            "developers,developers,developers,developers,"
+                + "developers,steve-ballmer,developers,developers,developers,"
+                + "developers,developers",
+            "developers", "steve-ballmer"
+        );
+    }
+
+    private void testThatInputMatchesOutput(String input, String... expectedTags) {
+        Set<String> output = tagService.toValidatedSet(input);
+
+        assertEquals(expectedTags.length, output.size());
+        assertThat(output, hasItems(expectedTags));
     }
 
 }

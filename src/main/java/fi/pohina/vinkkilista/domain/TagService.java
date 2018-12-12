@@ -62,6 +62,32 @@ public class TagService {
     }
     
     /**
+     * Function for converting comma separated tag names to validated set of
+     * tag names.
+     *
+     * @param tagCsv comma separated tag names
+     * @return set of validated tag names
+     */
+    public static Set<String> toValidatedSet(String tagCsv) {
+        Set<String> tagNames = new HashSet<>();
+        
+        if (tagCsv == null || tagCsv.isEmpty()) {
+            return tagNames;
+        }
+        
+        String[] tagArray = tagCsv.split(",");
+        
+        for (String tagName : tagArray) {
+            String validated = validateTag(tagName);
+            if (!validated.isEmpty()) {
+                tagNames.add(validated);
+            }
+        }
+        
+        return tagNames;
+    }
+    
+    /**
      * Function for getting a tag name by url.
      *
      * @param url the url to be analyzed
@@ -110,7 +136,7 @@ public class TagService {
      * only allowed characters. Null if length is 0. Currently Only allows
      * alpha-numeric characters.
      */
-    private String validateTag(String tag) {
+    private static String validateTag(String tag) {
         if (tag == null) {
             return "";
         }
