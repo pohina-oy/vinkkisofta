@@ -69,7 +69,7 @@ public class App {
 
                     map.put("userLogInText", "log in");
                     map.put("userLogInLink", "/login");
-                    map.put("userStatusText", "You are logged in as a guest:");
+                    map.put("userStatusText", "You are logged in as a guest.");
                 }
 
                 return render(map, "index");
