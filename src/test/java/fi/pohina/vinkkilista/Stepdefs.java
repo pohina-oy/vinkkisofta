@@ -76,7 +76,7 @@ public class Stepdefs {
         WebElement firstBookmark = getBookmarkElementById(getFirstBookmarkId());
         assertBookmarkReadStatusIs(firstBookmark, false);
     }
-    
+
     @When("^the first bookmark marking button is clicked$")
     public void theFirstBookmarkMarkingButtonIsClicked() {
 
