@@ -89,7 +89,8 @@ public class Stepdefs {
 
     @Then("check first bookmark read status contains {string}")
     public void check_First_Bookmark_Read_Status_Contains(String string) {
-
+        WebElement firstBookmark = getBookmarkElementById(getFirstBookmarkId());
+        assertBookmarkReadStatusIs(firstBookmark, true);
     }
 
     // End toggle read
