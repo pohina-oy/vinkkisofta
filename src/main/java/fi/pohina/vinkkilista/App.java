@@ -56,10 +56,11 @@ public class App {
         path("/bookmarks", () -> {
             get("/", (req, res) -> {
                 Map<String, Object> map = new HashMap<>();
-                Collection<Bookmark> bookmarks = this.bookmarkService.getAllBookmarks();
-                map.put("bookmarks", bookmarks);
+                Collection<Bookmark> bookmarks = bookmarkService.getAllBookmarks();
 
                 setUserStatusToMap(req, map);
+                map.put("bookmarks", bookmarks);
+                map.put("user", replaceNullUserWithGuest(requestUserManager.getSignedInUser(req)));
 
                 return render(map, "index");
             });
@@ -73,7 +74,15 @@ public class App {
             get("/search", (req, res) -> {
                 Map<String, Object> map = new HashMap<>();
                 setUserStatusToMap(req, map);
+                map.put("user", requestUserManager.getSignedInUser(req));
+                map.put("user", replaceNullUserWithGuest(requestUserManager.getSignedInUser(req)));
                 return render(map, "search");
+            });
+
+            post("/", (req, res) -> {
+                toggleBookmarkReadStatus(req);
+                res.redirect("/bookmarks/");
+                return null;
             });
 
             post("/new", (req, res) -> {
@@ -99,9 +108,16 @@ public class App {
 
             post("/search", (req, res) -> {
                 Map<String, Object> map = new HashMap<>();
-                Set<String> tags = tagService.toValidatedSet(req.queryParams("tags"));
+                String tagInput = req.queryParams("tags");
+
+                toggleBookmarkReadStatus(req);
+
+                Set<String> tags = tagService.toValidatedSet(tagInput);
                 Collection<Bookmark> bookmarks = bookmarkService.getBookmarksByTags(tags);
                 map.put("bookmarks", bookmarks);
+                map.put("user", replaceNullUserWithGuest(requestUserManager.getSignedInUser(req)));
+                map.put("tags", tagInput);
+
                 return render(map, "search");
             });
         });
@@ -134,6 +150,38 @@ public class App {
             res.redirect("/bookmarks/");
             return "";
         });
+    }
+
+    /**
+     * Replaces null user with a generated guest user for display.
+     *
+     * @param user
+     * @return existing user or generated guest user
+     */
+    private User replaceNullUserWithGuest(User user) {
+        if (user == null) {
+            return new User("undefined", "undefined", "guest", 0);
+        }
+
+        return user;
+    }
+
+    /**
+     * Toggles a bookmark's read status for a user specified in request.
+     *
+     * @param req
+     */
+    private void toggleBookmarkReadStatus(Request req) {
+        String bookmarkId = req.queryParams("bookmarkId");
+        User user = requestUserManager.getSignedInUser(req);
+
+        if (bookmarkId != null) {
+            if (user.getBookmarkReadStatus(bookmarkId) == null) {
+                users.markBookmarkAsRead(user.getId(), bookmarkId);
+            } else {
+                users.unmarkBookmarkAsRead(user.getId(), bookmarkId);
+            }
+        }
     }
 
     /**
