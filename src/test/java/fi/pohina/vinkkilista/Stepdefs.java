@@ -71,7 +71,7 @@ public class Stepdefs {
 
     // Toggle read
 
-    @When("^the marking button is clicked$")
+    @When("^the first bookmark marking button is clicked$")
     public void theMarkingButtonIsClicked() {
 
         WebElement firstBookmark = getBookmarkElementById(getFirstBookmarkId());
