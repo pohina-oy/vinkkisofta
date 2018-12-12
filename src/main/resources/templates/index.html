@@ -12,7 +12,9 @@
             <h1>Vinkkilista</h1>
 
             <div>
-                User: <span th:text="${user.username}"></span>
+                <span th:text="${userStatusText}"></span>
+                <!--User: <span th:text="${user.username}"></span>-->
+                <a id="userLogInLink" th:href="${userLogInLink}" th:text="${userLogInText}" ></a>
             </div>
 			
             <div class="bookmarkList">

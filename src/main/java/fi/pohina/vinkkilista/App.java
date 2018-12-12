@@ -61,10 +61,18 @@ public class App {
 
                 User user = requestUserManager.getSignedInUser(req);
                 if (user != null) {
-                    map.put("user", user);
+
+                    map.put("userStatusText", "You are logged in as: " + user.getUsername());
+                    map.put("userLogInText", "log out");
+                    map.put("userLogInLink", "/logout");
+                    //map.put("user", user);
                 } else {
                     user = new User("undefined", "undefined", "guest", 0);
-                    map.put("user", user);
+
+                    map.put("userLogInText", "log in");
+                    map.put("userLogInLink", "/login");
+                    map.put("userStatusText", "You are logged in as a guest:");
+                    //map.put("user", user);
                 }
 
                 return render(map, "index");
