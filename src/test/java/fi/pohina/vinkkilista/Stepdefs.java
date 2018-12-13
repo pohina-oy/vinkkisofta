@@ -258,7 +258,7 @@ public class Stepdefs {
     public void the_user_is_shown_as_creator_of_the_bookmark_with_title(String user, String title) {
         pageUrlIs(baseUrl);
         WebElement bookmark;
-        bookmark = findSpecificBookmarkElementByTitle(getBookmarkWebElements("bookmarkList"), title);
+        bookmark = getSpecificBookmarkElementByTitle(getBookmarkWebElements("bookmarkList"), title);
         
         assertTrue(bookmark.findElement(By.className("bookmarkCreator")).getText().contains(user));
     }
@@ -332,7 +332,7 @@ public class Stepdefs {
         return false;
     }
     
-    private WebElement findSpecificBookmarkElementByTitle(List<WebElement> bookmarks, String title) {
+    private WebElement getSpecificBookmarkElementByTitle(List<WebElement> bookmarks, String title) {
         for (WebElement bookmark : bookmarks) {
             if (bookmark.findElement(By.className("bookmarkTitle")).getText().contains(title)) {
                 return bookmark;
