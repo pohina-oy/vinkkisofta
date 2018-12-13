@@ -3,6 +3,8 @@ package fi.pohina.vinkkilista;
 import cucumber.api.java.After;
 import cucumber.api.java.en.*;
 import fi.pohina.vinkkilista.domain.TagService;
+
+import java.text.SimpleDateFormat;
 import java.util.*;
 import static org.junit.Assert.*;
 import org.openqa.selenium.*;
@@ -53,6 +55,7 @@ public class Stepdefs {
     public void theUserIsLoggedInOnCreatePage() {
         navigateToCreatePage();
         loginWithTestUser();
+
     }
 
     @When("^the \"logout\" link is clicked$")
@@ -63,11 +66,55 @@ public class Stepdefs {
     }
 
     //@Then("^the user is logged out and redirected to the login page$")
-   //public void theUserIsLoggedOutAndRedirectedToTheLoginPage() {
-        //assertCurrentUrlContains("/login");
+    //public void theUserIsLoggedOutAndRedirectedToTheLoginPage() {
+    //assertCurrentUrlContains("/login");
     //}
 
     // End logout
+
+    // Toggle read
+
+
+    @Given("given first bookmark read status contains {string}")
+    public void the_First_Bookmark_Read_Status_Contains(String status) {
+        WebElement firstBookmark = getBookmarkElementById(getFirstBookmarkId());
+        assertBookmarkReadStatusContains(firstBookmark, status);
+    }
+
+
+    @When("^the first bookmark marking button is clicked$")
+    public void theMarkingButtonIsClicked() {
+
+
+        WebElement firstBookmark = getBookmarkElementById(getFirstBookmarkId());
+        WebElement readToggleButton = getBookmarkElementReadToggleButtonElement(firstBookmark);
+
+        readToggleButton.click();
+    }
+    @Then("the first bookmark read status contains {string}")
+    public void theFirstBookmarkReadStatusContainsReadOn(String status) {
+
+        WebElement firstBookmark = getBookmarkElementById(getFirstBookmarkId());
+        assertBookmarkReadStatusContains(firstBookmark, status);
+    }
+
+    @Then("the first bookmark read status contains the current date")
+    public void the_first_bookmark_read_status_contains_the_current_date() {
+
+        String dateInString = new SimpleDateFormat("dd.MM.yyyy").format(new Date());
+
+        WebElement firstBookmark = getBookmarkElementById(getFirstBookmarkId());
+        assertBookmarkReadStatusContains(firstBookmark, dateInString);
+    }
+
+    @Then("^the new bookmark read status contains \"not read\"")
+    public void the_new_bookmark_read_status_contains_not_read() {
+        WebElement newBookmark = getBookmarkElementByTitle("readStatusBookmark");
+        System.out.println(newBookmark.findElement(By.className("bookmarkTitle")).getText());
+        assertBookmarkReadStatusContains(newBookmark, "not read");
+    }
+
+    // End toggle read
 
     @When("^the user navigates to /bookmarks/$")
     public void theUserNavigatesToBookmarks() {
@@ -77,7 +124,7 @@ public class Stepdefs {
     @When("^the \"Sign in with Github\" link is clicked$")
     public void theSignInWithGithubLinkIsClicked() {
         WebElement element = driver
-            .findElement(By.linkText("Sign in with Github"));
+                .findElement(By.linkText("Sign in with Github"));
         element.click();
     }
 
@@ -219,7 +266,7 @@ public class Stepdefs {
     }
 
     // Helper functions
-    
+
     private void attemptBookmarkCreation(String title, String url, String author, String tags) {
         typeToElementWithId("titleInput", title);
         typeToElementWithId("urlInput", url);
@@ -257,20 +304,20 @@ public class Stepdefs {
 
     private List<WebElement> getBookmarkWebElements(String containerClassName) {
         return driver.findElement(By.className(containerClassName))
-            .findElements(By.className("bookmark"));
+                .findElements(By.className("bookmark"));
     }
 
     private void allBookmarksHaveAnyOfTags(List<WebElement> bookmarks, String tags) {
         for (WebElement bookmark : bookmarks) {
             assertTrue(
-                bookmarkHasAnyOfTags(bookmark, TagService.toValidatedSet(tags))
+                    bookmarkHasAnyOfTags(bookmark, TagService.toValidatedSet(tags))
             );
         }
     }
 
     private Boolean bookmarkHasAnyOfTags(WebElement bookmark, Set<String> tagSet) {
         WebElement tagsOfBookmark = bookmark.findElement(
-            By.className("bookmarkTags")
+                By.className("bookmarkTags")
         );
 
         for (String tag : tagSet) {
@@ -301,18 +348,78 @@ public class Stepdefs {
         element.click();
     }
 
+    private void assertBookmarkReadStatusContains(WebElement bookmark, String status) {
+        WebElement readToggle = getBookmarkElementReadStatus(bookmark);
+
+        if (!readToggle.getText().toLowerCase().contains(status)) {
+            fail("Bookmark element read toggle '" + readToggle.getText() + "' did not contain '" + status + "'");
+        }
+    }
+
     private void assertCurrentUrlContains(String substring) {
         String currentUrl = driver.getCurrentUrl();
         assertTrue(currentUrl.contains(substring));
     }
 
+    private String getFirstBookmarkId() {
+        return getBookmarkElementId(getBookmarkWebElements("bookmarkList").get(0));
+    }
+
+    private String getLastBookmarkId() {
+        List<WebElement> elements = getBookmarkWebElements("bookmarkList");
+        return getBookmarkElementId(elements.get(elements.size() - 1));
+    }
+
+    private WebElement getBookmarkElementReadStatus(WebElement element) {
+        return element.findElement(By.className("bookmarkReadStatus"));
+    }
+
+    private WebElement getBookmarkElementReadToggleButtonElement(WebElement element) {
+        return element.findElement(By.className("markBookmarkButton"));
+    }
+
+    private WebElement getBookmarkElementById(String id) {
+
+        List<WebElement> bookmarks = getBookmarkWebElements("bookmarkList");
+
+        for (WebElement element : bookmarks) {
+            String currentId = getBookmarkElementId(element);
+
+            if (id.equals(currentId)) {
+                return element;
+            }
+        }
+        return null;
+    }
+
+    private String getBookmarkElementId(WebElement bookmark) {
+        return bookmark.findElement(By.name("bookmarkId")).getAttribute("value");
+    }
+
+    private WebElement getBookmarkElementByTitle(String title) {
+        List<WebElement> bookmarks = getBookmarkWebElements("bookmarkList");
+
+        for (WebElement element : bookmarks) {
+            String currentTitle = getBookmarkElementTitle(element);
+
+            if (title.equals(currentTitle)) {
+                return element;
+            }
+        }
+        return null;
+    }
+
+    private String getBookmarkElementTitle(WebElement bookmark) {
+        return bookmark.findElement(By.className("bookmarkTitle")).getText();
+    }
+
     private void assertLoggedInUserIs(String expectedUsername) {
         String currentUser = driver
-            .findElement(By.id("userStatusText"))
-            .getText();
+                .findElement(By.id("userStatusText"))
+                .getText();
         assertEquals(
-            "You are logged in as: " + expectedUsername,
-            currentUser
+                "You are logged in as: " + expectedUsername,
+                currentUser
         );
     }
 
