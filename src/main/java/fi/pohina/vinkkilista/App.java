@@ -22,7 +22,6 @@ public class App {
     private final GithubOAuthApi githubOAuthApi;
     private final BookmarkService bookmarkService;
     private final TagService tagService;
-    private final AppConfig config;
     private final UserService users;
     private final RequestUserManager requestUserManager;
     private String githubAuthLoginUrl;
@@ -31,7 +30,6 @@ public class App {
     public App(BookmarkService bookmarkService, TagService tagService, UserService userService, AppConfig config) {
         this.bookmarkService = bookmarkService;
         this.tagService = tagService;
-        this.config = config;
         this.users = userService;
         this.githubOAuthApi = new GithubOAuthApi(
             config.getGithubClientId(),

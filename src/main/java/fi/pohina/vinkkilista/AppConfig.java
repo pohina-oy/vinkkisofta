@@ -27,8 +27,5 @@ public class AppConfig {
     public boolean isProduction() {
         return "production".equals(stage);
     }
-
-    // public String getStage() {
-    //    return stage;
-    //}
+    
 }
