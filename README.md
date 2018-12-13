@@ -1,5 +1,9 @@
 # Vinkkisofta [![Build Status](https://travis-ci.org/pohina-oy/vinkkisofta.svg?branch=master)](https://travis-ci.org/pohina-oy/vinkkisofta)[![codecov](https://codecov.io/gh/pohina-oy/vinkkisofta/branch/master/graph/badge.svg)](https://codecov.io/gh/pohina-oy/vinkkisofta)
 
+## Loppuraportti
+
+https://docs.google.com/document/d/18otySG4AUGDV660uRTTgGnhSSxrGzJ_hCmlOr0-XSSQ/edit?usp=sharing
+
 
 ## Resursseja
 
