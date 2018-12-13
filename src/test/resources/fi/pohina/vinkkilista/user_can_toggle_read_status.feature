@@ -19,6 +19,6 @@ Feature: User can toggle read status on available bookmarks
     Then  the first bookmark read status contains the current date
   
   Scenario: The read status of a new bookmark is not read
-    Given the user is logged in on create page
-    When  valid title "testBookmark" and valid url "http://www.somesite.org" are given
+    Given new bookmark is selected
+    When  valid title "readStatusBookmark" and valid url "http://www.somesite.org" are given
     Then  the new bookmark read status contains "not read"

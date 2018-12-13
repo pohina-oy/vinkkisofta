@@ -55,6 +55,7 @@ public class Stepdefs {
     public void theUserIsLoggedInOnCreatePage() {
         navigateToCreatePage();
         loginWithTestUser();
+
     }
 
     @When("^the \"logout\" link is clicked$")
@@ -104,6 +105,13 @@ public class Stepdefs {
 
         WebElement firstBookmark = getBookmarkElementById(getFirstBookmarkId());
         assertBookmarkReadStatusContains(firstBookmark, dateInString);
+    }
+
+    @Then("^the new bookmark read status contains \"not read\"")
+    public void the_new_bookmark_read_status_contains_not_read() {
+        WebElement newBookmark = getBookmarkElementByTitle("readStatusBookmark");
+        System.out.println(newBookmark.findElement(By.className("bookmarkTitle")).getText());
+        assertBookmarkReadStatusContains(newBookmark, "not read");
     }
 
     // End toggle read
@@ -340,15 +348,8 @@ public class Stepdefs {
         element.click();
     }
 
-    private void assertBookmarkReadStatusIs(WebElement bookmark, boolean status) {
-        WebElement readToggle = getBookmarkElemenReadToggleReadStatus(bookmark);
-
-        if (!readToggle.getText().toLowerCase().contains("read on")) {
-            fail("Bookmark element read toggle does not contain 'read on'");
-        }
-    }
     private void assertBookmarkReadStatusContains(WebElement bookmark, String status) {
-        WebElement readToggle = getBookmarkElemenReadToggleReadStatus(bookmark);
+        WebElement readToggle = getBookmarkElementReadStatus(bookmark);
 
         if (!readToggle.getText().toLowerCase().contains(status)) {
             fail("Bookmark element read toggle '" + readToggle.getText() + "' did not contain '" + status + "'");
@@ -363,12 +364,20 @@ public class Stepdefs {
     private String getFirstBookmarkId() {
         return getBookmarkElementId(getBookmarkWebElements("bookmarkList").get(0));
     }
-    private WebElement getBookmarkElemenReadToggleReadStatus(WebElement element) {
+
+    private String getLastBookmarkId() {
+        List<WebElement> elements = getBookmarkWebElements("bookmarkList");
+        return getBookmarkElementId(elements.get(elements.size() - 1));
+    }
+
+    private WebElement getBookmarkElementReadStatus(WebElement element) {
         return element.findElement(By.className("bookmarkReadStatus"));
     }
+
     private WebElement getBookmarkElementReadToggleButtonElement(WebElement element) {
         return element.findElement(By.className("markBookmarkButton"));
     }
+
     private WebElement getBookmarkElementById(String id) {
 
         List<WebElement> bookmarks = getBookmarkWebElements("bookmarkList");
@@ -382,8 +391,26 @@ public class Stepdefs {
         }
         return null;
     }
+
     private String getBookmarkElementId(WebElement bookmark) {
         return bookmark.findElement(By.name("bookmarkId")).getAttribute("value");
+    }
+
+    private WebElement getBookmarkElementByTitle(String title) {
+        List<WebElement> bookmarks = getBookmarkWebElements("bookmarkList");
+
+        for (WebElement element : bookmarks) {
+            String currentTitle = getBookmarkElementTitle(element);
+
+            if (title.equals(currentTitle)) {
+                return element;
+            }
+        }
+        return null;
+    }
+
+    private String getBookmarkElementTitle(WebElement bookmark) {
+        return bookmark.findElement(By.className("bookmarkTitle")).getText();
     }
 
     private void assertLoggedInUserIs(String expectedUsername) {
