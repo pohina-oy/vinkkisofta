@@ -217,10 +217,7 @@ public class Stepdefs {
     
     @When("valid title {string} and valid url {string} and valid tags {string} are given")
     public void valid_title_and_valid_url_and_valid_tags_are_given(String title, String url, String tags) {
-        typeToElementWithId("titleInput", title);
-        typeToElementWithId("urlInput", url);
-        typeToElementWithId("tagsInput", tags);
-        submitElementWithId("submitForm");
+        attemptBookmarkCreation(title, url, "", tags);
     }
     
     @Then("tag {string} is shown in bookmark listing")
@@ -321,15 +318,6 @@ public class Stepdefs {
         }
     }
     
-    private WebElement findSpecificBookmarkElementByTitle(List<WebElement> bookmarks, String title) {
-        for (WebElement bookmark : bookmarks) {
-            if (bookmark.findElement(By.className("bookmarkTitle")).getText().contains(title)) {
-                return bookmark;
-            }
-        }
-        return null;
-    }
-
     private Boolean bookmarkHasAnyOfTags(WebElement bookmark, Set<String> tagSet) {
         WebElement tagsOfBookmark = bookmark.findElement(
             By.className("bookmarkTags")
@@ -342,6 +330,15 @@ public class Stepdefs {
         }
 
         return false;
+    }
+    
+    private WebElement findSpecificBookmarkElementByTitle(List<WebElement> bookmarks, String title) {
+        for (WebElement bookmark : bookmarks) {
+            if (bookmark.findElement(By.className("bookmarkTitle")).getText().contains(title)) {
+                return bookmark;
+            }
+        }
+        return null;
     }
 
     private void loginWithTestUser() {
