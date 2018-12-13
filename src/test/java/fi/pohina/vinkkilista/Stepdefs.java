@@ -188,9 +188,11 @@ public class Stepdefs {
     @Then("a bookmark with title {string} is listed in search results")
     public void a_bookmark_with_title_is_listed_in_search_results(String title) {
         pageUrlIs(baseUrl + "search");
-
+        WebElement bookmark;
+        bookmark = getBookmarkElementByTitle(getBookmarkWebElements("bookmarkList"), title);
+        
         pageHasContent("Search bookmarks by tags");
-        pageHasContent(title);
+        assertTrue(bookmark.findElement(By.className("bookmarkTitle")).getText().contains(title));
     }
     
     @Then("a bookmark with title {string} is not listed in search results")
@@ -221,7 +223,7 @@ public class Stepdefs {
     }
     
     @Then("tag {string} is shown in bookmark listing")
-    public void tag_is_shown_in_bookmark_listing(String tag) {
+    public void tag_is_shown_in_bookmark_listing_on_bookmark_with_title(String tag) {
         pageUrlIs(baseUrl);
         
         pageHasContent(tag);
@@ -232,8 +234,10 @@ public class Stepdefs {
     @Then("bookmark with title {string} is listed")
     public void bookmark_with_title_is_listed(String title) {
         pageUrlIs(baseUrl);
+        WebElement bookmark;
+        bookmark = getBookmarkElementByTitle(getBookmarkWebElements("bookmarkList"), title);
         
-        pageHasContent(title);
+        assertTrue(bookmark.findElement(By.className("bookmarkTitle")).getText().contains(title));
     }
     
     @Then("bookmark with title {string} is not listed")
@@ -254,11 +258,19 @@ public class Stepdefs {
     
     // Bookmark creator
     
+    @Given("user is logged in and new bookmark is selected")
+    public void user_is_logged_in_and_new_bookmark_is_selected() {
+        loginWithTestUser();
+        navigateToBookmarkListing();
+        WebElement element = driver.findElement(By.id("newBookmarkLink"));
+        element.click();
+    }
+    
     @Then("the user {string} is shown as creator of the bookmark with title {string}")
     public void the_user_is_shown_as_creator_of_the_bookmark_with_title(String user, String title) {
         pageUrlIs(baseUrl);
         WebElement bookmark;
-        bookmark = getSpecificBookmarkElementByTitle(getBookmarkWebElements("bookmarkList"), title);
+        bookmark = getBookmarkElementByTitle(getBookmarkWebElements("bookmarkList"), title);
         
         assertTrue(bookmark.findElement(By.className("bookmarkCreator")).getText().contains(user));
     }
@@ -332,7 +344,21 @@ public class Stepdefs {
         return false;
     }
     
-    private WebElement getSpecificBookmarkElementByTitle(List<WebElement> bookmarks, String title) {
+    private Boolean bookmarkHasAllOfTags(WebElement bookmark, Set<String> tagSet) {
+        WebElement tagsOfBookmark = bookmark.findElement(
+            By.className("bookmarkTags")
+        );
+
+        for (String tag : tagSet) {
+            if (!tagsOfBookmark.getText().contains(tag)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+    
+    private WebElement getBookmarkElementByTitle(List<WebElement> bookmarks, String title) {
         for (WebElement bookmark : bookmarks) {
             if (bookmark.findElement(By.className("bookmarkTitle")).getText().contains(title)) {
                 return bookmark;
@@ -340,7 +366,7 @@ public class Stepdefs {
         }
         return null;
     }
-
+    
     private void loginWithTestUser() {
         enableTestLogin();
         navigateToLogin();
