@@ -222,4 +222,8 @@ typings/
 # FuseBox cache
 .fusebox/
 
+#.idea/.nmae .idea/compiler.xml
+.idea/.name
+.idea/compiler.xml
+
 # End of https://www.gitignore.io/api/node
