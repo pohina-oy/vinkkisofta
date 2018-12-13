@@ -57,6 +57,19 @@ jacocoTestReport {
         xml.enabled true
         html.enabled true
     }
+    afterEvaluate {
+        classDirectories = files(classDirectories.files.collect {
+            fileTree(dir: it,
+                exclude: [
+                    'fi/pohina/vinkkilista/App.*',
+                    'fi/pohina/vinkkilista/Main.*',
+                    'fi/pohina/vinkkilista/api/GithubJsonApi.*',
+                    'fi/pohina/vinkkilista/api/GithubOAuthApi.*',
+                    'fi/pohina/vinkkilista/data_access/Postgres*'
+                ]
+            )
+        })
+    }
 }
 
 task stage(dependsOn: ['jar', 'clean'])
